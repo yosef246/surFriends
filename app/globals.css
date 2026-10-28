@@ -2,8 +2,13 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* Light only for v1. The dark variant stays class-based so that `dark:` utilities
+   inside shadcn components never fire from the OS preference. See docs/DESIGN_SYSTEM.md §1. */
 @custom-variant dark (&:is(.dark *));
 
+/* ------------------------------------------------------------------ */
+/* 1. shadcn semantic mapping (utility name -> CSS variable)           */
+/* ------------------------------------------------------------------ */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -26,6 +31,7 @@
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
@@ -39,6 +45,14 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  /* surFriends semantic additions */
+  --color-live: var(--live);
+  --color-live-foreground: var(--live-foreground);
+  --color-live-text: var(--live-text);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-danger: var(--danger);
+  --color-link: var(--link);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -48,89 +62,11 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-:root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
-}
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  html {
-    @apply font-sans;
-  }
-}
-
-/* surFriends design tokens (spec section 9) */
-@theme {
+/* ------------------------------------------------------------------ */
+/* 2. Raw design tokens (spec §9 palette + accessible variants)        */
+/* ------------------------------------------------------------------ */
+@theme static {
+  /* --- 8 base colors from spec §9, unchanged --- */
   --color-sea-deep: #0a2540;
   --color-sea-wave: #0ea5e9;
   --color-sand: #f5efe4;
@@ -139,9 +75,151 @@
   --color-kelp: #166534;
   --color-shadow: #1f2937;
   --color-mist: #94a3b8;
+
+  /* --- AA-safe variants (use for TEXT / thin strokes; originals stay for fills) --- */
+  --color-sea-wave-text: #0369a1; /* 5.93:1 on foam, 5.18:1 on sand */
+  --color-sunset-text: #c2410c; /* 5.18:1 on foam, 4.53:1 on sand */
+  --color-mist-text: #475569; /* 7.58:1 on foam, 6.62:1 on sand */
+  --color-mist-border: #64748b; /* 4.76:1 on foam, 4.16:1 on sand (input borders) */
+
+  /* --- Typography scale (size + line-height). Weights are set via font-* classes. --- */
+  --text-display: 1.75rem; /* 28 */
+  --text-display--line-height: 2.125rem; /* 34 */
+  --text-title: 1.375rem; /* 22 */
+  --text-title--line-height: 1.75rem; /* 28 */
+  --text-heading: 1.125rem; /* 18 */
+  --text-heading--line-height: 1.5rem; /* 24 */
+  --text-body: 1rem; /* 16 */
+  --text-body--line-height: 1.5rem; /* 24 */
+  --text-body-sm: 0.875rem; /* 14 */
+  --text-body-sm--line-height: 1.25rem; /* 20 */
+  --text-caption: 0.75rem; /* 12 */
+  --text-caption--line-height: 1rem; /* 16 */
+  --text-data: 0.8125rem; /* 13, JetBrains Mono */
+  --text-data--line-height: 1.125rem; /* 18 */
+
+  /* --- Layout sizes --- */
+  --spacing-touch: 2.75rem; /* 44px minimum hit target */
+  --spacing-topbar: 3.5rem; /* 56px */
+  --spacing-bottomnav: 4rem; /* 64px, plus env(safe-area-inset-bottom) */
+  --container-feed: 36rem; /* 576px max feed column on wide screens */
+
+  /* --- Elevation (navy-tinted, never pure black) --- */
+  --shadow-card: 0 1px 2px rgb(10 37 64 / 0.06), 0 2px 8px rgb(10 37 64 / 0.06);
+  --shadow-raised: 0 2px 4px rgb(10 37 64 / 0.08), 0 8px 20px rgb(10 37 64 / 0.1);
+  --shadow-fab: 0 4px 8px rgb(10 37 64 / 0.18), 0 12px 24px rgb(10 37 64 / 0.18);
+  --shadow-sheet: 0 -8px 32px rgb(10 37 64 / 0.18);
+
+  /* --- Easing --- */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-press: cubic-bezier(0.3, 0, 0.2, 1);
+
+  /* --- Animations (utilities: animate-shimmer, animate-card-in, ...) --- */
+  --animate-shimmer: shimmer 1.4s linear infinite;
+  --animate-card-in: card-in 280ms var(--ease-out-soft) both;
+  --animate-pill-in: pill-in 240ms var(--ease-out-soft) both;
+  --animate-pill-out: pill-out 160ms var(--ease-standard) both;
+  --animate-count-pop: count-pop 220ms var(--ease-out-soft);
+  --animate-card-out: card-out 220ms var(--ease-standard) both;
+  --animate-live-pulse: live-pulse 2s ease-out infinite;
+  --animate-sending: sending 1.2s ease-in-out infinite;
+  --animate-toast-in: toast-in 200ms var(--ease-out-soft) both;
+
+  @keyframes shimmer {
+    from {
+      background-position: calc(var(--shimmer-dir, 1) * 150%) 0;
+    }
+    to {
+      background-position: calc(var(--shimmer-dir, 1) * -150%) 0;
+    }
+  }
+  @keyframes card-in {
+    from {
+      opacity: 0;
+      transform: translateY(-12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes card-out {
+    from {
+      opacity: 1;
+      transform: none;
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+  }
+  @keyframes pill-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes pill-out {
+    from {
+      opacity: 1;
+      transform: none;
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.96);
+    }
+  }
+  @keyframes count-pop {
+    0% {
+      transform: scale(1);
+    }
+    40% {
+      transform: scale(1.25);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  @keyframes live-pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgb(249 115 22 / 0.55);
+    }
+    70%,
+    100% {
+      box-shadow: 0 0 0 8px rgb(249 115 22 / 0);
+    }
+  }
+  @keyframes sending {
+    0%,
+    100% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 0.9;
+    }
+  }
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
 }
 
+/* ------------------------------------------------------------------ */
+/* 3. Variable values (light only)                                     */
+/* ------------------------------------------------------------------ */
 :root {
+  /* spec §9 raw palette as CSS variables */
   --sea-deep: #0a2540;
   --sea-wave: #0ea5e9;
   --sand: #f5efe4;
@@ -150,4 +228,125 @@
   --kelp: #166534;
   --shadow: #1f2937;
   --mist: #94a3b8;
+
+  /* shadcn semantic roles */
+  --background: var(--sand);
+  --foreground: var(--shadow);
+  --card: var(--foam);
+  --card-foreground: var(--shadow);
+  --popover: var(--foam);
+  --popover-foreground: var(--shadow);
+  --primary: var(--sea-deep);
+  --primary-foreground: var(--foam);
+  --secondary: color-mix(in srgb, var(--sea-deep) 8%, var(--sand));
+  --secondary-foreground: var(--sea-deep);
+  --muted: color-mix(in srgb, var(--sea-deep) 5%, var(--sand));
+  --muted-foreground: #475569; /* mist-text */
+  --accent: color-mix(in srgb, var(--sea-wave) 16%, var(--foam));
+  --accent-foreground: var(--sea-deep);
+  --destructive: #b91c1c;
+  --destructive-foreground: var(--foam);
+  --border: color-mix(in srgb, var(--sea-deep) 14%, var(--sand));
+  --input: #64748b; /* mist-border */
+  --ring: #0369a1; /* sea-wave-text */
+
+  /* surFriends additions */
+  --live: var(--sunset); /* fills, dots, pill background */
+  --live-foreground: var(--sea-deep); /* 5.54:1 on sunset */
+  --live-text: #c2410c; /* sunset-text, for text on foam/sand */
+  --success: var(--kelp);
+  --success-foreground: var(--foam);
+  --danger: #b91c1c;
+  --link: #0369a1;
+
+  --chart-1: var(--sea-wave);
+  --chart-2: #0369a1;
+  --chart-3: var(--sea-deep);
+  --chart-4: var(--kelp);
+  --chart-5: var(--sunset);
+
+  --radius: 0.75rem; /* 12px */
+
+  --sidebar: var(--foam);
+  --sidebar-foreground: var(--shadow);
+  --sidebar-primary: var(--sea-deep);
+  --sidebar-primary-foreground: var(--foam);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--sea-deep);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+
+  /* motion durations (use as duration-(--dur-fast) etc.) */
+  --dur-instant: 80ms;
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 320ms;
+
+  --shimmer-dir: 1;
+  color-scheme: light;
+}
+
+[dir="rtl"] {
+  --shimmer-dir: -1;
+}
+
+/* ------------------------------------------------------------------ */
+/* 4. Base                                                             */
+/* ------------------------------------------------------------------ */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground text-body;
+  }
+  html {
+    @apply font-sans;
+    -webkit-text-size-adjust: 100%;
+  }
+  /* One visible focus style for everything keyboard-reachable */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  /* Latin names / numbers inside Hebrew text keep their own direction */
+  bdi,
+  .isolate-bidi {
+    unicode-bidi: isolate;
+  }
+}
+
+/* Skeleton block: static fill, shimmer layered on top */
+@utility skeleton {
+  background-color: color-mix(in srgb, var(--mist) 28%, var(--sand));
+  background-image: linear-gradient(
+    100deg,
+    transparent 30%,
+    rgb(255 255 255 / 0.55) 50%,
+    transparent 70%
+  );
+  background-size: 300% 100%;
+  animation: shimmer 1.4s linear infinite;
+  border-radius: var(--radius-md);
+}
+
+/* ------------------------------------------------------------------ */
+/* 5. Reduced motion                                                   */
+/* ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* Looping decorations become fully static */
+  .skeleton,
+  .animate-shimmer,
+  .animate-live-pulse,
+  .animate-sending {
+    animation: none !important;
+  }
 }

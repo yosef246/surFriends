@@ -17,7 +17,7 @@ export default async function HomePage() {
       <h1 className="text-2xl font-bold text-sea-deep">
         שלום{name ? `, ${name}` : ""}
       </h1>
-      <p className="font-mono text-sm text-mist" dir="ltr">
+      <p className="font-mono text-sm text-mist-text" dir="ltr">
         {user?.email}
       </p>
       <form action={signOut}>

@@ -165,7 +165,7 @@ export type Database = {
           id: string;
           report_id: string;
           user_id: string;
-          text: string;
+          text: string | null;
           quick_reaction: QuickReaction | null;
           created_at: string | null;
         };
@@ -173,7 +173,7 @@ export type Database = {
           id?: string;
           report_id: string;
           user_id: string;
-          text: string;
+          text: string | null;
           quick_reaction?: QuickReaction | null;
           created_at?: string | null;
         };
@@ -181,7 +181,7 @@ export type Database = {
           id?: string;
           report_id?: string;
           user_id?: string;
-          text?: string;
+          text?: string | null;
           quick_reaction?: QuickReaction | null;
           created_at?: string | null;
         };

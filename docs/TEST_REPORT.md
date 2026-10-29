@@ -224,7 +224,18 @@
 
 תאריך: 2026-10-29, commit בסיס ef7152b. היקף: סקירת קוד סטטית (app, components, lib, middleware, next.config, public/sw.js, כל המיגרציות). לא הורצו שרת, build, lint או Lighthouse. הורצו רק `node --test tests/*.test.ts` ו-`pnpm exec tsc --noEmit`.
 
-Lighthouse: ימולא ע"י ראש הצוות
+### Lighthouse (ראש הצוות, `/login`, production build על :3100, lighthouse@12)
+
+| | Performance | Accessibility | Best Practices | SEO |
+|---|---|---|---|---|
+| מובייל | 95 | 100 | 100 | 82 |
+| דסקטופ | 100 | 100 | 100 | 82 |
+
+- **BUG-029 | high | ✅ fixed (2617fae):** `motion-page` (‏`page-enter`) התחיל את כל `<main>` ב-`opacity: 0`, ולכן Lighthouse החזיר `NO_LCP` וציון Performance מובייל של 0. עכשיו האנימציה היא `transform` בלבד. מובייל: FCP 1.1s, LCP 2.6s, TBT 130ms, CLS 0.
+- **BUG-030 | low:** SEO 82. חסר `meta description` בדף `/login`, ו-`/robots.txt` מופנה ל-`/login` ע"י ה-middleware (‏307). צריך `app/robots.ts` ולהחריג את `robots.txt` ב-matcher.
+- הזדמנויות: unused JavaScript (~71KiB), legacy JavaScript (~11KiB).
+- דפים מחוברים לא נבדקו ב-Lighthouse (אין session). ניתוח סטטי: First Load JS של 189–218KB לדף.
+- סריקת chunks בצד הלקוח: לא נמצאו `service_role`, `VAPID_PRIVATE` או `CRON_SECRET`.
 
 ### סיכום
 

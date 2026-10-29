@@ -14,7 +14,7 @@ export function HeroSummary({ summary }: { summary: Summary }) {
     >
       <WaveStrip />
       <div className="relative z-10 flex max-w-[60%] flex-col items-start gap-2">
-        <p className="eyebrow eyebrow-light">חופי ישראל · עכשיו</p>
+        <p className="eyebrow-ocean">חופי ישראל · עכשיו</p>
         {recentCount > 0 ? (
           <>
             <p className="numeral font-display text-numeral-xl font-normal text-white">{recentCount}</p>

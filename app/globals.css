@@ -988,6 +988,26 @@
   text-shadow: 0 1px 2px rgb(8 19 31 / 0.5);
 }
 
+/* v3 eyebrow on the deep-ocean live summary card (bg-hero-ocean): pale aqua text + turquoise dot. */
+@utility eyebrow-ocean {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #a5f3fa;
+  &::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-image: linear-gradient(160deg, #7fe3ee, #1cc8da);
+    box-shadow: 0 0 0 3px rgb(28 200 218 / 0.2);
+  }
+}
+
 /* Comfortable Hebrew paragraph */
 @utility prose-he {
   line-height: 1.7;

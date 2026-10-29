@@ -23,7 +23,7 @@ export function OfflineBanner() {
     <div
       role="status"
       aria-live="polite"
-      className="flex items-center justify-center gap-2 bg-secondary px-4 py-2 text-center text-body-sm text-ink"
+      className="flex items-center justify-center gap-2 bg-ocean-deep px-4 py-2 text-center text-body-sm text-white"
     >
       <WifiOff className="size-4" aria-hidden />
       אין חיבור. מציגים את מה שנטען עד עכשיו

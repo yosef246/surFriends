@@ -18,7 +18,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label="ניווט ראשי"
-      className="fixed inset-x-0 bottom-0 z-30 rounded-t-card bg-card pb-[env(safe-area-inset-bottom)] shadow-nav"
+      className="glass-bar fixed inset-x-0 bottom-0 z-30 rounded-t-card pb-[env(safe-area-inset-bottom)] shadow-nav"
     >
       <ul className="mx-auto flex h-bottomnav w-full max-w-feed items-stretch">
         {ITEMS.map(({ href, label, icon: Icon, match }) => {
@@ -29,18 +29,21 @@ export function BottomNav() {
                 href={href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex h-full min-h-touch min-w-touch flex-col items-center justify-center gap-1 text-caption font-medium",
+                  "motion-press flex h-full min-h-touch min-w-touch flex-col items-center justify-center gap-1 text-caption font-medium transition-colors duration-(--dur-fast)",
                   active ? "text-ink" : "text-muted-text"
                 )}
               >
-                <Icon className={cn("size-5", active && "fill-ink/10")} aria-hidden />
-                <span className="flex flex-col items-center gap-0.5">
-                  {label}
+                <span className="relative flex h-8 w-14 items-center justify-center">
                   <span
                     aria-hidden
-                    className={cn("size-1 rounded-full", active ? "bg-signature" : "bg-transparent")}
+                    className={cn(
+                      "absolute inset-0 rounded-pill bg-signature shadow-bubble transition-[transform,opacity] duration-(--dur-slow) ease-(--ease-spring)",
+                      active ? "scale-x-100 opacity-100" : "scale-x-40 opacity-0"
+                    )}
                   />
+                  <Icon className="relative size-5" aria-hidden />
                 </span>
+                {label}
               </Link>
             </li>
           );
@@ -52,7 +55,7 @@ export function BottomNav() {
             aria-label="דיווח חדש"
             className="group flex h-full min-h-touch min-w-touch flex-col items-center justify-end gap-1 pb-2 text-caption font-medium text-ink"
           >
-            <span className="-mt-7 mb-auto flex size-14 items-center justify-center rounded-full bg-signature text-ink shadow-raised ring-4 ring-card transition-[transform,background-color] duration-(--dur-fast) ease-(--ease-press) group-hover:bg-signature-hover group-active:scale-[0.94] group-active:bg-signature-pressed">
+            <span className="bubble-fab motion-press -mt-7 mb-auto flex size-14 items-center justify-center rounded-full text-ink ring-4 ring-white/80 transition-transform duration-(--dur-base) ease-(--ease-spring)">
               <Plus className="size-7" aria-hidden />
             </span>
             דיווח

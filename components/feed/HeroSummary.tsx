@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Mascot } from "@/components/mascot";
 import { RelativeTime } from "@/components/shared/RelativeTime";
+import { WaveStrip } from "@/components/shared/WaveStrip";
 import { buttonVariants } from "@/components/ui/button";
 import type { HeroSummary as Summary } from "@/lib/feed";
 import { cn } from "@/lib/utils";
@@ -10,44 +11,39 @@ export function HeroSummary({ summary }: { summary: Summary }) {
   return (
     <section
       aria-label="סיכום חי"
-      className="relative min-h-42 overflow-hidden rounded-card bg-signature p-5 shadow-hero"
+      className="motion-pop-in relative min-h-44 overflow-hidden rounded-card bg-hero-sea p-5 pb-10 text-white shadow-hero"
     >
+      <WaveStrip />
       <div className="relative z-10 flex max-w-[60%] flex-col items-start gap-2">
-        <p className="text-body-sm font-medium text-ink">סיכום חי</p>
+        <p className="eyebrow eyebrow-light">סיכום חי</p>
         {recentCount > 0 ? (
           <>
             <p
-              className="numeral text-numeral-xl font-light"
+              className="numeral text-numeral-xl font-light text-white"
               aria-label={`${recentCount} דיווחים בשעתיים האחרונות`}
             >
               <span aria-hidden>{recentCount}</span>
             </p>
-            <p className="text-heading font-medium text-ink">
+            <p className="text-heading font-medium text-white">
               {recentCount === 1 ? "דיווח בשעתיים האחרונות" : "דיווחים בשעתיים האחרונות"}
             </p>
           </>
         ) : (
           <>
-            <p className="text-heading font-medium text-ink">הים שקט... היה הראשון לדווח</p>
-            <Link
-              href="/new"
-              className={cn(
-                buttonVariants({ variant: "ghost", size: "sm" }),
-                "border-ink hover:bg-signature-hover"
-              )}
-            >
+            <p className="text-heading font-medium text-white">הים שקט... היה הראשון לדווח</p>
+            <Link href="/new" className={cn(buttonVariants({ variant: "default", size: "sm" }))}>
               לדיווח חדש
             </Link>
           </>
         )}
         {latest ? (
-          <p className="text-body-sm text-ink">
+          <p className="text-body-sm text-white">
             {latest.beachName ? `${latest.beachName} · ` : ""}
             <RelativeTime iso={latest.created_at} />
           </p>
         ) : null}
       </div>
-      <Mascot.Wave size={120} className="absolute -bottom-2 end-3 animate-mascot-bob" />
+      <Mascot.Wave size={120} className="motion-float absolute bottom-3 end-3 z-10" />
     </section>
   );
 }

@@ -13,7 +13,7 @@ export function TopBar({ displayName, avatarUrl }: Props) {
   if (pathname === "/") return null;
 
   return (
-    <header className="bg-surface">
+    <header className="glass-bar">
       <div className="mx-auto flex min-h-topbar w-full max-w-feed items-center justify-between gap-3 px-4">
         <Link href="/" className="flex min-h-touch items-center gap-2 text-heading font-medium text-ink">
           <Waves className="size-6" aria-hidden />

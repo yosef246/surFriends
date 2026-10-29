@@ -68,49 +68,59 @@ export function PhotoField({ onChange, uploading, uploadError, disabled }: Props
         className="sr-only"
       />
       {preview ? (
-        <div className="flex items-center gap-3">
+        <div className="motion-pop-in relative aspect-[4/3] w-full overflow-hidden rounded-card bg-surface shadow-card">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={preview}
             alt="תצוגה מקדימה של התמונה שנבחרה"
-            className="size-24 rounded-lg object-cover"
+            className="size-full object-cover"
           />
-          <div className="flex flex-col gap-1 text-body-sm">
-            <span className="flex items-center gap-1 text-success" role="status">
-              {uploading ? (
-                <>
-                  <Loader2 className="size-4 animate-spin" aria-hidden /> מעלים...
-                </>
-              ) : (
-                <>
-                  <Check className="size-4" aria-hidden /> התמונה מוכנה ({Math.round(size / 1024)}KB)
-                </>
-              )}
-            </span>
-            <button
-              type="button"
-              onClick={clear}
-              disabled={uploading || disabled}
-              className="flex min-h-touch items-center gap-1 text-link disabled:opacity-50"
-            >
-              <X className="size-4" aria-hidden /> הסירו תמונה
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={clear}
+            disabled={uploading || disabled}
+            aria-label="הסירו תמונה"
+            className="bubble-glass motion-press absolute end-3 top-3 flex size-11 items-center justify-center rounded-full text-ink disabled:opacity-50"
+          >
+            <X className="size-5" aria-hidden />
+          </button>
+          <span
+            role="status"
+            className="glass-card absolute start-3 bottom-3 flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-body-sm font-medium text-ink"
+          >
+            {uploading ? (
+              <>
+                <Loader2 className="size-4 animate-spin" aria-hidden /> מעלים...
+              </>
+            ) : (
+              <>
+                <Check className="size-4 text-success" aria-hidden /> התמונה מוכנה ({Math.round(size / 1024)}KB)
+              </>
+            )}
+          </span>
+          {uploading ? (
+            <div aria-hidden className="absolute inset-0 flex items-center justify-center bg-abyss/50">
+              <Loader2 className="size-8 animate-spin text-white" />
+            </div>
+          ) : null}
         </div>
       ) : (
         <label
           htmlFor={id}
-          className={`flex min-h-touch w-fit cursor-pointer items-center gap-2 rounded-card border-2 border-dashed border-input bg-card px-5 text-body-sm font-medium text-ink has-[:focus-visible]:outline-2 ${
+          className={`glass-card motion-press motion-lift flex min-h-32 w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-card border-2 border-dashed border-input px-5 py-6 text-body-sm font-medium text-ink has-[:focus-visible]:outline-2 ${
             disabled || processing ? "opacity-50" : ""
           }`}
         >
           {processing ? (
             <>
-              <Loader2 className="size-4 animate-spin" aria-hidden /> מעבדים תמונה...
+              <Loader2 className="size-7 animate-spin" aria-hidden /> מעבדים תמונה...
             </>
           ) : (
             <>
-              <Camera className="size-4" aria-hidden /> הוסיפו תמונה
+              <span className="flex size-12 items-center justify-center rounded-full bg-signature-soft">
+                <Camera className="size-6" aria-hidden />
+              </span>
+              הוסיפו תמונה מהחוף
             </>
           )}
         </label>

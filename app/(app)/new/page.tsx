@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { NewReportForm } from "@/components/forms/NewReportForm";
+import { buttonVariants } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { createClient } from "@/lib/supabase/server";
 
@@ -23,15 +24,18 @@ export default async function NewReportPage({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-2">
+      <div className="motion-fade-up flex items-center gap-3">
         <Link
           href="/"
           aria-label="חזרה לפיד"
-          className="flex min-h-touch min-w-touch items-center justify-center rounded-full"
+          className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
         >
           <ArrowRight className="size-5" aria-hidden />
         </Link>
-        <h1 className="text-title font-medium text-ink">דיווח חדש</h1>
+        <div className="min-w-0">
+          <p className="eyebrow">מה המצב בים?</p>
+          <h1 className="text-title heading-tight font-medium text-gradient-sea">דיווח חדש</h1>
+        </div>
       </div>
       {error || !beaches?.length ? (
         <EmptyState

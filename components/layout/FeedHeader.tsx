@@ -17,14 +17,17 @@ export function greetingFor(now: Date = new Date()): string {
 export function FeedHeader({ greeting, firstName, displayName, avatarUrl }: Props) {
   return (
     <header className="flex min-h-topbar items-center justify-between gap-3">
-      <p className="min-w-0 text-title font-light text-ink">
-        {greeting}
-        {firstName ? <span className="font-medium"> {firstName}</span> : null}
-      </p>
+      <div className="min-w-0">
+        <p className="eyebrow">שלום</p>
+        <p className="text-display heading-tight font-light text-gradient-sea">
+          {greeting}
+          {firstName ? <span className="wave-underline font-medium"> {firstName}</span> : null}
+        </p>
+      </div>
       <Link
         href="/profile"
         aria-label={`הפרופיל של ${displayName}`}
-        className="flex min-h-touch min-w-touch items-center justify-center rounded-full"
+        className="motion-press flex min-h-touch min-w-touch items-center justify-center rounded-full"
       >
         <UserAvatar name={displayName} src={avatarUrl} className="size-10 text-ink" />
       </Link>

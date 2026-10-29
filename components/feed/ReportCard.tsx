@@ -22,7 +22,7 @@ export function ReportCard({ report }: { report: FeedReport }) {
   ].filter(Boolean);
 
   return (
-    <article className="flex flex-col gap-3 rounded-card bg-card p-4 shadow-card">
+    <article className="glass-card flex flex-col gap-3 rounded-card p-4">
       <header className="flex items-center gap-3">
         <Link
           href={`/profile/${report.user_id}`}
@@ -84,7 +84,7 @@ export function ReportCardSkeleton() {
   return (
     <div
       aria-hidden
-      className="flex flex-col gap-3 rounded-card bg-card p-4 shadow-card"
+      className="glass-card flex flex-col gap-3 rounded-card p-4"
     >
       <div className="flex items-center gap-3">
         <div className="skeleton size-9 rounded-full" />

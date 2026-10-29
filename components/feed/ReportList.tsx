@@ -50,8 +50,8 @@ export function ReportList({ initialReports }: { initialReports: FeedReport[] })
     <div className="flex flex-col gap-4">
       <h1 className="sr-only">פיד דיווחים</h1>
       <ul className="flex flex-col gap-4" aria-busy={pending}>
-        {reports.map((r) => (
-          <li key={r.id}>
+        {reports.map((r, i) => (
+          <li key={r.id} className="motion-fade-up" style={{ "--i": Math.min(i, 8) } as React.CSSProperties}>
             <ReportCard report={r} />
           </li>
         ))}
@@ -68,7 +68,7 @@ export function ReportList({ initialReports }: { initialReports: FeedReport[] })
           type="button"
           onClick={loadMore}
           disabled={pending}
-          className={cn(buttonVariants({ variant: "outline" }), "min-h-touch self-center")}
+          className={cn(buttonVariants({ variant: "secondary" }), "min-h-touch self-center")}
         >
           {pending ? "טוענים..." : "טען עוד"}
         </button>

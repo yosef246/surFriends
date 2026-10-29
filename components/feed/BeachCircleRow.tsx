@@ -6,22 +6,26 @@ export function BeachCircleRow({ beaches }: { beaches: BeachCircleItem[] }) {
   if (beaches.length === 0) return null;
   return (
     <nav aria-label="חופים">
-      <ul className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pt-2 pb-3 [scrollbar-width:none]">
-        {beaches.map((b) => (
-          <li key={b.id} className="w-18 shrink-0 snap-start">
+      <ul className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pt-3 pb-3 [scrollbar-width:none]">
+        {beaches.map((b, i) => (
+          <li
+            key={b.id}
+            className="motion-pop-in w-18 shrink-0 snap-start"
+            style={{ "--i": Math.min(i, 8) } as React.CSSProperties}
+          >
             <Link
               href={`/beach/${b.id}`}
               aria-label={b.live ? `${b.name}, חי` : b.name}
-              className="flex min-h-touch flex-col items-center gap-2"
+              className="motion-press motion-lift flex min-h-touch flex-col items-center gap-2"
             >
-              <span className="relative flex size-16 items-center justify-center rounded-full bg-card text-ink shadow-card">
+              <span className="glass-card relative flex size-16 items-center justify-center rounded-full text-ink ring-2 ring-signature">
                 <Waves className="size-6" aria-hidden />
                 {b.live ? (
                   <span
                     aria-hidden
-                    className="absolute -top-1.5 -end-2 inline-flex h-[1.125rem] items-center gap-1 rounded-pill bg-link-soft px-1.5 text-caption font-medium text-link-blue"
+                    className="motion-pulse-ring absolute -top-1.5 -end-2 inline-flex h-[1.125rem] items-center gap-1 rounded-pill bg-live px-1.5 text-caption font-medium text-ink"
                   >
-                    <span className="size-1.5 rounded-full bg-link-blue animate-live-pulse" />
+                    <span className="size-1.5 rounded-full bg-ink" />
                     חי
                   </span>
                 ) : null}

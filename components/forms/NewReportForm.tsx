@@ -20,11 +20,6 @@ import { WaveRatingInput } from "./WaveRatingInput";
 
 type Props = { beaches: BeachOption[]; defaultBeachId: number | null };
 
-const chip = (on: boolean) =>
-  `min-h-touch rounded-pill px-4 text-body-sm font-medium ${
-    on ? "bg-signature text-ink" : "bg-card text-copy shadow-card"
-  }`;
-
 export function NewReportForm({ beaches, defaultBeachId }: Props) {
   const router = useRouter();
   const [beachId, setBeachId] = useState<number | null>(defaultBeachId);
@@ -38,6 +33,16 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [touched, setTouched] = useState({ beach: false, text: false });
   const submitting = useRef(false);
+  const taRef = useRef<HTMLTextAreaElement>(null);
+
+  // Single-line pill that grows (max 3 lines) only when the text wraps.
+  useEffect(() => {
+    const el = taRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = Math.min(el.scrollHeight, 96) + "px";
+    el.style.overflowY = el.scrollHeight > 96 ? "auto" : "hidden";
+  }, [text]);
 
   // Preselect the last used beach (only when no ?beach= default was given).
   useEffect(() => {
@@ -133,52 +138,66 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
   }
 
   const label =
-    stage === "uploading" ? "מעלים תמונה..." : stage === "saving" || done ? "מפרסמים..." : "פרסמו";
+    stage === "uploading" ? "מעלים תמונה..." : stage === "saving" || done ? "מפרסמים..." : "פרסמו 🤙";
+
+  const section = (i: number) => ({ "--i": i }) as React.CSSProperties;
 
   return (
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-6 pb-28">
-      <BeachPicker
-        beaches={beaches}
-        value={beachId}
-        onChange={setBeachId}
-        onBlur={() => setTouched((s) => ({ ...s, beach: true }))}
-        error={beachError}
-      />
+      <div className="motion-fade-up" style={section(0)}>
+        <BeachPicker
+          beaches={beaches}
+          value={beachId}
+          onChange={setBeachId}
+          onBlur={() => setTouched((s) => ({ ...s, beach: true }))}
+          error={beachError}
+        />
+      </div>
 
-      <WaveRatingInput value={rating} onChange={setRating} />
+      <div className="motion-fade-up" style={section(1)}>
+        <WaveRatingInput value={rating} onChange={setRating} />
+      </div>
 
-      <div className="flex flex-col gap-1.5">
+      <div className="motion-fade-up flex flex-col gap-2" style={section(2)}>
         <label htmlFor="report-text" className="text-body-sm font-medium text-ink">
           מה קורה בחוף?
         </label>
         <textarea
           id="report-text"
+          ref={taRef}
           value={text}
-          rows={4}
+          rows={1}
           onChange={(e) => setText(e.target.value)}
           onBlur={() => setTouched((s) => ({ ...s, text: true }))}
           aria-invalid={textError ? true : undefined}
           aria-describedby="report-text-meta"
-          className="w-full resize-y rounded-lg border border-input bg-card px-3.5 py-3 text-body text-copy placeholder:text-muted-text focus:border-link-blue focus:ring-3 focus:ring-link-blue/30 focus:outline-none aria-invalid:border-danger"
+          className="block min-h-12 w-full resize-none rounded-pill border-[1.5px] border-input bg-white/90 px-5 py-3 text-body text-copy shadow-card backdrop-blur-sm placeholder:text-muted-text focus:border-link-blue focus:ring-3 focus:ring-link/25 focus:outline-none aria-invalid:border-danger"
         />
-        <div className="flex flex-wrap gap-2" role="group" aria-label="טקסט מהיר">
+        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]" role="group" aria-label="טקסט מהיר">
           {QUICK_TEXTS.map((t) => (
-            <button key={t} type="button" onClick={() => addQuick(t)} className={chip(false)}>
+            <button
+              key={t}
+              type="button"
+              onClick={() => addQuick(t)}
+              className="bubble-chip h-10 shrink-0 rounded-pill px-4 text-body-sm font-medium whitespace-nowrap"
+            >
               {t}
             </button>
           ))}
         </div>
-        <div id="report-text-meta" className="flex justify-between gap-2 text-body-sm">
+        <div id="report-text-meta" className="flex justify-between gap-2 text-body-sm empty:hidden">
           <span role={textError ? "alert" : undefined} className="text-danger">
             {textError ? `⚠ ${textError}` : ""}
           </span>
-          <span className={`font-mono ${tooLong ? "text-danger" : "text-muted-text"}`}>
-            {len}/{REPORT_TEXT_MAX}
-          </span>
+          {len > 400 || tooLong ? (
+            <span className={`font-mono ${tooLong ? "text-danger" : "text-muted-text"}`}>
+              {len}/{REPORT_TEXT_MAX}
+            </span>
+          ) : null}
         </div>
       </div>
 
-      <fieldset className="flex flex-col gap-1.5">
+      <fieldset className="motion-fade-up flex flex-col gap-1.5" style={section(3)}>
         <legend className="mb-1.5 text-body-sm font-medium text-ink">גובה גל (לא חובה)</legend>
         <div className="flex flex-wrap gap-2">
           {WAVE_HEIGHTS.map((h) => (
@@ -187,7 +206,7 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
               type="button"
               aria-pressed={height === h}
               onClick={() => setHeight(height === h ? null : h)}
-              className={chip(height === h)}
+              className="bubble-chip h-10 rounded-pill px-4 text-body-sm font-medium"
             >
               {height === h ? "✓ " : ""}
               {h}
@@ -196,12 +215,14 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
         </div>
       </fieldset>
 
-      <PhotoField onChange={setPhoto} uploading={stage === "uploading"} uploadError={photoError} disabled={busy} />
+      <div className="motion-fade-up" style={section(4)}>
+        <PhotoField onChange={setPhoto} uploading={stage === "uploading"} uploadError={photoError} disabled={busy} />
+      </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-30 rounded-t-card bg-card px-4 pt-3 shadow-nav pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+      <div className="glass-bar fixed inset-x-0 bottom-0 z-30 rounded-t-card px-4 pt-3 shadow-nav pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
         <div className="mx-auto flex w-full max-w-feed flex-col gap-2">
           {banner ? (
-            <p role="alert" className="rounded-lg border border-danger p-3 text-body-sm text-danger">
+            <p role="alert" className="rounded-lg border border-danger bg-white/90 p-3 text-body-sm text-danger">
               ⚠ {banner}
             </p>
           ) : null}

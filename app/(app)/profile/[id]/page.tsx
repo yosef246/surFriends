@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { ReportList } from "@/components/feed/ReportList";
-import { ProfileHeader } from "@/components/profile/ProfileHeader";
+import { ProfileHero } from "@/components/profile/ProfileHero";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { getCurrentProfile, getCurrentUser, getSupabase } from "@/lib/auth";
-import { fetchReports } from "@/lib/feed";
+import { countActiveReports, fetchReports } from "@/lib/feed";
 import { DEFAULT_DISPLAY_NAME } from "@/lib/profile";
 import { getProfileById } from "@/lib/profile-data";
 import { REPORT_TTL_HOURS, isUuid, reportCutoffIso } from "@/lib/reports";
@@ -22,10 +22,12 @@ export default async function UserProfilePage({ params }: { params: Promise<{ id
   if (!isUuid(id)) notFound();
 
   const supabase = await getSupabase();
-  const [profile, reports, me] = await Promise.all([
+  const cutoff = reportCutoffIso();
+  const [profile, reports, me, reportCount] = await Promise.all([
     getProfileById(id),
-    fetchReports(supabase, reportCutoffIso(), null, user?.id ?? "", null, id),
+    fetchReports(supabase, cutoff, null, user?.id ?? "", null, id),
     getCurrentProfile(),
+    countActiveReports(supabase, cutoff, id),
   ]);
   if (!profile) notFound();
   const myName = me?.display_name ?? (user?.user_metadata?.full_name as string | undefined) ?? DEFAULT_DISPLAY_NAME;
@@ -34,7 +36,7 @@ export default async function UserProfilePage({ params }: { params: Promise<{ id
   // Favorites are private (RLS): intentionally not shown here.
   return (
     <div className="flex flex-col gap-6">
-      <ProfileHeader profile={profile} />
+      <ProfileHero profile={profile} reportCount={reportCount} />
       <ReportList
         initialReports={reports}
         currentUserId={user?.id ?? ""}
@@ -43,10 +45,8 @@ export default async function UserProfilePage({ params }: { params: Promise<{ id
         authorId={profile.id}
         heading={
           <>
-            <p className="eyebrow eyebrow-coral">דיווחים</p>
-            <h2 className="text-title heading-tight font-display font-normal text-ink">
-              הדיווחים מה-{REPORT_TTL_HOURS} השעות האחרונות
-            </h2>
+            <h2 className="section-title">דיווחים</h2>
+            <p className="text-label text-muted-text">מה-{REPORT_TTL_HOURS} השעות האחרונות</p>
           </>
         }
         emptyState={<EmptyState title={`אין דיווחים מ${profile.display_name} ב-${REPORT_TTL_HOURS} השעות האחרונות`} />}

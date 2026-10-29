@@ -15,12 +15,9 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  // Google login was removed: old links go to the feed.
+  // /login is gone (anonymous sessions). /callback is a real route again (Google link / sign-in return).
   async redirects() {
-    return [
-      { source: "/login", destination: "/", permanent: true },
-      { source: "/callback", destination: "/", permanent: true },
-    ];
+    return [{ source: "/login", destination: "/", permanent: true }];
   },
   async headers() {
     return [
@@ -30,6 +27,8 @@ const nextConfig: NextConfig = {
     ];
   },
   // Verification builds use NEXT_DIST_DIR=.next-verify so they never clobber a running `pnpm dev`.
+  // /credits reads public/beaches/CREDITS.md at runtime: make sure it is bundled with the function.
+  outputFileTracingIncludes: { "/credits": ["./public/beaches/CREDITS.md"] },
   distDir: process.env.NEXT_DIST_DIR || ".next",
   images: {
     remotePatterns: supabaseHost

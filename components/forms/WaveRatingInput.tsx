@@ -46,7 +46,7 @@ export function WaveRatingInput({ value, onChange }: Props) {
                 onChange(target);
                 (e.currentTarget.parentElement?.children[target - 1] as HTMLElement | undefined)?.focus();
               }}
-              className={`bubble-chip motion-press flex h-20 flex-col items-center justify-center gap-0.5 rounded-pill px-1 text-center ${
+              className={`bubble-chip motion-press flex h-20 flex-col items-center justify-center gap-0.5 rounded-full px-1 text-center ${
                 checked ? "motion-pop-in" : ""
               }`}
             >

@@ -15,9 +15,9 @@ export function TopBar({ displayName, avatarUrl }: Props) {
   return (
     <header className="glass-bar">
       <div className="mx-auto flex min-h-topbar w-full max-w-feed items-center justify-between gap-3 px-4">
-        <Link href="/" className="flex min-h-touch items-center gap-2 text-heading font-medium text-ink">
-          <Waves className="size-6" aria-hidden />
-          surFriends
+        <Link href="/" className="flex min-h-touch items-center gap-2 text-ink">
+          <Waves className="size-6 text-link-blue" aria-hidden />
+          <span className="text-title heading-tight font-display font-normal text-gradient-sea">surFriends</span>
         </Link>
         <Link
           href="/profile"

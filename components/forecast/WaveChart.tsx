@@ -191,7 +191,7 @@ export function WaveChart({
                 setRange(v);
                 setSel(null);
               }}
-              className="bubble-chip min-h-touch rounded-pill px-4 text-body-sm font-medium"
+              className="bubble-chip min-h-touch rounded-full px-4 text-body-sm font-semibold"
             >
               {label}
             </button>

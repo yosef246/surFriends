@@ -55,7 +55,7 @@ export function QuickReactionBar({ comingCount, onTheWayCount, myComing, myOnThe
                 aria-pressed={pressed[kind]}
                 disabled={pending}
                 onClick={() => tap(kind)}
-                className="bubble-chip inline-flex min-h-touch items-center gap-1.5 rounded-pill px-4 text-body-sm font-medium whitespace-nowrap disabled:opacity-70"
+                className="bubble-chip inline-flex min-h-touch items-center gap-1.5 rounded-full px-4 text-body-sm font-semibold whitespace-nowrap disabled:opacity-70"
               >
                 <span key={pops[kind]} aria-hidden className={cn(pops[kind] > 0 && pressed[kind] && "motion-pop-in")}>
                   {emoji}

@@ -40,7 +40,7 @@ export function SkillLevelSelect({ value, onChange, disabled }: Props) {
             disabled={disabled}
             onClick={() => onChange(level)}
             onKeyDown={(e) => onKeyDown(e, i)}
-            className="bubble-chip h-11 rounded-pill px-5 text-body-sm font-medium disabled:opacity-50"
+            className="bubble-chip h-11 rounded-full px-5 text-body-sm font-semibold disabled:opacity-50"
           >
             {value === level ? "✓ " : ""}
             {SKILL_LABELS[level]}

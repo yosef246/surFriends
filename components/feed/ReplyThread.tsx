@@ -288,7 +288,7 @@ function ReplyRow({
           ) : null}
         </div>
         {badge ? (
-          <span className="bubble-chip mt-0.5 inline-flex items-center gap-1 rounded-pill px-3 py-0.5 text-body-sm">
+          <span className="bubble-chip mt-0.5 inline-flex items-center gap-1 rounded-full px-3 py-0.5 text-body-sm">
             <span aria-hidden>{badge.emoji}</span>
             {badge.label}
           </span>

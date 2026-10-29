@@ -211,7 +211,7 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
               key={t}
               type="button"
               onClick={() => addQuick(t)}
-              className="bubble-chip h-10 shrink-0 rounded-pill px-4 text-body-sm font-medium whitespace-nowrap"
+              className="bubble-chip h-12 shrink-0 rounded-full px-5 text-body-sm font-semibold whitespace-nowrap"
             >
               {t}
             </button>
@@ -238,7 +238,7 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
               type="button"
               aria-pressed={height === h}
               onClick={() => setHeight(height === h ? null : h)}
-              className="bubble-chip h-10 rounded-pill px-4 text-body-sm font-medium"
+              className="bubble-chip h-12 rounded-full px-5 text-body-sm font-semibold"
             >
               {height === h ? "✓ " : ""}
               {h}

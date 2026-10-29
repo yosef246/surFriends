@@ -116,7 +116,7 @@ export function ReportCard({
           aria-expanded={open}
           aria-controls={panelId}
           onClick={() => setOpen((o) => !o)}
-          className="bubble-chip inline-flex min-h-touch items-center gap-1.5 rounded-pill px-4 text-body-sm font-medium whitespace-nowrap"
+          className="bubble-chip inline-flex min-h-touch items-center gap-1.5 rounded-full px-4 text-body-sm font-semibold whitespace-nowrap"
         >
           <span aria-hidden>💬</span>
           <span>{commentsLabel(report.replyCount)}</span>

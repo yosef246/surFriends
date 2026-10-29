@@ -81,7 +81,7 @@ export function BeachPicker({ beaches, value, onChange, error, onBlur }: Props) 
                     tabIndex={b.id === tabStop ? 0 : -1}
                     title={`${b.name_he} · ${b.city}`}
                     onClick={() => onChange(b.id)}
-                    className={`bubble-chip inline-flex h-11 shrink-0 snap-center items-center gap-1.5 rounded-pill px-4 text-body-sm font-medium whitespace-nowrap ${
+                    className={`bubble-chip inline-flex h-12 shrink-0 snap-center items-center gap-1.5 rounded-full px-5 text-body-sm font-semibold whitespace-nowrap ${
                       on ? "motion-pop-in" : ""
                     }`}
                   >

@@ -331,13 +331,12 @@
       transform: scale(1, 1);
     }
   }
+  /* Transform only: starting the whole page at opacity 0 hides the LCP element (Lighthouse NO_LCP). */
   @keyframes page-enter {
     from {
-      opacity: 0;
       transform: translateY(10px);
     }
     to {
-      opacity: 1;
       transform: none;
     }
   }

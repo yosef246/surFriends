@@ -30,7 +30,7 @@ export default async function LoginPage({
       <div className="flex flex-col items-center gap-3 text-center">
         <Mascot.Wave size={180} className="motion-float" />
         <h1 className="motion-fade-up text-display heading-tight font-display font-normal text-gradient-sea" style={{ "--i": 1 } as React.CSSProperties}>surFriends</h1>
-        <p className="motion-fade-up text-body text-muted-text" style={{ "--i": 2 } as React.CSSProperties}>קהילת הגולשים של ישראל</p>
+        <p className="text-body text-muted-text">קהילת הגולשים של ישראל</p>
       </div>
       <div className="motion-fade-up flex w-full flex-col gap-4" style={{ "--i": 3 } as React.CSSProperties}>
         {inApp ? <InAppBrowserNotice /> : null}

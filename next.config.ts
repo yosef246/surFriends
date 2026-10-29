@@ -15,6 +15,13 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Google login was removed: old links go to the feed.
+  async redirects() {
+    return [
+      { source: "/login", destination: "/", permanent: true },
+      { source: "/callback", destination: "/", permanent: true },
+    ];
+  },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },

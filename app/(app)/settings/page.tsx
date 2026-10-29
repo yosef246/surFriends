@@ -1,21 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { ArrowRight, LogOut } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { PreparingProfile } from "@/components/session/PreparingProfile";
 import { NotificationsCard } from "@/components/settings/NotificationsCard";
 import { ProfileEditForm } from "@/components/settings/ProfileEditForm";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { getCurrentUser, getSupabase } from "@/lib/auth";
 import { fetchFavoriteBeaches, getProfileById } from "@/lib/profile-data";
+import { DEFAULT_DISPLAY_NAME } from "@/lib/profile";
 import { cn } from "@/lib/utils";
 import pkg from "../../../package.json";
-import { signOut } from "../actions";
 
 export const metadata: Metadata = { title: "הגדרות | surFriends" };
 
 export default async function SettingsPage() {
   const [supabase, user] = await Promise.all([getSupabase(), getCurrentUser()]);
-  if (!user) redirect("/login");
+  if (!user) return <PreparingProfile />;
   const [profile, favorites, { data: pushRow }] = await Promise.all([
     getProfileById(user.id),
     fetchFavoriteBeaches(user.id),
@@ -24,7 +24,7 @@ export default async function SettingsPage() {
 
   const initial = {
     display_name:
-      profile?.display_name ?? (user.user_metadata?.full_name as string | undefined) ?? user.email?.split("@")[0] ?? "",
+      profile?.display_name ?? (user.user_metadata?.full_name as string | undefined) ?? DEFAULT_DISPLAY_NAME,
     skill_level: profile?.skill_level ?? null,
     bio: profile?.bio ?? null,
   };
@@ -50,13 +50,6 @@ export default async function SettingsPage() {
       </section>
 
       <NotificationsCard accountEnabled={pushRow?.push_enabled ?? true} favorites={favorites} />
-
-      <form action={signOut}>
-        <Button type="submit" variant="outline" className="w-full">
-          <LogOut aria-hidden />
-          התנתקות
-        </Button>
-      </form>
 
       <p className="text-center text-caption text-muted-text">
         <span dir="ltr">surFriends v{pkg.version}</span>

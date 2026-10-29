@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { Pencil } from "lucide-react";
 import { ReportList } from "@/components/feed/ReportList";
 import { FavoriteBeachesList } from "@/components/profile/FavoriteBeachesList";
@@ -9,6 +8,8 @@ import { EmptyState } from "@/components/shared/EmptyState";
 import { buttonVariants } from "@/components/ui/button";
 import { getCurrentUser, getSupabase } from "@/lib/auth";
 import { fetchReports } from "@/lib/feed";
+import { PreparingProfile } from "@/components/session/PreparingProfile";
+import { DEFAULT_DISPLAY_NAME } from "@/lib/profile";
 import { fetchFavoriteBeaches, getProfileById } from "@/lib/profile-data";
 import { REPORT_TTL_HOURS, reportCutoffIso } from "@/lib/reports";
 import { cn } from "@/lib/utils";
@@ -17,7 +18,7 @@ export const metadata: Metadata = { title: "הפרופיל שלי | surFriends" 
 
 export default async function ProfilePage() {
   const [supabase, user] = await Promise.all([getSupabase(), getCurrentUser()]);
-  if (!user) redirect("/login");
+  if (!user) return <PreparingProfile />;
 
   const [profile, favorites, reports] = await Promise.all([
     getProfileById(user.id),
@@ -26,7 +27,7 @@ export default async function ProfilePage() {
   ]);
 
   const displayName =
-    profile?.display_name ?? (user.user_metadata?.full_name as string | undefined) ?? user.email ?? "משתמש";
+    profile?.display_name ?? (user.user_metadata?.full_name as string | undefined) ?? DEFAULT_DISPLAY_NAME;
   const avatarUrl = profile?.avatar_url ?? (user.user_metadata?.avatar_url as string | undefined) ?? null;
 
   return (

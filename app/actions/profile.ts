@@ -5,7 +5,7 @@ import { getCurrentUser, getSupabase } from "@/lib/auth";
 import { isBeachId, validateProfileInput, type ProfileInput } from "@/lib/profile";
 import type { ActionResult } from "@/lib/reports";
 
-const SESSION_EXPIRED = "ההתחברות פגה. התחברו מחדש";
+const SESSION_EXPIRED = "רעננו את הדף ונסו שוב";
 
 export async function updateProfile(input: ProfileInput): Promise<ActionResult> {
   const user = await getCurrentUser();
@@ -18,7 +18,7 @@ export async function updateProfile(input: ProfileInput): Promise<ActionResult> 
   // Only these three columns, only the session user's row (RLS + the column grant enforce it too).
   const { data, error } = await supabase
     .from("profiles")
-    .update({ display_name: v.value.display_name, skill_level: v.value.skill_level, bio: v.value.bio })
+    .update({ display_name: v.value.display_name, skill_level: v.value.skill_level, bio: v.value.bio, name_chosen: true })
     .eq("id", user.id)
     .select("id");
   if (error) {

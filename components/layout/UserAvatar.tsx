@@ -1,3 +1,5 @@
+import { Waves } from "lucide-react";
+import { isDefaultName } from "@/lib/profile";
 import { cn } from "@/lib/utils";
 
 type Props = { name: string; src?: string | null; className?: string };
@@ -15,7 +17,7 @@ export function UserAvatar({ name, src, className }: Props) {
         // eslint-disable-next-line @next/next/no-img-element
         <img src={src} alt="" referrerPolicy="no-referrer" className="size-full object-cover" />
       ) : (
-        <span aria-hidden>{initial}</span>
+        isDefaultName(name) ? <Waves className="size-1/2" aria-hidden /> : <span aria-hidden>{initial}</span>
       )}
     </span>
   );

@@ -20,7 +20,7 @@ export const REACTION_LABEL: Record<ReactionKind, { emoji: string; label: string
 export const isReactionKind = (v: unknown): v is ReactionKind =>
   typeof v === "string" && (REACTION_KINDS as readonly string[]).includes(v);
 
-export const MSG_SESSION = "ההתחברות פגה. התחברו מחדש";
+export const MSG_SESSION = "רעננו את הדף ונסו שוב";
 export const MSG_RATE_LIMIT = "יותר מדי תגובות, נסו שוב עוד מעט";
 export const MSG_REPORT_GONE = "הדיווח כבר לא קיים";
 export const MSG_REPLY_GONE = "התגובה לא נמצאה";

@@ -114,7 +114,7 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
           data: { user },
         } = await supabase.auth.getUser();
         if (!user) {
-          setBanner("ההתחברות פגה. התחברו מחדש");
+          setBanner("רעננו את הדף ונסו שוב");
           return;
         }
         const path = `${user.id}/${crypto.randomUUID()}.jpg`;

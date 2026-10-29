@@ -21,7 +21,7 @@ export function FeedHeader({ greeting, firstName, displayName, avatarUrl }: Prop
         <p className="eyebrow">שלום</p>
         <p className="text-display heading-tight font-display font-normal text-gradient-sea">
           {greeting}{" "}
-          {firstName ? <span className="wave-underline">{firstName}</span> : null}
+          {firstName ? <span className="wave-underline">{firstName}</span> : <span aria-hidden>🤙</span>}
         </p>
       </div>
       <Link

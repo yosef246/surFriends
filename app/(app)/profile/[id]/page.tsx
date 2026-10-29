@@ -5,6 +5,7 @@ import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { getCurrentProfile, getCurrentUser, getSupabase } from "@/lib/auth";
 import { fetchReports } from "@/lib/feed";
+import { DEFAULT_DISPLAY_NAME } from "@/lib/profile";
 import { getProfileById } from "@/lib/profile-data";
 import { REPORT_TTL_HOURS, isUuid, reportCutoffIso } from "@/lib/reports";
 
@@ -16,20 +17,19 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default async function UserProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const user = await getCurrentUser();
-  if (!user) redirect("/login");
-  if (id.toLowerCase() === user.id.toLowerCase()) redirect("/profile");
+  if (user && id.toLowerCase() === user.id.toLowerCase()) redirect("/profile");
 
   if (!isUuid(id)) notFound();
 
   const supabase = await getSupabase();
   const [profile, reports, me] = await Promise.all([
     getProfileById(id),
-    fetchReports(supabase, reportCutoffIso(), null, user.id, null, id),
+    fetchReports(supabase, reportCutoffIso(), null, user?.id ?? "", null, id),
     getCurrentProfile(),
   ]);
   if (!profile) notFound();
-  const myName = me?.display_name ?? (user.user_metadata?.full_name as string | undefined) ?? user.email ?? "משתמש";
-  const myAvatar = me?.avatar_url ?? (user.user_metadata?.avatar_url as string | undefined) ?? null;
+  const myName = me?.display_name ?? (user?.user_metadata?.full_name as string | undefined) ?? DEFAULT_DISPLAY_NAME;
+  const myAvatar = me?.avatar_url ?? (user?.user_metadata?.avatar_url as string | undefined) ?? null;
 
   // Favorites are private (RLS): intentionally not shown here.
   return (
@@ -37,7 +37,7 @@ export default async function UserProfilePage({ params }: { params: Promise<{ id
       <ProfileHeader profile={profile} />
       <ReportList
         initialReports={reports}
-        currentUserId={user.id}
+        currentUserId={user?.id ?? ""}
         currentUserName={myName}
         currentUserAvatar={myAvatar}
         authorId={profile.id}

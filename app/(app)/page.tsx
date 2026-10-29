@@ -5,6 +5,7 @@ import { PostedNotice } from "@/components/feed/PostedNotice";
 import { ReportList } from "@/components/feed/ReportList";
 import { FeedHeader, greetingFor } from "@/components/layout/FeedHeader";
 import { fetchBeachCircles, fetchHeroSummary, fetchReports } from "@/lib/feed";
+import { DEFAULT_DISPLAY_NAME, firstNameOf } from "@/lib/profile";
 import { REPORT_TTL_HOURS, reportCutoffIso } from "@/lib/reports";
 import { getCurrentProfile, getCurrentUser, getSupabase } from "@/lib/auth";
 
@@ -23,11 +24,10 @@ export default async function FeedPage() {
   const displayName =
     profile?.display_name ??
     (user?.user_metadata?.full_name as string | undefined) ??
-    user?.email ??
-    "משתמש";
+    DEFAULT_DISPLAY_NAME;
   const avatarUrl =
     profile?.avatar_url ?? (user?.user_metadata?.avatar_url as string | undefined) ?? null;
-  const firstName = displayName.trim().split(/\s+/)[0] ?? "";
+  const firstName = firstNameOf(displayName);
 
   return (
     <div className="flex flex-col gap-5">

@@ -1,20 +1,18 @@
-import { redirect } from "next/navigation";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { OfflineBanner } from "@/components/layout/OfflineBanner";
 import { TopBar } from "@/components/layout/TopBar";
+import { DEFAULT_DISPLAY_NAME } from "@/lib/profile";
 import { getCurrentProfile, getCurrentUser } from "@/lib/auth";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const [user, profile] = await Promise.all([getCurrentUser(), getCurrentProfile()]);
-  if (!user) redirect("/login");
 
   const displayName =
     profile?.display_name ??
-    (user.user_metadata?.full_name as string | undefined) ??
-    user.email ??
-    "משתמש";
+    (user?.user_metadata?.full_name as string | undefined) ??
+    DEFAULT_DISPLAY_NAME;
   const avatarUrl =
-    profile?.avatar_url ?? (user.user_metadata?.avatar_url as string | undefined) ?? null;
+    profile?.avatar_url ?? (user?.user_metadata?.avatar_url as string | undefined) ?? null;
 
   return (
     <div className="min-h-dvh">

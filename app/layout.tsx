@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Suez_One, IBM_Plex_Sans_Hebrew, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { AppStart } from "@/components/session/AppStart";
 
 const suezOne = Suez_One({
   variable: "--font-suez-one",
@@ -36,9 +37,17 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="he" dir="rtl">
+    <html lang="he" dir="rtl" suppressHydrationWarning>
       <body className={`${suezOne.variable} ${plexHebrew.variable} ${jetbrainsMono.variable} antialiased`}>
+        <script
+          // Before first paint: hide the launch splash when it was already shown in this browser session.
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if(sessionStorage.getItem('sf_splash_seen')==='1')document.documentElement.setAttribute('data-splash-seen','')}catch(e){}",
+          }}
+        />
         {children}
+        <AppStart />
       </body>
     </html>
   );

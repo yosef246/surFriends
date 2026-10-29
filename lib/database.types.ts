@@ -22,6 +22,7 @@ export type Database = {
           bio: string | null;
           created_at: string | null;
           push_enabled: boolean;
+          name_chosen: boolean;
         };
         Insert: {
           id: string;
@@ -31,6 +32,7 @@ export type Database = {
           bio?: string | null;
           created_at?: string | null;
           push_enabled?: boolean;
+          name_chosen?: boolean;
         };
         Update: {
           id?: string;
@@ -40,6 +42,7 @@ export type Database = {
           bio?: string | null;
           created_at?: string | null;
           push_enabled?: boolean;
+          name_chosen?: boolean;
         };
         Relationships: [];
       };

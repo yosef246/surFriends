@@ -36,14 +36,14 @@ test("createAdminClient is only imported from server-only code", () => {
   assert.ok(read("lib/supabase/admin.ts").includes('import "server-only"'));
 });
 
-test("every exported server action checks the session (except signOut)", () => {
+test("every exported server action checks the session", () => {
   const files = walk("app").filter((f) => /^"use server"/m.test(read(f)));
   assert.ok(files.length >= 5);
   for (const f of files) {
     const lines = read(f).split("\n");
     lines.forEach((line, i) => {
       const m = /^export async function (\w+)/.exec(line);
-      if (!m || m[1] === "signOut") return;
+      if (!m) return;
       const body = lines.slice(i, i + 16).join("\n");
       assert.match(body, /getCurrentUser\(\)/, `${f}: ${m[1]} has no getCurrentUser() in its first lines`);
     });

@@ -47,3 +47,13 @@ test("isBeachId and setFavorite", () => {
   assert.deepEqual(p.setFavorite([1, 2], 2, false), [1]);
   assert.deepEqual(p.setFavorite([1], 9, false), [1]);
 });
+
+test("default name: no first name for the greeting, real names use the first word", () => {
+  assert.equal(p.DEFAULT_DISPLAY_NAME, "גולש/ת");
+  assert.equal(p.validateProfileInput({ ...base, display_name: p.DEFAULT_DISPLAY_NAME }).ok, true);
+  assert.equal(p.firstNameOf("גולש/ת"), "");
+  assert.equal(p.firstNameOf(null), "");
+  assert.equal(p.firstNameOf("  דנה כהן "), "דנה");
+  assert.equal(p.isDefaultName(" גולש/ת "), true);
+  assert.equal(p.isDefaultName("דנה"), false);
+});

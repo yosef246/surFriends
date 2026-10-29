@@ -995,3 +995,8 @@
 @utility motion-chart-fade {
   animation: chart-fade 700ms var(--ease-out-soft) both;
 }
+
+/* Launch splash: skipped when already shown in this browser session (see root layout script). */
+html[data-splash-seen] [data-splash] {
+  display: none;
+}

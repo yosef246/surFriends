@@ -10,6 +10,7 @@ import { Mascot } from "@/components/mascot";
 import { FavoriteToggle } from "@/components/shared/FavoriteToggle";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { buttonVariants } from "@/components/ui/button";
+import { DEFAULT_DISPLAY_NAME } from "@/lib/profile";
 import { getCurrentProfile, getCurrentUser, getSupabase } from "@/lib/auth";
 import { fetchReports } from "@/lib/feed";
 import { getBeachForecast, parseBeachId } from "@/lib/forecast";
@@ -54,7 +55,7 @@ export default async function BeachPage({ params }: { params: Promise<{ id: stri
   if (!beach) notFound();
 
   const displayName =
-    profile?.display_name ?? (user?.user_metadata?.full_name as string | undefined) ?? user?.email ?? "משתמש";
+    profile?.display_name ?? (user?.user_metadata?.full_name as string | undefined) ?? DEFAULT_DISPLAY_NAME;
   const avatarUrl = profile?.avatar_url ?? (user?.user_metadata?.avatar_url as string | undefined) ?? null;
 
   return (

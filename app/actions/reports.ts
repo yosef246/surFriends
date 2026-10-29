@@ -17,7 +17,7 @@ const RATE_LIMITED = "יותר מדי דיווחים, נסו שוב בעוד כ�
 
 export async function createReport(input: CreateReportInput): Promise<ActionResult> {
   const user = await getCurrentUser();
-  if (!user) return { error: "ההתחברות פגה. התחברו מחדש" };
+  if (!user) return { error: "רעננו את הדף ונסו שוב" };
   const supabase = await getSupabase();
 
   const v = validateReportInput(input, {
@@ -81,7 +81,7 @@ export async function createReport(input: CreateReportInput): Promise<ActionResu
 export async function deleteReport(id: string): Promise<ActionResult> {
   if (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id)) return { error: "הדיווח לא נמצא" };
   const user = await getCurrentUser();
-  if (!user) return { error: "ההתחברות פגה. התחברו מחדש" };
+  if (!user) return { error: "רעננו את הדף ונסו שוב" };
   const supabase = await getSupabase();
 
   const { data: row } = await supabase

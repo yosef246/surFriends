@@ -6,7 +6,7 @@ import { isAllowedPushEndpoint, validateSubscription } from "@/lib/push";
 import { saveSubscription, sendTestPush } from "@/lib/push-send";
 import type { ActionResult } from "@/lib/reports";
 
-const SESSION_EXPIRED = "ההתחברות פגה. התחברו מחדש";
+const SESSION_EXPIRED = "רעננו את הדף ונסו שוב";
 const GENERIC = "לא הצלחנו להפעיל התראות. נסו שוב";
 
 /**

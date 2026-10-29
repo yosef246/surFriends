@@ -13,6 +13,15 @@ export const SKILL_LABELS: Record<SkillLevel, string> = {
   pro: "מקצוען",
 };
 
+/** Name given to anonymous profiles by the handle_new_user trigger (supabase migration 20261029070000). */
+export const DEFAULT_DISPLAY_NAME = "גולש/ת";
+export const isDefaultName = (name: string | null | undefined) => !name || name.trim() === DEFAULT_DISPLAY_NAME;
+/** First word of the name for the greeting; "" for the default name (the greeting then shows only the emoji). */
+export function firstNameOf(name: string | null | undefined): string {
+  if (isDefaultName(name)) return "";
+  return name!.trim().split(/\s+/)[0] ?? "";
+}
+
 export const profileTextLength = (s: string) => Array.from(s).length;
 const isBlank = (s: string) => s.replace(/[\s\p{Cf}]/gu, "").length === 0;
 

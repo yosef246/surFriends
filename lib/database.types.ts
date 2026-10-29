@@ -58,6 +58,10 @@ export type Database = {
           longitude: number;
           description: string | null;
           difficulty: Difficulty | null;
+          image_path: string | null;
+          image_credit: string | null;
+          image_license: string | null;
+          image_source_url: string | null;
         };
         Insert: {
           id?: number;
@@ -70,6 +74,10 @@ export type Database = {
           longitude: number;
           description?: string | null;
           difficulty?: Difficulty | null;
+          image_path?: string | null;
+          image_credit?: string | null;
+          image_license?: string | null;
+          image_source_url?: string | null;
         };
         Update: {
           id?: number;
@@ -82,6 +90,10 @@ export type Database = {
           longitude?: number;
           description?: string | null;
           difficulty?: Difficulty | null;
+          image_path?: string | null;
+          image_credit?: string | null;
+          image_license?: string | null;
+          image_source_url?: string | null;
         };
         Relationships: [];
       };

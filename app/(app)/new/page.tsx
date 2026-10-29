@@ -15,7 +15,7 @@ export default async function NewReportPage({
   const supabase = await createClient();
   const { data: beaches, error } = await supabase
     .from("beaches")
-    .select("id, name_he, city, region")
+    .select("id, name_he, city, region, image_path, image_credit")
     .order("region")
     .order("name_he");
 

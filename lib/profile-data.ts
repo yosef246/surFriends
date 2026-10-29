@@ -24,21 +24,42 @@ export const getProfileById = cache(async (id: string): Promise<ProfileView | nu
   return data;
 });
 
-export type FavoriteBeach = { id: number; name: string; city: string };
+export type FavoriteBeach = {
+  id: number;
+  name: string;
+  city: string;
+  imagePath: string | null;
+  imageCredit: string | null;
+};
 
 /** The session user's favorites (RLS hides everyone else's). Ordered north to south like the feed. */
 export async function fetchFavoriteBeaches(userId: string): Promise<FavoriteBeach[]> {
   const supabase = await getSupabase();
   const { data, error } = await supabase
     .from("user_favorites")
-    .select("beaches(id, name_he, city, latitude)")
+    .select("beaches(id, name_he, city, latitude, image_path, image_credit)")
     .eq("user_id", userId);
   if (error) return [];
-  const rows = (data ?? []) as unknown as { beaches: { id: number; name_he: string; city: string; latitude: number } | null }[];
+  const rows = (data ?? []) as unknown as {
+    beaches: {
+      id: number;
+      name_he: string;
+      city: string;
+      latitude: number;
+      image_path: string | null;
+      image_credit: string | null;
+    } | null;
+  }[];
   return rows
     .flatMap((r) => (r.beaches ? [r.beaches] : []))
     .sort((a, b) => b.latitude - a.latitude)
-    .map((b) => ({ id: b.id, name: b.name_he, city: b.city }));
+    .map((b) => ({
+      id: b.id,
+      name: b.name_he,
+      city: b.city,
+      imagePath: b.image_path,
+      imageCredit: b.image_credit,
+    }));
 }
 
 export async function isFavoriteBeach(userId: string, beachId: number): Promise<boolean> {

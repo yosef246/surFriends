@@ -24,7 +24,7 @@ const getBeach = cache(async (id: number) => {
   const supabase = await getSupabase();
   const { data } = await supabase
     .from("beaches")
-    .select("id, name_he, city, region, difficulty, description")
+    .select("id, name_he, city, region, difficulty, description, image_path, image_credit")
     .eq("id", id)
     .maybeSingle();
   return data;

@@ -12,7 +12,7 @@ export type FeedReport = {
   wave_height_estimate: string | null;
   created_at: string;
   author: { display_name: string; avatar_url: string | null } | null;
-  beach: { id: number; name_he: string; city: string } | null;
+  beach: { id: number; name_he: string; city: string; image_path: string | null; image_credit: string | null } | null;
   replyCount: number;
   comingCount: number;
   onTheWayCount: number;
@@ -54,7 +54,7 @@ const NO_USER = "00000000-0000-0000-0000-000000000000";
 /** The one select shape for feed reports (server list, load-more, realtime single fetch). */
 export const FEED_SELECT = `id, user_id, text, image_url, wave_rating, wave_height_estimate, created_at,
        profiles(display_name, avatar_url),
-       beaches(id, name_he, city),
+       beaches(id, name_he, city, image_path, image_credit),
        replies(count),
        coming:replies(count),
        onway:replies(count),
@@ -187,12 +187,21 @@ export async function fetchHeroSummary(
   };
 }
 
-export type BeachCircleItem = { id: number; name: string; live: boolean; favorite: boolean };
+export type BeachCircleItem = {
+  id: number;
+  name: string;
+  live: boolean;
+  favorite: boolean;
+  imagePath: string | null;
+  imageCredit: string | null;
+};
 
 type BeachRow = {
   id: number;
   name_he: string;
   latitude: number;
+  image_path: string | null;
+  image_credit: string | null;
   user_favorites: { user_id: string }[] | null;
   reports: { count: number }[] | null;
 };
@@ -208,7 +217,7 @@ export async function fetchBeachCircles(
   const since = new Date(Date.now() - LIVE_WINDOW_MS).toISOString();
   const { data, error } = await supabase
     .from("beaches")
-    .select("id, name_he, latitude, user_favorites(user_id), reports(count)")
+    .select("id, name_he, latitude, image_path, image_credit, user_favorites(user_id), reports(count)")
     .eq("user_favorites.user_id", userId)
     .gt("reports.created_at", since)
     .order("latitude", { ascending: false });
@@ -221,5 +230,7 @@ export async function fetchBeachCircles(
     name: r.name_he,
     live: (r.reports?.[0]?.count ?? 0) > 0,
     favorite: (r.user_favorites?.length ?? 0) > 0,
+    imagePath: r.image_path,
+    imageCredit: r.image_credit,
   }));
 }

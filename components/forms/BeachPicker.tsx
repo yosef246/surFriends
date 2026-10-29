@@ -3,7 +3,14 @@
 import { useEffect, useId, useMemo, useRef } from "react";
 import { Check } from "lucide-react";
 
-export type BeachOption = { id: number; name_he: string; city: string; region: string };
+export type BeachOption = {
+  id: number;
+  name_he: string;
+  city: string;
+  region: string;
+  image_path: string | null;
+  image_credit: string | null;
+};
 
 type Props = {
   beaches: BeachOption[];

@@ -2,7 +2,7 @@
 INSERT INTO public.beaches (slug, name_he, name_en, city, region, latitude, longitude, difficulty, description) VALUES
 ('sokolov', 'נהריה – חוף סוקולוב',       'Sokolov Beach',       'נהריה',    'North',  33.0075, 35.0920, 'advanced',     'חוף סלעי ומאתגר, מתאים לגולשים מנוסים'),
 ('bat-galim', 'בת גלים (קזינו)',       'Bat Galim Beach',     'חיפה',     'North',  32.8285, 34.9690, 'advanced',     'חוף סוער וותיק (קזינו ובק דור), ימי סערה וגלים גבוהים'),
-('zamir-nirvana', 'חוף זמיר (חיפה)', 'Zamir / Nirvana',    'חיפה',     'North',  32.8365, 34.9775, 'intermediate', 'חוף נוח ונגיש, מועדוני גלישה פעילים'),
+('zamir-nirvana', 'חיפה – חוף זמיר (נירוונה)', 'Zamir / Nirvana',    'חיפה',     'North',  32.8365, 34.9775, 'intermediate', 'חוף נוח ונגיש, מועדוני גלישה פעילים'),
 ('sdot-yam-caesarea', 'קיסריה – שדות ים',   'Sdot Yam / Caesarea', 'קיסריה',   'Center', 32.5020, 34.8955, 'advanced',     'הסלע והארובות — נקודות שבירה בסערות, לגולשים מנוסים'),
 ('poleg', 'נתניה – חוף פולג',           'Poleg Beach',         'נתניה',    'Center', 32.2795, 34.8445, 'beginner',     'רחב, פחות עמוס, מצוין למתחילים'),
 ('ha-sira', 'הרצליה – חוף הסירה',          'Ha-Sira Beach',       'הרצליה',   'Center', 32.1760, 34.7975, 'intermediate', 'Point Break על סלעים, רכיבה ארוכה'),

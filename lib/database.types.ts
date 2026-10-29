@@ -21,6 +21,7 @@ export type Database = {
           skill_level: SkillLevel | null;
           bio: string | null;
           created_at: string | null;
+          push_enabled: boolean;
         };
         Insert: {
           id: string;
@@ -29,6 +30,7 @@ export type Database = {
           skill_level?: SkillLevel | null;
           bio?: string | null;
           created_at?: string | null;
+          push_enabled?: boolean;
         };
         Update: {
           id?: string;
@@ -37,6 +39,7 @@ export type Database = {
           skill_level?: SkillLevel | null;
           bio?: string | null;
           created_at?: string | null;
+          push_enabled?: boolean;
         };
         Relationships: [];
       };
@@ -210,6 +213,8 @@ export type Database = {
           p256dh: string;
           auth: string;
           created_at: string | null;
+          user_agent: string | null;
+          last_success_at: string | null;
         };
         Insert: {
           id?: string;
@@ -218,6 +223,8 @@ export type Database = {
           p256dh: string;
           auth: string;
           created_at?: string | null;
+          user_agent?: string | null;
+          last_success_at?: string | null;
         };
         Update: {
           id?: string;
@@ -226,6 +233,8 @@ export type Database = {
           p256dh?: string;
           auth?: string;
           created_at?: string | null;
+          user_agent?: string | null;
+          last_success_at?: string | null;
         };
         Relationships: [
           {
@@ -237,9 +246,16 @@ export type Database = {
           },
         ];
       };
+      push_log: {
+        Row: { id: number; user_id: string; beach_id: number | null; kind: "report" | "test"; sent_at: string };
+        Insert: { id?: number; user_id: string; beach_id?: number | null; kind?: "report" | "test"; sent_at?: string };
+        Update: { id?: number; user_id?: string; beach_id?: number | null; kind?: "report" | "test"; sent_at?: string };
+        Relationships: [];
+      };
     };
     Views: { [_ in never]: never };
     Functions: {
+      purge_old_push_log: { Args: Record<PropertyKey, never>; Returns: number };
       purge_expired_reports: { Args: Record<PropertyKey, never>; Returns: number };
       expired_report_image_paths: {
         Args: { limit_count?: number };

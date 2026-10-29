@@ -5,8 +5,8 @@ import { ArrowRight, LogOut } from "lucide-react";
 import { NotificationsCard } from "@/components/settings/NotificationsCard";
 import { ProfileEditForm } from "@/components/settings/ProfileEditForm";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { getCurrentUser } from "@/lib/auth";
-import { getProfileById } from "@/lib/profile-data";
+import { getCurrentUser, getSupabase } from "@/lib/auth";
+import { fetchFavoriteBeaches, getProfileById } from "@/lib/profile-data";
 import { cn } from "@/lib/utils";
 import pkg from "../../../package.json";
 import { signOut } from "../actions";
@@ -16,7 +16,12 @@ export const metadata: Metadata = { title: "הגדרות | surFriends" };
 export default async function SettingsPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
-  const profile = await getProfileById(user.id);
+  const supabase = await getSupabase();
+  const [profile, favorites, { data: pushRow }] = await Promise.all([
+    getProfileById(user.id),
+    fetchFavoriteBeaches(user.id),
+    supabase.from("profiles").select("push_enabled").eq("id", user.id).maybeSingle(),
+  ]);
 
   const initial = {
     display_name:
@@ -45,7 +50,7 @@ export default async function SettingsPage() {
         <ProfileEditForm initial={initial} />
       </section>
 
-      <NotificationsCard />
+      <NotificationsCard accountEnabled={pushRow?.push_enabled ?? true} favorites={favorites} />
 
       <form action={signOut}>
         <Button type="submit" variant="outline" className="w-full">

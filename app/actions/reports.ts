@@ -1,7 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { getCurrentUser, getSupabase } from "@/lib/auth";
+import { notifyFavoriteUsers } from "@/lib/push-send";
 import {
   REPORT_BUCKET,
   imagePathFromUrl,
@@ -63,6 +65,14 @@ export async function createReport(input: CreateReportInput): Promise<ActionResu
     }
     return { error: GENERIC };
   }
+
+  // Push to the beach's favoriters after the response is sent. Only on a fresh insert (the 23505 retry path
+  // above returns earlier), so a retried submit never double-notifies. notifyFavoriteUsers never throws.
+  after(() =>
+    notifyFavoriteUsers({ beachId: r.beachId, authorId: user.id, text: r.text, waveRating: r.waveRating }).then(
+      () => undefined,
+    ),
+  );
 
   revalidatePath("/");
   return { ok: true };

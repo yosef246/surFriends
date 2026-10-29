@@ -3,6 +3,8 @@
 import { useRef, useState } from "react";
 import { Star } from "lucide-react";
 import { toggleFavoriteBeach } from "@/app/actions/profile";
+import { PushOptInSheet } from "@/components/push/PushOptInSheet";
+import { shouldOfferOptIn } from "@/lib/push-client";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -19,6 +21,7 @@ export function FavoriteToggle({ beachId, beachName, initialFavorite, onChange, 
   const [on, setOn] = useState(initialFavorite);
   const [pops, setPops] = useState(0); // re-keys the icon so the pop-in animation replays
   const [error, setError] = useState<string | null>(null);
+  const [offerPush, setOfferPush] = useState(false);
   const busy = useRef(false);
 
   async function toggle() {
@@ -35,6 +38,10 @@ export function FavoriteToggle({ beachId, beachName, initialFavorite, onChange, 
       if ("error" in res) err = res.error;
     } catch {
       err = "לא הצלחנו לעדכן. נסו שוב";
+    }
+    if (!err && next) {
+      // In-context push opt-in: only after an explicit star tap, never on load.
+      shouldOfferOptIn().then(setOfferPush).catch(() => {});
     }
     if (err) {
       setOn(!next);
@@ -64,6 +71,7 @@ export function FavoriteToggle({ beachId, beachName, initialFavorite, onChange, 
       <span role="alert" className={error ? "absolute end-0 top-full z-10 mt-1 whitespace-nowrap rounded-pill bg-white/95 px-3 py-1 text-caption text-danger shadow-card" : "sr-only"}>
         {error ? `⚠ ${error}` : ""}
       </span>
+      {offerPush && <PushOptInSheet onClose={() => setOfferPush(false)} />}
     </span>
   );
 }

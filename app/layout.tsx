@@ -22,11 +22,13 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "surFriends",
   description: "קהילת הגולשים של ישראל",
+  appleWebApp: { capable: true, title: "surFriends", statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  themeColor: "#0b6c9e",
   interactiveWidget: "resizes-content",
 };
 

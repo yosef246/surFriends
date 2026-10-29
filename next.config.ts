@@ -16,7 +16,11 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      // The SW file must never be served stale from an HTTP cache, or updates to it would not roll out.
+      { source: "/sw.js", headers: [{ key: "Cache-Control", value: "no-cache, no-store, must-revalidate" }] },
+    ];
   },
   // Verification builds use NEXT_DIST_DIR=.next-verify so they never clobber a running `pnpm dev`.
   distDir: process.env.NEXT_DIST_DIR || ".next",

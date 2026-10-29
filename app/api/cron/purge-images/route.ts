@@ -42,6 +42,8 @@ export async function GET(request: NextRequest) {
       removed += gone?.length ?? 0;
       if (!gone || gone.length === 0) break; // nothing removed: don't spin on the same rows
     }
+    // Housekeeping for the push cooldown log (best effort; needs the Day 12 migration).
+    await admin.rpc("purge_old_push_log");
     return NextResponse.json({ removed, batches, purgedReports });
   } catch (e) {
     console.error("purge-images failed", e instanceof Error ? e.message : e);

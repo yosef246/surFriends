@@ -12,6 +12,7 @@ const buttonVariants = cva(
       variant: {
         default: "bubble-primary",
         accent: "bubble-primary",
+        ocean: "bubble-ocean",
         secondary: "bubble-glass",
         soft: "bubble-soft",
         outline: "bubble-outline",

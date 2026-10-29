@@ -37,11 +37,14 @@ export function BottomNav() {
                   <span
                     aria-hidden
                     className={cn(
-                      "absolute inset-0 rounded-pill bg-signature shadow-bubble transition-[transform,opacity] duration-(--dur-slow) ease-(--ease-spring)",
+                      "bubble-ocean absolute inset-0 rounded-pill transition-[transform,opacity] duration-(--dur-slow) ease-(--ease-spring)",
                       active ? "scale-x-100 opacity-100" : "scale-x-40 opacity-0"
                     )}
                   />
-                  <Icon className="relative size-5" aria-hidden />
+                  <Icon
+                    className={cn("relative size-5 transition-colors duration-(--dur-fast)", active && "text-white")}
+                    aria-hidden
+                  />
                 </span>
                 {label}
               </Link>
@@ -55,7 +58,7 @@ export function BottomNav() {
             aria-label="דיווח חדש"
             className="group flex h-full min-h-touch min-w-touch flex-col items-center justify-end gap-1 pb-2 text-caption font-medium text-ink"
           >
-            <span className="bubble-fab motion-press -mt-7 mb-auto flex size-14 items-center justify-center rounded-full text-ink ring-4 ring-white/80 transition-transform duration-(--dur-base) ease-(--ease-spring)">
+            <span className="bubble-ocean motion-press -mt-7 mb-auto flex size-14 items-center justify-center rounded-full text-white ring-4 ring-white/80 transition-transform duration-(--dur-base) ease-(--ease-spring)">
               <Plus className="size-7" aria-hidden />
             </span>
             דיווח

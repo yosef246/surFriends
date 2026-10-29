@@ -228,7 +228,7 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
               ⚠ {banner}
             </p>
           ) : null}
-          <Button type="submit" size="lg" disabled={busy} aria-busy={busy} className="w-full">
+          <Button type="submit" variant="ocean" size="lg" disabled={busy} aria-busy={busy} className="w-full">
             {busy ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
             {label}
           </Button>

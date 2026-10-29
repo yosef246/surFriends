@@ -29,7 +29,7 @@ export default async function LoginPage({
     <main className="motion-page relative z-10 mx-auto flex min-h-dvh w-full max-w-sm flex-col items-center justify-center gap-8 px-6 py-10 text-foreground">
       <div className="flex flex-col items-center gap-3 text-center">
         <Mascot.Wave size={180} className="motion-float" />
-        <h1 className="motion-fade-up text-display heading-tight font-display font-normal text-gradient-sea wave-underline" style={{ "--i": 1 } as React.CSSProperties}>surFriends</h1>
+        <h1 className="motion-fade-up text-display heading-tight font-display font-normal text-gradient-sea" style={{ "--i": 1 } as React.CSSProperties}>surFriends</h1>
         <p className="motion-fade-up text-body text-muted-text" style={{ "--i": 2 } as React.CSSProperties}>קהילת הגולשים של ישראל</p>
       </div>
       <div className="motion-fade-up flex w-full flex-col gap-4" style={{ "--i": 3 } as React.CSSProperties}>

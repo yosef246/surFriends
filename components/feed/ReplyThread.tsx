@@ -119,7 +119,12 @@ export function ReplyThread({ reportId, panelId, me }: { reportId: string; panel
         pending: true,
       })
     );
-    const res = await replyToReport(reportId, clean, id);
+    let res: Awaited<ReturnType<typeof replyToReport>>;
+    try {
+      res = await replyToReport(reportId, clean, id);
+    } catch {
+      res = { error: typeof navigator !== "undefined" && !navigator.onLine ? "אין חיבור. נסו שוב" : "השליחה נכשלה. נסו שוב" };
+    }
     if ("error" in res) {
       setItems((cur) => removeReplyById(cur, id));
       setSendError(res.error);
@@ -235,7 +240,12 @@ function ReplyRow({
   async function remove() {
     setBusy(true);
     setError(null);
-    const res = await deleteReply(reply.id);
+    let res: Awaited<ReturnType<typeof deleteReply>>;
+    try {
+      res = await deleteReply(reply.id);
+    } catch {
+      res = { error: typeof navigator !== "undefined" && !navigator.onLine ? "אין חיבור. נסו שוב" : "המחיקה נכשלה. נסו שוב" };
+    }
     if ("error" in res) {
       setBusy(false);
       setError(res.error);

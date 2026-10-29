@@ -78,9 +78,13 @@ export function NotificationsCard({ accountEnabled, favorites }: Props) {
     setBusy(true);
     setMsg(null);
     const next = !account;
-    const res = await setPushEnabled(next);
-    if ("error" in res) setMsg({ kind: "error", text: res.error });
-    else setAccount(next);
+    try {
+      const res = await setPushEnabled(next);
+      if ("error" in res) setMsg({ kind: "error", text: res.error });
+      else setAccount(next);
+    } catch {
+      setMsg({ kind: "error", text: "אין חיבור. נסו שוב" });
+    }
     setBusy(false);
   }
 

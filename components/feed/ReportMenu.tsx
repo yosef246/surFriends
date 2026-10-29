@@ -36,13 +36,17 @@ export function ReportMenu({ reportId, onDeleted }: { reportId: string; onDelete
   function doDelete() {
     setError(null);
     startTransition(async () => {
-      const res = await deleteReport(reportId);
-      if ("error" in res) {
-        setError(res.error);
-        return;
+      try {
+        const res = await deleteReport(reportId);
+        if ("error" in res) {
+          setError(res.error);
+          return;
+        }
+        setConfirm(false);
+        onDeleted(reportId);
+      } catch {
+        setError(typeof navigator !== "undefined" && !navigator.onLine ? "אין חיבור. נסו שוב" : "המחיקה נכשלה. נסו שוב");
       }
-      setConfirm(false);
-      onDeleted(reportId);
     });
   }
 

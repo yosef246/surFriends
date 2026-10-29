@@ -65,8 +65,8 @@ test("service worker only opens same-origin URLs", () => {
 });
 
 // BUG-019 (Day 13): RLS lets any authenticated user INSERT a push_subscriptions row with an arbitrary endpoint,
-// bypassing isAllowedPushEndpoint (SSRF). Flips to passing once a migration drops that policy.
-test("push_subscriptions has no client INSERT policy", { todo: "BUG-019: policy 'Users add own push subscriptions' still exists" }, () => {
+// bypassing isAllowedPushEndpoint (SSRF). Fixed by 20261029060000_push_insert_lockdown.sql.
+test("push_subscriptions has no client INSERT policy", () => {
   const dir = join(ROOT, "supabase/migrations");
   const all = readdirSync(dir)
     .sort()
@@ -75,4 +75,5 @@ test("push_subscriptions has no client INSERT policy", { todo: "BUG-019: policy 
   const created = /CREATE POLICY "Users add own push subscriptions"/.test(all);
   const dropped = /DROP POLICY (IF EXISTS )?"Users add own push subscriptions"[^;]*;(?![\s\S]*CREATE POLICY "Users add own push subscriptions")/.test(all);
   assert.ok(!created || dropped);
+  assert.match(all, /REVOKE INSERT ON public\.push_subscriptions FROM anon, authenticated/);
 });

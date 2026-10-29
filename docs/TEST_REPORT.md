@@ -12,6 +12,8 @@
 
 להריץ ידנית בפרויקט המאוחסן (פעם אחת, בטוח להרצה חוזרת): `supabase/migrations/20261029010000_day7_hardening.sql`
 
+יום 13 (חובה לפני חשיפת התראות, BUG-019): `supabase/migrations/20261029060000_push_insert_lockdown.sql` (מוחק את מדיניות ה-INSERT וה-UPDATE על `push_subscriptions` ושולל INSERT/UPDATE מ-anon/authenticated; הכתיבה ממילא דרך admin client אחרי `isAllowedPushEndpoint`).
+
 - ה-CHECK-ים נוצרים `NOT VALID` ואז מתבצע ניסיון `VALIDATE`; אם שורה ישנה מפרה, מודפס NOTICE והמיגרציה לא נכשלת.
 - שורות הדמו עם גובה גל `'מעל הראש'` מתוקנות ל-`'ראש'` (גם ב-`supabase/dev/sample_reports.sql`).
 - הטריגרים לא חלים על הרצות מה-SQL Editor (`auth.uid()` ריק), ולכן סקריפט הדמו ממשיך לעבוד.
@@ -232,7 +234,7 @@
 | דסקטופ | 100 | 100 | 100 | 82 |
 
 - **BUG-029 | high | ✅ fixed (2617fae):** `motion-page` (‏`page-enter`) התחיל את כל `<main>` ב-`opacity: 0`, ולכן Lighthouse החזיר `NO_LCP` וציון Performance מובייל של 0. עכשיו האנימציה היא `transform` בלבד. מובייל: FCP 1.1s, LCP 2.6s, TBT 130ms, CLS 0.
-- **BUG-030 | low:** SEO 82. חסר `meta description` בדף `/login`, ו-`/robots.txt` מופנה ל-`/login` ע"י ה-middleware (‏307). צריך `app/robots.ts` ולהחריג את `robots.txt` ב-matcher.
+- **BUG-030 | low | ✅ fixed (fix: day 13):** נוספו `app/robots.ts` (מתיר `/login`, חוסם נתיבי האפליקציה ו-`/api/`), החרגת `robots.txt` ו-`sitemap.xml` מה-matcher, ו-`metadata` עם description בעברית בדף `/login`. SEO 82. חסר `meta description` בדף `/login`, ו-`/robots.txt` מופנה ל-`/login` ע"י ה-middleware (‏307). צריך `app/robots.ts` ולהחריג את `robots.txt` ב-matcher.
 - הזדמנויות: unused JavaScript (~71KiB), legacy JavaScript (~11KiB).
 - דפים מחוברים לא נבדקו ב-Lighthouse (אין session). ניתוח סטטי: First Load JS של 189–218KB לדף.
 - סריקת chunks בצד הלקוח: לא נמצאו `service_role`, `VAPID_PRIVATE` או `CRON_SECRET`.
@@ -288,17 +290,20 @@
 
 ### ממצאים חדשים
 
-### BUG-019 | high | מדיניות INSERT על `push_subscriptions` עוקפת את ה-allowlist של SSRF
+### BUG-019 | high | ✅ fixed (fix: day 13) | מדיניות INSERT על `push_subscriptions` עוקפת את ה-allowlist של SSRF
+- **תוקן (יום 13):** מיגרציה `20261029060000_push_insert_lockdown.sql`; הכתיבה כבר עברה דרך `saveSubscription` (admin + ולידציה + user_id מה-session). הבדיקה ב-`tests/security-static.test.ts` עוברת.
 - **קבצים:** `supabase/migrations/20261028000000_init_schema.sql:162` (policy "Users add own push subscriptions"), מול `lib/push.ts:107` ו-`lib/push-send.ts` (`deliver`).
 - **תרחיש:** משתמש מחובר שולח `POST /rest/v1/push_subscriptions` עם ה-JWT שלו ו-`endpoint` שרירותי (https, כל host ופורט) ומפתחות base64 תקינים. ה-RLS מאפשר (נבדק רק `user_id = auth.uid()`, אין CHECK על endpoint). אחר כך `sendTestPushAction` (פעם בדקה) או דיווח בחוף מועדף גורם לשרת לשלוח POST ל-URL הזה. זה SSRF עיוור, עם oracle בוליאני (`sent` מוחזר ללקוח). גם מגבלת 10 המכשירים נעקפת. `DAY12_PUSH.md` מניח שה-allowlist הוא ההגנה.
 - **תיקון:** מיגרציה: `DROP POLICY "Users add own push subscriptions" ON public.push_subscriptions; REVOKE INSERT ON public.push_subscriptions FROM anon, authenticated;` (הכתיבה נעשית ממילא דרך admin). אופציונלי: CHECK על ה-host של endpoint. אחר כך להסיר את ה-`todo` ב-`tests/security-static.test.ts`.
 
-### BUG-020 | medium | כשל רשת בקריאת server action לא נתפס ב-4 מקומות
+### BUG-020 | medium | ✅ fixed (fix: day 13) | כשל רשת בקריאת server action לא נתפס ב-4 מקומות
+- **תוקן (יום 13):** try/catch עם הודעה מוקדמת ו-rollback ב-`loadMore`, `doDelete`, `replyToReport`, `deleteReply` (ובונוס `toggleAccount`); offline: "אין חיבור. נסו שוב".
 - **קבצים:** `components/feed/ReportList.tsx:213-221` (`loadMore`), `components/feed/ReportMenu.tsx:38-48` (`doDelete`), `components/feed/ReplyThread.tsx:122` (`replyToReport`), `components/feed/ReplyThread.tsx:238` (`deleteReply`).
 - **תרחיש:** מצב טיסה או רשת נופלת. ב-`startTransition(async ...)` חריגה נזרקת ל-error boundary ב-React 19: "טען עוד" או "מחקו" מפילים את כל העמוד ל-`error.tsx`. ב-`ReplyThread` התגובה האופטימית נשארת `pending` לנצח בלי הודעה, ובמחיקת תגובה `busy` נתקע על true והכפתור מת.
 - **תיקון:** `try/catch` סביב כל קריאה, הודעת שגיאה מקומית ו-rollback (כמו ב-`ProfileEditForm` וב-`FavoriteToggle`).
 
-### BUG-021 | medium | אין `not-found.tsx` ואין `global-error.tsx`
+### BUG-021 | medium | ✅ fixed (fix: day 13) | אין `not-found.tsx` ואין `global-error.tsx`
+- **תוקן (יום 13):** `app/not-found.tsx` (מסקוט, כפתור חזרה לפיד) ו-`app/global-error.tsx`; `/beach/999` ו-`/profile/not-a-uuid` כבר קוראים ל-`notFound()`.
 - **קבצים:** `app/` (חסרים), `app/(app)/error.tsx`.
 - **תרחיש:** `/beach/999`, `/profile/not-a-uuid` או כל נתיב לא קיים מציגים את דף ה-404 האנגלי של Next בלי RTL, בלי ניווט ובלי מסקוט. שגיאה בשכבת root לא מכוסה בכלל.
 - **תיקון:** `app/not-found.tsx` (עברית, `Mascot.Oops`, קישור לפיד) ו-`app/global-error.tsx` מינימלי.

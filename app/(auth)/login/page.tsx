@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Mascot } from "@/components/mascot";
@@ -7,6 +8,11 @@ import { safeNextPath } from "@/lib/safe-next";
 import { isInAppBrowser } from "@/lib/in-app-browser";
 import { InAppBrowserNotice } from "@/components/auth/InAppBrowserNotice";
 import { LoginButton } from "./login-button";
+
+export const metadata: Metadata = {
+  title: "התחברות | surFriends",
+  description: "surFriends, קהילת הגולשים של ישראל. התחברו כדי לראות דיווחי גלים חיים מהחופים ולשתף עם החברים.",
+};
 
 export default async function LoginPage({
   searchParams,

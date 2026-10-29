@@ -211,13 +211,17 @@ export function ReportList({
     if (!last) return;
     setFailed(false);
     startTransition(async () => {
-      const res = await loadMoreReports({ created_at: last.created_at, id: last.id }, beachId, authorId);
-      if (!res.ok) {
+      try {
+        const res = await loadMoreReports({ created_at: last.created_at, id: last.id }, beachId, authorId);
+        if (!res.ok) {
+          setFailed(true);
+          return;
+        }
+        setState((s) => appendPage(s, res.reports));
+        setHasMore(res.reports.length >= FEED_PAGE_SIZE);
+      } catch {
         setFailed(true);
-        return;
       }
-      setState((s) => appendPage(s, res.reports));
-      setHasMore(res.reports.length >= FEED_PAGE_SIZE);
     });
   }
 
@@ -269,8 +273,8 @@ export function ReportList({
       </ul>
 
       {failed ? (
-        <p role="alert" className="text-center text-body-sm text-danger">
-          לא הצלחנו לטעון עוד. נסו שוב
+        <p role="alert" aria-live="polite" className="text-center text-body-sm text-danger">
+          {typeof navigator !== "undefined" && !navigator.onLine ? "אין חיבור. נסו שוב" : "לא הצלחנו לטעון עוד. נסו שוב"}
         </p>
       ) : null}
 

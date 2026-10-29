@@ -136,3 +136,61 @@ test("chunk / isGoneStatus", () => {
   assert.ok(p.isGoneStatus(404) && p.isGoneStatus(410));
   assert.ok(!p.isGoneStatus(500) && !p.isGoneStatus(429) && !p.isGoneStatus(undefined));
 });
+
+test("buildReplyPayload: coming / on_the_way / text, aggregation, null beach, emoji, truncation", () => {
+  const base = { reportId: "11111111-2222-3333-4444-555555555555", beachId: 9, beachName: "הילטון", actorName: "דני כהן" };
+  const c = p.buildReplyPayload({ ...base, kind: "coming" });
+  assert.equal(c.title, "🤙 דני בא/ה להילטון");
+  assert.equal(c.body, "על הדיווח שלך");
+  assert.equal(c.url, "/beach/9");
+  assert.equal(c.tag, `reply-${base.reportId}`);
+  assert.equal(p.buildReplyPayload({ ...base, kind: "coming", others: 2 }).title, "🤙 דני ועוד 2 באים להילטון");
+  assert.equal(p.buildReplyPayload({ ...base, kind: "on_the_way" }).title, "🚗 דני בדרך להילטון");
+  assert.equal(p.buildReplyPayload({ ...base, kind: "on_the_way", others: 1 }).title, "🚗 דני ועוד 1 בדרך להילטון");
+  assert.equal(p.buildReplyPayload({ ...base, kind: "coming", beachName: null }).title, "🤙 דני בא/ה לחוף");
+  assert.equal(p.buildReplyPayload({ ...base, kind: "coming", beachName: "Hilton" }).title, "🤙 דני בא/ה ל-Hilton");
+  assert.equal(p.buildReplyPayload({ ...base, kind: "coming", actorName: "🏄 דני" }).title, "🤙 🏄 בא/ה להילטון");
+  assert.equal(p.buildReplyPayload({ ...base, kind: "coming", actorName: "  " }).title, "🤙 מישהו בא/ה להילטון");
+  const t = p.buildReplyPayload({ ...base, kind: "text", text: "😀".repeat(100) });
+  assert.equal(t.title, "💬 דני הגיב/ה על הדיווח שלך");
+  assert.equal(Array.from(t.body).length, 80);
+  assert.ok(t.body.endsWith("…"));
+  assert.equal(p.buildReplyPayload({ ...base, kind: "text", text: "קצר\nומסודר" }).body, "קצר ומסודר");
+});
+
+test("replyPushSkipReason: owner===actor, disabled, missing report", () => {
+  const ok = { reportExists: true, ownerId: "o", actorId: "a", ownerPushEnabled: true };
+  assert.equal(p.replyPushSkipReason(ok), null);
+  assert.equal(p.replyPushSkipReason({ ...ok, actorId: "o" }), "own-report");
+  assert.equal(p.replyPushSkipReason({ ...ok, ownerPushEnabled: false }), "push-disabled");
+  assert.equal(p.replyPushSkipReason({ ...ok, reportExists: false }), "report-not-found");
+  assert.equal(p.replyPushSkipReason({ ...ok, ownerId: null }), "report-not-found");
+});
+
+test("inReplyCooldown: 5 minute window", () => {
+  const now = Date.parse("2026-10-29T12:00:00Z");
+  assert.equal(p.inReplyCooldown(null, now), false);
+  assert.equal(p.inReplyCooldown("2026-10-29T11:56:00Z", now), true);
+  assert.equal(p.inReplyCooldown("2026-10-29T11:54:59Z", now), false);
+  assert.equal(p.inReplyCooldown("garbage", now), false);
+});
+
+test("aggregateOthers: distinct, excludes actor/owner, only after last push", () => {
+  const rows = [
+    { user_id: "a", created_at: "2026-10-29T11:00:00Z" },
+    { user_id: "b", created_at: "2026-10-29T11:10:00Z" },
+    { user_id: "b", created_at: "2026-10-29T11:11:00Z" },
+    { user_id: "c", created_at: "2026-10-29T11:12:00Z" },
+    { user_id: "o", created_at: "2026-10-29T11:12:00Z" },
+    { user_id: "old", created_at: "2026-10-29T09:00:00Z" },
+  ];
+  assert.equal(p.aggregateOthers(rows, "a", "o", "2026-10-29T10:00:00Z"), 2);
+  assert.equal(p.aggregateOthers(rows, "a", "o", null), 3);
+  assert.equal(p.aggregateOthers([], "a", "o", null), 0);
+});
+
+test("isFreshInsert: only when no error (23505 is not fresh)", () => {
+  assert.equal(p.isFreshInsert(null), true);
+  assert.equal(p.isFreshInsert(undefined), true);
+  assert.equal(p.isFreshInsert({ code: "23505" }), false);
+});

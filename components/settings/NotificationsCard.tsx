@@ -105,7 +105,7 @@ export function NotificationsCard({ accountEnabled, favorites }: Props) {
             התראות
           </h2>
           <p id="notifications-desc" className="mt-1 text-body-sm text-muted-text">
-            נעדכן אתכם כשיש דיווח חדש מהחופים המועדפים. ההתראות פועלות לכל מכשיר בנפרד
+            נעדכן אתכם כשיש דיווח חדש מהחופים המועדפים. ההתראות פועלות לכל מכשיר בנפרד. תקבלו התראה גם כשמישהו בא או מגיב על הדיווח שלכם
           </p>
         </div>
         {(on || env === "off") && (

@@ -1,6 +1,9 @@
 "use server";
 
+import { after } from "next/server";
 import { getCurrentUser, getSupabase } from "@/lib/auth";
+import { isFreshInsert } from "@/lib/push";
+import { sendReplyPush } from "@/lib/push-send";
 import {
   MSG_GENERIC,
   MSG_REPLY_GONE,
@@ -41,6 +44,8 @@ export async function replyToReport(reportId: string, text: string, clientId?: s
     }
     return { error: mapReplyDbError(error) };
   }
+  // Fire-and-forget push to the report owner; only reached on a fresh insert (the 23505 retry returns above).
+  after(() => sendReplyPush({ reportId: v.value.reportId, actorId: user.id, kind: "text", text: t }).then(() => undefined));
   return { ok: true, id };
 }
 
@@ -79,6 +84,11 @@ export async function toggleReaction(reportId: string, kind: ReactionKind): Prom
   });
   // 23505 = already on (double tap / other tab): treat as on.
   if (insErr && insErr.code !== "23505") return { error: mapReplyDbError(insErr) };
+
+  // Push only when this call really inserted (not the 23505 double-tap). Covers the coming -> on_the_way switch too.
+  if (isFreshInsert(insErr)) {
+    after(() => sendReplyPush({ reportId: v.value.reportId, actorId: user.id, kind: v.value.kind }).then(() => undefined));
+  }
 
   const other = mine.find((r) => r.quick_reaction === otherKind(v.value.kind));
   if (other) {

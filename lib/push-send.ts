@@ -5,11 +5,16 @@ import {
   COOLDOWN_MS,
   MAX_SUBSCRIPTIONS_PER_USER,
   TEST_PUSH_INTERVAL_MS,
+  aggregateOthers,
   buildPushPayload,
+  buildReplyPayload,
   chunk,
   cooledDownUserIds,
+  inReplyCooldown,
   isGoneStatus,
+  replyPushSkipReason,
   selectRecipients,
+  type ReplyPushKind,
   type PushPayload,
   type PushSubscriptionInput,
 } from "@/lib/push";
@@ -164,6 +169,86 @@ export async function notifyFavoriteUsers(input: {
     return { recipients: recipients.length, ...summary };
   } catch (e) {
     console.error("notifyFavoriteUsers failed", e instanceof Error ? e.message : e);
+    return { ...empty, skipped: "error" };
+  }
+}
+
+/**
+ * Push to the owner of a report when someone reacts ("coming"/"on_the_way") or replies with text.
+ * Cooldown 5 min per (owner, report) via push_log; the next push after the window folds in other reactors
+ * ("דני ועוד 2 באים"). Never throws: it runs inside after().
+ */
+export async function sendReplyPush(input: {
+  reportId: string;
+  actorId: string;
+  kind: ReplyPushKind;
+  text?: string | null;
+}): Promise<SendSummary> {
+  const empty: SendSummary = { recipients: 0, sent: 0, removed: 0, failed: 0 };
+  try {
+    if (!ensureVapid()) return { ...empty, skipped: "vapid-not-configured" };
+    const admin = createAdminClient();
+
+    const { data: report } = await admin.from("reports").select("user_id, beach_id").eq("id", input.reportId).maybeSingle();
+    const ownerId = report?.user_id ?? null;
+    const [{ data: beach }, { data: actor }, { data: owner }] = await Promise.all([
+      report ? admin.from("beaches").select("name_he").eq("id", report.beach_id).maybeSingle() : Promise.resolve({ data: null }),
+      admin.from("profiles").select("display_name").eq("id", input.actorId).maybeSingle(),
+      ownerId ? admin.from("profiles").select("push_enabled").eq("id", ownerId).maybeSingle() : Promise.resolve({ data: null }),
+    ]);
+
+    const skip = replyPushSkipReason({
+      reportExists: !!report,
+      ownerId,
+      actorId: input.actorId,
+      ownerPushEnabled: owner?.push_enabled === true,
+    });
+    if (skip || !report || !ownerId) return { ...empty, skipped: skip ?? "report-not-found" };
+
+    const { data: last } = await admin
+      .from("push_log")
+      .select("sent_at")
+      .eq("user_id", ownerId)
+      .eq("report_id", input.reportId)
+      .eq("kind", "reply")
+      .order("sent_at", { ascending: false })
+      .limit(1);
+    const lastSentAt = last?.[0]?.sent_at ?? null;
+    if (inReplyCooldown(lastSentAt)) return { ...empty, recipients: 1, skipped: "cooldown" };
+
+    let others = 0;
+    if (input.kind !== "text") {
+      const { data: rx } = await admin
+        .from("replies")
+        .select("user_id, created_at")
+        .eq("report_id", input.reportId)
+        .eq("quick_reaction", input.kind)
+        .limit(200);
+      others = aggregateOthers(rx ?? [], input.actorId, ownerId, lastSentAt);
+    }
+
+    const subs = await loadSubs(admin, [ownerId]);
+    if (subs.length === 0) return { ...empty, recipients: 1, skipped: "no-subscriptions" };
+
+    const payload = buildReplyPayload({
+      reportId: input.reportId,
+      beachId: report.beach_id,
+      beachName: beach?.name_he ?? null,
+      actorName: actor?.display_name ?? "",
+      kind: input.kind,
+      text: input.text,
+      others,
+    });
+    // Topic max 32 chars: the uuid without dashes.
+    const { summary, deliveredUsers } = await deliver(admin, subs, payload, input.reportId.replace(/-/g, ""));
+    if (deliveredUsers.size > 0) {
+      await admin
+        .from("push_log")
+        .insert({ user_id: ownerId, beach_id: report.beach_id, report_id: input.reportId, kind: "reply" });
+    }
+    return { recipients: 1, ...summary };
+  } catch (e) {
+    console.error("sendReplyPush failed", e instanceof Error ? e.message : e);
     return { ...empty, skipped: "error" };
   }
 }

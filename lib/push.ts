@@ -1,6 +1,7 @@
 // Pure Web Push helpers (no I/O, no aliases) so `node --test` can import this file directly.
 
 export const COOLDOWN_MS = 30 * 60 * 1000; // at most 1 report push per user per beach per 30 min
+export const REPLY_COOLDOWN_MS = 5 * 60 * 1000; // at most 1 reply/reaction push per owner per report per 5 min
 export const TEST_PUSH_INTERVAL_MS = 60 * 1000;
 export const MAX_SUBSCRIPTIONS_PER_USER = 10;
 export const SNIPPET_MAX = 80;
@@ -135,6 +136,82 @@ export function selectRecipients(i: {
     out.push(id);
   }
   return out;
+}
+
+// ---------- Reply / reaction pushes (to the report owner) ----------
+
+export type ReplyPushKind = "coming" | "on_the_way" | "text";
+
+/** "ל" + name; a non-Hebrew name gets a hyphen ("ל-Hilton"). Null/blank name -> "לחוף". */
+export function toBeach(beachName: string | null | undefined): string {
+  const n = (beachName ?? "").trim();
+  if (!n) return "לחוף";
+  return /^[֐-׿]/.test(n) ? `ל${n}` : `ל-${n}`;
+}
+
+export function buildReplyPayload(i: {
+  reportId: string;
+  beachId: number;
+  beachName: string | null;
+  actorName: string;
+  kind: ReplyPushKind;
+  text?: string | null;
+  /** Other people with the same reaction since the last push (aggregation), >= 0. */
+  others?: number;
+}): PushPayload {
+  const who = firstName(i.actorName);
+  const others = typeof i.others === "number" && Number.isInteger(i.others) && i.others > 0 ? i.others : 0;
+  const names = others > 0 ? `${who} ועוד ${others}` : who;
+  const base = { url: `/beach/${i.beachId}`, tag: `reply-${i.reportId}` };
+  if (i.kind === "coming") {
+    return { ...base, title: `🤙 ${names} ${others > 0 ? "באים" : "בא/ה"} ${toBeach(i.beachName)}`, body: "על הדיווח שלך" };
+  }
+  if (i.kind === "on_the_way") {
+    return { ...base, title: `🚗 ${names} בדרך ${toBeach(i.beachName)}`, body: "על הדיווח שלך" };
+  }
+  return { ...base, title: `💬 ${who} הגיב/ה על הדיווח שלך`, body: snippet(i.text ?? "") };
+}
+
+/** Why a reply push must not be sent (null = send). */
+export function replyPushSkipReason(i: {
+  reportExists: boolean;
+  ownerId: string | null;
+  actorId: string;
+  ownerPushEnabled: boolean;
+}): "report-not-found" | "own-report" | "push-disabled" | null {
+  if (!i.reportExists || !i.ownerId) return "report-not-found";
+  if (i.ownerId === i.actorId) return "own-report";
+  if (!i.ownerPushEnabled) return "push-disabled";
+  return null;
+}
+
+/** True while the last reply push for this (owner, report) is inside the cooldown window. */
+export function inReplyCooldown(lastSentAt: string | null | undefined, now: number = Date.now()): boolean {
+  if (!lastSentAt) return false;
+  const t = Date.parse(lastSentAt);
+  return Number.isFinite(t) && now - t < REPLY_COOLDOWN_MS;
+}
+
+/** Distinct reactors (excluding actor and owner) created after the last push; i.e. "ועוד N". */
+export function aggregateOthers(
+  rows: { user_id: string; created_at: string }[],
+  actorId: string,
+  ownerId: string,
+  sinceIso: string | null,
+): number {
+  const since = sinceIso ? Date.parse(sinceIso) : -Infinity;
+  const ids = new Set<string>();
+  for (const r of rows) {
+    if (r.user_id === actorId || r.user_id === ownerId) continue;
+    const t = Date.parse(r.created_at);
+    if (Number.isFinite(t) && t > since) ids.add(r.user_id);
+  }
+  return ids.size;
+}
+
+/** Notify only when an insert really happened: no error. (23505 = already there / retried id -> no push.) */
+export function isFreshInsert(error: { code?: string } | null | undefined): boolean {
+  return !error;
 }
 
 export function chunk<T>(arr: T[], size: number): T[][] {

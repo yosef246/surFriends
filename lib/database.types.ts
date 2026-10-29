@@ -250,9 +250,9 @@ export type Database = {
         ];
       };
       push_log: {
-        Row: { id: number; user_id: string; beach_id: number | null; kind: "report" | "test"; sent_at: string };
-        Insert: { id?: number; user_id: string; beach_id?: number | null; kind?: "report" | "test"; sent_at?: string };
-        Update: { id?: number; user_id?: string; beach_id?: number | null; kind?: "report" | "test"; sent_at?: string };
+        Row: { id: number; user_id: string; beach_id: number | null; report_id: string | null; kind: "report" | "test" | "reply"; sent_at: string };
+        Insert: { id?: number; user_id: string; beach_id?: number | null; report_id?: string | null; kind?: "report" | "test" | "reply"; sent_at?: string };
+        Update: { id?: number; user_id?: string; beach_id?: number | null; report_id?: string | null; kind?: "report" | "test" | "reply"; sent_at?: string };
         Relationships: [];
       };
     };

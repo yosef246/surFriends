@@ -38,3 +38,6 @@ Project Settings > Environment Variables (Production + Preview), ואז Redeploy
 - קיימים כבר: `SUPABASE_SERVICE_ROLE_KEY`, `CRON_SECRET`.
 
 אסור להחליף את מפתחות ה-VAPID אחרי שיש מנויים: מנויים קיימים קשורים למפתח הציבורי ויפסיקו לעבוד.
+
+## התראות על תגובות (Day 13)
+בעל דיווח מקבל push כשמישהו לוחץ "🤙 אני בא" / "🚗 בדרך" או כותב תגובה על הדיווח שלו (`sendReplyPush`, נשלח מ-`after()` רק על הוספה בפועל, לא על הסרה ולא על ניסיון חוזר). דילוג: בעל הדיווח הוא המגיב, `push_enabled` כבוי, או שהדיווח נמחק. Cooldown: push אחד לכל (בעלים, דיווח) ב-5 דקות (`push_log`, `kind = 'reply'`, `report_id`); ה-push הראשון אחרי החלון מאגד מגיבים נוספים ("דני ועוד 2 באים"). הקישור פותח `/beach/<id>`.

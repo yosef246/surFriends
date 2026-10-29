@@ -27,10 +27,11 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // Do not run code between createServerClient and getUser().
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Do not run code between createServerClient and getClaims().
+  // getClaims() verifies the JWT locally against the cached JWKS (asymmetric keys): no network
+  // round-trip per request, and it still refreshes the session when the access token expired.
+  const { data, error } = await supabase.auth.getClaims();
+  const user = !error && data?.claims ? data.claims : null;
 
   const { pathname } = request.nextUrl;
   const isPublic = PUBLIC_PATHS.some(

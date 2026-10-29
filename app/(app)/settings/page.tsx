@@ -14,9 +14,8 @@ import { signOut } from "../actions";
 export const metadata: Metadata = { title: "הגדרות | surFriends" };
 
 export default async function SettingsPage() {
-  const user = await getCurrentUser();
+  const [supabase, user] = await Promise.all([getSupabase(), getCurrentUser()]);
   if (!user) redirect("/login");
-  const supabase = await getSupabase();
   const [profile, favorites, { data: pushRow }] = await Promise.all([
     getProfileById(user.id),
     fetchFavoriteBeaches(user.id),

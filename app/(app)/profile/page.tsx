@@ -16,9 +16,8 @@ import { cn } from "@/lib/utils";
 export const metadata: Metadata = { title: "הפרופיל שלי | surFriends" };
 
 export default async function ProfilePage() {
-  const user = await getCurrentUser();
+  const [supabase, user] = await Promise.all([getSupabase(), getCurrentUser()]);
   if (!user) redirect("/login");
-  const supabase = await getSupabase();
 
   const [profile, favorites, reports] = await Promise.all([
     getProfileById(user.id),

@@ -27,6 +27,7 @@ export function BottomNav() {
             <li key={href} className="flex-1">
               <Link
                 href={href}
+                prefetch
                 aria-current={active ? "page" : undefined}
                 className={cn(
                   "motion-press flex h-full min-h-touch min-w-touch flex-col items-center justify-center gap-1 text-caption font-medium transition-colors duration-(--dur-fast)",
@@ -55,6 +56,7 @@ export function BottomNav() {
         <li className="flex-1">
           <Link
             href="/new"
+            prefetch
             aria-label="דיווח חדש"
             className="group flex h-full min-h-touch min-w-touch flex-col items-center justify-end gap-1 pb-2 text-caption font-medium text-ink"
           >

@@ -9,8 +9,7 @@ import { REPORT_TTL_HOURS, reportCutoffIso } from "@/lib/reports";
 import { getCurrentProfile, getCurrentUser, getSupabase } from "@/lib/auth";
 
 export default async function FeedPage() {
-  const supabase = await getSupabase();
-  const user = await getCurrentUser();
+  const [supabase, user] = await Promise.all([getSupabase(), getCurrentUser()]);
   const userId = user?.id ?? "";
 
   const cutoff = reportCutoffIso();

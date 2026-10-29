@@ -6,7 +6,7 @@ import { EmptyState } from "@/components/shared/EmptyState";
 import { getCurrentProfile, getCurrentUser, getSupabase } from "@/lib/auth";
 import { fetchReports } from "@/lib/feed";
 import { getProfileById } from "@/lib/profile-data";
-import { REPORT_TTL_HOURS, reportCutoffIso } from "@/lib/reports";
+import { REPORT_TTL_HOURS, isUuid, reportCutoffIso } from "@/lib/reports";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const profile = await getProfileById((await params).id);
@@ -19,14 +19,15 @@ export default async function UserProfilePage({ params }: { params: Promise<{ id
   if (!user) redirect("/login");
   if (id.toLowerCase() === user.id.toLowerCase()) redirect("/profile");
 
-  const profile = await getProfileById(id);
-  if (!profile) notFound();
+  if (!isUuid(id)) notFound();
 
   const supabase = await getSupabase();
-  const [reports, me] = await Promise.all([
-    fetchReports(supabase, reportCutoffIso(), null, user.id, null, profile.id),
+  const [profile, reports, me] = await Promise.all([
+    getProfileById(id),
+    fetchReports(supabase, reportCutoffIso(), null, user.id, null, id),
     getCurrentProfile(),
   ]);
+  if (!profile) notFound();
   const myName = me?.display_name ?? (user.user_metadata?.full_name as string | undefined) ?? user.email ?? "משתמש";
   const myAvatar = me?.avatar_url ?? (user.user_metadata?.avatar_url as string | undefined) ?? null;
 

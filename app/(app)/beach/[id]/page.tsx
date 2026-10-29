@@ -41,19 +41,17 @@ export default async function BeachPage({ params }: { params: Promise<{ id: stri
   const beachId = parseBeachId((await params).id);
   if (!beachId) notFound();
 
-  const beach = await getBeach(beachId);
-  if (!beach) notFound();
-
-  const user = await getCurrentUser();
+  const [supabase, user] = await Promise.all([getSupabase(), getCurrentUser()]);
   const userId = user?.id ?? "";
-  const supabase = await getSupabase();
 
-  const [forecastRes, reports, profile, isFavorite] = await Promise.all([
+  const [beach, forecastRes, reports, profile, isFavorite] = await Promise.all([
+    getBeach(beachId),
     getBeachForecast(beachId),
     fetchReports(supabase, reportCutoffIso(), null, userId, beachId),
     getCurrentProfile(),
     userId ? isFavoriteBeach(userId, beachId) : false,
   ]);
+  if (!beach) notFound();
 
   const displayName =
     profile?.display_name ?? (user?.user_metadata?.full_name as string | undefined) ?? user?.email ?? "משתמש";

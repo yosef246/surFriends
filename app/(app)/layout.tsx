@@ -5,10 +5,8 @@ import { TopBar } from "@/components/layout/TopBar";
 import { getCurrentProfile, getCurrentUser } from "@/lib/auth";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const user = await getCurrentUser();
+  const [user, profile] = await Promise.all([getCurrentUser(), getCurrentProfile()]);
   if (!user) redirect("/login");
-
-  const profile = await getCurrentProfile();
 
   const displayName =
     profile?.display_name ??

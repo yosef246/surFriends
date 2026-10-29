@@ -22,7 +22,7 @@ export function ReportCard({ report }: { report: FeedReport }) {
   ].filter(Boolean);
 
   return (
-    <article className="glass-card flex flex-col gap-3 rounded-card p-4">
+    <article className="glass-card bubble-post motion-bubble-hover flex flex-col gap-3 p-5">
       <header className="flex items-center gap-3">
         <Link
           href={`/profile/${report.user_id}`}
@@ -40,7 +40,7 @@ export function ReportCard({ report }: { report: FeedReport }) {
       {beach ? (
         <Link
           href={`/beach/${beach.id}`}
-          className="-my-2 flex min-h-touch items-center gap-1 text-body-sm font-medium text-link"
+          className="-my-2 flex min-h-touch items-center gap-1 font-display text-heading font-normal tracking-tight text-link"
         >
           <span>{beach.name_he}</span>
           <span className="text-muted-text">· {beach.city}</span>
@@ -62,7 +62,7 @@ export function ReportCard({ report }: { report: FeedReport }) {
       <p className="text-body break-words whitespace-pre-line text-copy">{report.text}</p>
 
       {report.image_url ? (
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-surface">
+        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-surface">
           <Image
             src={report.image_url}
             alt={beach ? `תמונה מהדיווח ב${beach.name_he}` : "תמונה מהדיווח"}
@@ -84,7 +84,7 @@ export function ReportCardSkeleton() {
   return (
     <div
       aria-hidden
-      className="glass-card flex flex-col gap-3 rounded-card p-4"
+      className="glass-card bubble-post flex flex-col gap-3 p-5"
     >
       <div className="flex items-center gap-3">
         <div className="skeleton size-9 rounded-full" />

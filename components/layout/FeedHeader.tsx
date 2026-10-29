@@ -19,9 +19,9 @@ export function FeedHeader({ greeting, firstName, displayName, avatarUrl }: Prop
     <header className="flex min-h-topbar items-center justify-between gap-3">
       <div className="min-w-0">
         <p className="eyebrow">שלום</p>
-        <p className="text-display heading-tight font-light text-gradient-sea">
-          {greeting}
-          {firstName ? <span className="wave-underline font-medium"> {firstName}</span> : null}
+        <p className="text-display heading-tight font-display font-normal text-gradient-sea">
+          {greeting}{" "}
+          {firstName ? <span className="wave-underline">{firstName}</span> : null}
         </p>
       </div>
       <Link

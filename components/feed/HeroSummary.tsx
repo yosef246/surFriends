@@ -19,18 +19,18 @@ export function HeroSummary({ summary }: { summary: Summary }) {
         {recentCount > 0 ? (
           <>
             <p
-              className="numeral text-numeral-xl font-light text-white"
+              className="numeral font-display text-numeral-xl font-normal text-white"
               aria-label={`${recentCount} דיווחים בשעתיים האחרונות`}
             >
               <span aria-hidden>{recentCount}</span>
             </p>
-            <p className="text-heading font-medium text-white">
+            <p className="text-heading heading-tight font-display font-normal text-white">
               {recentCount === 1 ? "דיווח בשעתיים האחרונות" : "דיווחים בשעתיים האחרונות"}
             </p>
           </>
         ) : (
           <>
-            <p className="text-heading font-medium text-white">הים שקט... היה הראשון לדווח</p>
+            <p className="text-heading heading-tight font-display font-normal text-white">הים שקט... כולם מחכים שמישהו יעז. אתם?</p>
             <Link href="/new" className={cn(buttonVariants({ variant: "default", size: "sm" }))}>
               לדיווח חדש
             </Link>

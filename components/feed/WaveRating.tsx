@@ -6,7 +6,7 @@ export function WaveRating({ value }: { value: number }) {
   const label = LABELS[v];
   return (
     <div role="img" aria-label={`דירוג גלים ${v} מתוך 5, ${label}`} className="flex items-center gap-3">
-      <span aria-hidden className="numeral text-numeral-md font-light">
+      <span aria-hidden className="numeral font-display text-numeral-md font-normal">
         {v}
         <span className="text-unit text-muted-text">/5</span>
       </span>

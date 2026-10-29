@@ -107,20 +107,17 @@ export function PhotoField({ onChange, uploading, uploadError, disabled }: Props
       ) : (
         <label
           htmlFor={id}
-          className={`glass-card motion-press motion-lift flex min-h-32 w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-card border-2 border-dashed border-input px-5 py-6 text-body-sm font-medium text-ink has-[:focus-visible]:outline-2 ${
+          className={`bubble-glass motion-press inline-flex min-h-12 w-fit cursor-pointer items-center gap-2 rounded-full px-5 text-body-sm font-semibold text-ink has-[:focus-visible]:outline-2 ${
             disabled || processing ? "opacity-50" : ""
           }`}
         >
           {processing ? (
             <>
-              <Loader2 className="size-7 animate-spin" aria-hidden /> מעבדים תמונה...
+              <Loader2 className="size-5 animate-spin" aria-hidden /> מעבדים תמונה...
             </>
           ) : (
             <>
-              <span className="flex size-12 items-center justify-center rounded-full bg-signature-soft">
-                <Camera className="size-6" aria-hidden />
-              </span>
-              הוסיפו תמונה מהחוף
+              <Camera className="size-5" aria-hidden /> הוסיפו תמונה
             </>
           )}
         </label>

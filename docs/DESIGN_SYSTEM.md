@@ -90,7 +90,13 @@
 
 ## 3. טיפוגרפיה (עיצובי טקסט)
 
-Rubik, משקלים 300 / 400 / 500. כותרות Medium עם `letter-spacing: -0.01em`; `font-bold`/`font-semibold` מוגדרים כ-500. סקאלה (ללא שינוי): `text-numeral-xl/lg/md`, `text-unit`, `text-display` 28/34, `text-title` 22/28, `text-heading` 18/24, `text-body` 16/24, `text-body-sm` 14/20, `text-caption` 12/16, `text-data` 13/18 mono.
+**v3.1 "חתרני" (השראה: seanow.co.il).** שני פונטים דרך `next/font/google`: **Suez One** (`font-display`, משקל 400, כבד מטבעו) לכל הכותרות, ו-**IBM Plex Sans Hebrew** (`font-sans`, 400/500/600/700) לגוף ול-UI. JetBrains Mono נשאר רק למונה התווים. `font-bold`=700, `font-semibold`=600 (כפתורים, צ'יפים, ניווט, eyebrow ב-600-700; גוף 400-500). פונט display חייב `font-normal` (אין לו משקלים נוספים; `font-synthesis-weight:none` מונע bold מזויף). שורה צפופה 1.05-1.15 ו-tracking שלילי (`heading-tight`).
+
+סקאלה: `text-display` 32/34 (ברכה), `text-title` 28/30 (כותרות מסך וסקציה), `text-heading` 20/26, `text-body` 16/24, `text-body-sm` 14/20, `text-caption` 12/16, `text-data` 13/18, `text-numeral-xl/lg/md` 72/44/28.
+
+**איפה משתמשים ב-`font-display`:** ברכה (עם gradient + wave-underline), מספר ה-hero וכותרתו, כותרות מסך ("דיווח חדש") וסקציה ("דיווחים אחרונים"), שמות חופים בכרטיסים, כותרות EmptyState, כותרת login, המספר הגדול ב-WaveRating. Eyebrow מעל כותרת הפיד: `eyebrow eyebrow-coral` (צבע `live-text`, AA).
+
+**בועות פוסטים:** טוקן `--radius-bubble` (28px) ו-`bubble-post` (רדיוס + הדגשה פנימית עליונה + צל ים). `motion-bubble-hover`: ב-`@media (hover:hover)` scale 1.02 + צל חזק; ב-`:active` scale 1.02 (טאץ'); easing spring. ב-reduced-motion אין scale. הרשימה עם `px-1` כדי שהגדלה לא תיצור גלילה אופקית.
 
 ### Utilities חדשים (ב-`globals.css`)
 

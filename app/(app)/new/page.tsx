@@ -33,8 +33,8 @@ export default async function NewReportPage({
           <ArrowRight className="size-5" aria-hidden />
         </Link>
         <div className="min-w-0">
-          <p className="eyebrow">מה המצב בים?</p>
-          <h1 className="text-title heading-tight font-medium text-gradient-sea">דיווח חדש</h1>
+          <p className="eyebrow">מה המצב בים? ספרו לכולם</p>
+          <h1 className="text-title heading-tight font-display font-normal text-gradient-sea">דיווח חדש</h1>
         </div>
       </div>
       {error || !beaches?.length ? (

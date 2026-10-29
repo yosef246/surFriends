@@ -49,7 +49,7 @@ export function ReportList({ initialReports }: { initialReports: FeedReport[] })
   return (
     <div className="flex flex-col gap-4">
       <h1 className="sr-only">פיד דיווחים</h1>
-      <ul className="flex flex-col gap-4" aria-busy={pending}>
+      <ul className="flex flex-col gap-5 px-1 py-1" aria-busy={pending}>
         {reports.map((r, i) => (
           <li key={r.id} className="motion-fade-up" style={{ "--i": Math.min(i, 8) } as React.CSSProperties}>
             <ReportCard report={r} />

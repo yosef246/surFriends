@@ -1,10 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { Rubik, JetBrains_Mono } from "next/font/google";
+import { Suez_One, IBM_Plex_Sans_Hebrew, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const rubik = Rubik({
-  variable: "--font-rubik",
-  subsets: ["latin", "hebrew"],
+const suezOne = Suez_One({
+  variable: "--font-suez-one",
+  subsets: ["hebrew", "latin"],
+  weight: "400",
+});
+
+const plexHebrew = IBM_Plex_Sans_Hebrew({
+  variable: "--font-plex-hebrew",
+  subsets: ["hebrew", "latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -28,7 +35,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="he" dir="rtl">
-      <body className={`${rubik.variable} ${jetbrainsMono.variable} antialiased`}>
+      <body className={`${suezOne.variable} ${plexHebrew.variable} ${jetbrainsMono.variable} antialiased`}>
         {children}
       </body>
     </html>

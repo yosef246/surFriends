@@ -44,8 +44,8 @@ export default async function FeedPage() {
       <HeroSummary summary={summary} />
       <BeachCircleRow beaches={beaches} />
       <div>
-        <p className="eyebrow">מהחופים</p>
-        <h2 className="text-heading heading-tight font-medium text-ink">דיווחים אחרונים</h2>
+        <p className="eyebrow eyebrow-coral">חופי ישראל · עכשיו</p>
+        <h2 className="text-title heading-tight font-display font-normal text-ink">דיווחים אחרונים</h2>
       </div>
       <ReportList initialReports={reports} />
     </div>

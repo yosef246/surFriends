@@ -60,10 +60,10 @@ export function InAppBrowserNotice() {
   return (
     <section
       aria-label="התחברות מדפדפן פנימי"
-      className="flex w-full flex-col gap-3 rounded-lg border border-border bg-card p-4"
+      className="flex w-full flex-col gap-3 rounded-card bg-card p-4 shadow-card"
     >
-      <p className="text-body font-semibold text-sea-deep">פתחו את הקישור ב-Chrome או Safari כדי להתחבר</p>
-      <p className="text-body-sm text-mist-text">Google לא מאפשר התחברות מתוך WhatsApp / Instagram</p>
+      <p className="text-body font-medium text-ink">פתחו את הקישור ב-Chrome או Safari כדי להתחבר</p>
+      <p className="text-body-sm text-muted-text">Google לא מאפשר התחברות מתוך WhatsApp / Instagram</p>
       <div className="flex flex-col gap-2">
         {platform === "android" ? (
           <Button type="button" variant="accent" className="w-full" onClick={openInChrome}>
@@ -80,7 +80,7 @@ export function InAppBrowserNotice() {
         </span>
       </div>
       {platform === "ios" ? (
-        <p className="text-caption text-mist-text">או לחצו על ⋯ ובחרו &apos;פתח ב-Safari&apos;</p>
+        <p className="text-caption text-muted-text">או לחצו על ⋯ ובחרו &apos;פתח ב-Safari&apos;</p>
       ) : null}
     </section>
   );

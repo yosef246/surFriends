@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { OfflineBanner } from "@/components/layout/OfflineBanner";
-import { FAB } from "@/components/layout/FAB";
 import { TopBar } from "@/components/layout/TopBar";
 import { createClient } from "@/lib/supabase/server";
 
@@ -30,10 +29,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <div className="min-h-dvh">
       <TopBar displayName={displayName} avatarUrl={avatarUrl} />
       <OfflineBanner />
-      <main className="mx-auto w-full max-w-feed px-4 pt-4 pb-[calc(var(--spacing-bottomnav)+env(safe-area-inset-bottom)+5rem)]">
+      <main className="mx-auto w-full max-w-feed px-4 pt-2 pb-[calc(var(--spacing-bottomnav)+env(safe-area-inset-bottom)+5rem)]">
         {children}
       </main>
-      <FAB />
       <BottomNav />
     </div>
   );

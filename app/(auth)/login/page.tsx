@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { Waves } from "lucide-react";
+import { Mascot } from "@/components/mascot";
 import { createClient } from "@/lib/supabase/server";
 import { safeNextPath } from "@/lib/safe-next";
 import { isInAppBrowser } from "@/lib/in-app-browser";
@@ -24,19 +24,19 @@ export default async function LoginPage({
   const inApp = isInAppBrowser((await headers()).get("user-agent"));
 
   return (
+    <div className="min-h-dvh bg-foam">
     <main className="mx-auto flex min-h-dvh w-full max-w-sm flex-col items-center justify-center gap-8 px-6 py-10 text-foreground">
       <div className="flex flex-col items-center gap-3 text-center">
-        <span className="flex size-16 items-center justify-center rounded-full bg-primary text-primary-foreground">
-          <Waves className="size-8" aria-hidden />
-        </span>
-        <h1 className="text-display font-bold text-sea-deep">surFriends</h1>
-        <p className="text-body text-mist-text">קהילת הגולשים של ישראל</p>
+        <Mascot.Wave size={180} className="animate-mascot-bob" />
+        <h1 className="text-display font-medium text-ink">surFriends</h1>
+        <p className="text-body text-muted-text">קהילת הגולשים של ישראל</p>
       </div>
       <div className="flex w-full flex-col gap-4">
         {inApp ? <InAppBrowserNotice /> : null}
         <LoginButton next={target} hasError={Boolean(error)} />
       </div>
-      <p className="text-caption text-mist-text">בהמשך אתם מסכימים לתנאים</p>
+      <p className="text-caption text-muted-text">בהמשך אתם מסכימים לתנאים</p>
     </main>
+    </div>
   );
 }

@@ -66,3 +66,69 @@ export async function fetchReports(
     comingCount: r.coming?.[0]?.count ?? 0,
   }));
 }
+
+const HERO_WINDOW_MS = 2 * 3600 * 1000;
+const LIVE_WINDOW_MS = 3 * 3600 * 1000;
+
+export type HeroSummary = {
+  recentCount: number;
+  latest: { created_at: string; beachName: string | null } | null;
+};
+
+/** Reports in the last 2h (count) + the latest report overall. Two cheap parallel queries. */
+export async function fetchHeroSummary(supabase: SupabaseClient<Database>): Promise<HeroSummary> {
+  const since = new Date(Date.now() - HERO_WINDOW_MS).toISOString();
+  const [countRes, latestRes] = await Promise.all([
+    supabase.from("reports").select("id", { count: "exact", head: true }).gt("created_at", since),
+    supabase
+      .from("reports")
+      .select("created_at, beaches(name_he)")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ]);
+  const row = latestRes.data as unknown as {
+    created_at: string | null;
+    beaches: { name_he: string } | null;
+  } | null;
+  return {
+    recentCount: countRes.count ?? 0,
+    latest: row?.created_at ? { created_at: row.created_at, beachName: row.beaches?.name_he ?? null } : null,
+  };
+}
+
+export type BeachCircleItem = { id: number; name: string; live: boolean };
+
+type BeachRow = {
+  id: number;
+  name_he: string;
+  latitude: number;
+  user_favorites: { user_id: string }[] | null;
+  reports: { count: number }[] | null;
+};
+
+/**
+ * One query: beaches + embedded own favorites + embedded count of reports in the last 3h.
+ * Favorites first (if any), otherwise all beaches north to south.
+ */
+export async function fetchBeachCircles(
+  supabase: SupabaseClient<Database>,
+  userId: string
+): Promise<BeachCircleItem[]> {
+  const since = new Date(Date.now() - LIVE_WINDOW_MS).toISOString();
+  const { data, error } = await supabase
+    .from("beaches")
+    .select("id, name_he, latitude, user_favorites(user_id), reports(count)")
+    .eq("user_favorites.user_id", userId)
+    .gt("reports.created_at", since)
+    .order("latitude", { ascending: false });
+  if (error) return [];
+
+  const rows = (data ?? []) as unknown as BeachRow[];
+  const favs = rows.filter((r) => (r.user_favorites?.length ?? 0) > 0);
+  return (favs.length > 0 ? favs : rows).map((r) => ({
+    id: r.id,
+    name: r.name_he,
+    live: (r.reports?.[0]?.count ?? 0) > 0,
+  }));
+}

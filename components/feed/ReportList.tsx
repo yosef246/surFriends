@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState, useTransition } from "react";
-import { Waves } from "lucide-react";
 import { loadMoreReports } from "@/app/(app)/feed-actions";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { buttonVariants } from "@/components/ui/button";
@@ -36,16 +35,14 @@ export function ReportList({ initialReports }: { initialReports: FeedReport[] })
 
   if (reports.length === 0) {
     return (
-      <div className="flex flex-col items-center">
-        <EmptyState
-          icon={Waves}
-          title="עדיין שקט בים"
-          description="היו הראשונים לספר מה קורה בחוף"
-        />
+      <EmptyState
+        title="עדיין שקט בים"
+        description="היו הראשונים לספר מה קורה בחוף"
+      >
         <Link href="/new" className={cn(buttonVariants(), "min-h-touch")}>
-          דווחו עכשיו
+          היה הראשון לדווח
         </Link>
-      </div>
+      </EmptyState>
     );
   }
 
@@ -76,7 +73,7 @@ export function ReportList({ initialReports }: { initialReports: FeedReport[] })
           {pending ? "טוענים..." : "טען עוד"}
         </button>
       ) : (
-        <p className="py-2 text-center text-body-sm text-mist-text">זה הכל לעכשיו</p>
+        <p className="py-2 text-center text-body-sm text-muted-text">זה הכל לעכשיו</p>
       )}
     </div>
   );

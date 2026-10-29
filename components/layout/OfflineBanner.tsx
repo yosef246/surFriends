@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { WifiOff } from "lucide-react";
 
 function subscribe(cb: () => void) {
   window.addEventListener("online", cb);
@@ -22,8 +23,9 @@ export function OfflineBanner() {
     <div
       role="status"
       aria-live="polite"
-      className="border-b border-border bg-secondary px-4 py-2 text-center text-body-sm text-secondary-foreground"
+      className="flex items-center justify-center gap-2 bg-secondary px-4 py-2 text-center text-body-sm text-ink"
     >
+      <WifiOff className="size-4" aria-hidden />
       אין חיבור. מציגים את מה שנטען עד עכשיו
     </div>
   );

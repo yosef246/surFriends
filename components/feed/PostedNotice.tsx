@@ -27,7 +27,7 @@ export function PostedNotice() {
   return (
     <div
       role="status"
-      className="mb-3 flex items-center justify-between gap-2 rounded-lg bg-success px-4 py-2 text-body-sm font-semibold text-success-foreground animate-toast-in"
+      className="mb-3 flex items-center justify-between gap-2 rounded-pill bg-success px-4 py-2.5 text-body-sm font-medium text-success-foreground shadow-raised animate-toast-in"
     >
       <span className="flex items-center gap-2">
         <Check className="size-4" aria-hidden /> פורסם!

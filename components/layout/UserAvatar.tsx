@@ -7,7 +7,7 @@ export function UserAvatar({ name, src, className }: Props) {
   return (
     <span
       className={cn(
-        "inline-flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-secondary text-body-sm font-semibold text-secondary-foreground",
+        "inline-flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-secondary text-body-sm font-medium text-secondary-foreground",
         className
       )}
     >

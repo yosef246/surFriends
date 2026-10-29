@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Settings, User } from "lucide-react";
+import { Home, Plus, Settings, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const ITEMS = [
@@ -18,7 +18,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label="ניווט ראשי"
-      className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card pb-[env(safe-area-inset-bottom)]"
+      className="fixed inset-x-0 bottom-0 z-30 rounded-t-card bg-card pb-[env(safe-area-inset-bottom)] shadow-nav"
     >
       <ul className="mx-auto flex h-bottomnav w-full max-w-feed items-stretch">
         {ITEMS.map(({ href, label, icon: Icon, match }) => {
@@ -29,19 +29,35 @@ export function BottomNav() {
                 href={href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "relative flex h-full min-h-touch min-w-touch flex-col items-center justify-center gap-1 text-caption",
-                  active ? "font-bold text-sea-deep" : "font-medium text-mist-text"
+                  "flex h-full min-h-touch min-w-touch flex-col items-center justify-center gap-1 text-caption font-medium",
+                  active ? "text-ink" : "text-muted-text"
                 )}
               >
-                {active ? (
-                  <span aria-hidden className="absolute inset-x-6 top-0 h-0.5 rounded-full bg-sea-wave" />
-                ) : null}
-                <Icon className={cn("size-5", active && "fill-sea-wave/30")} aria-hidden />
-                {label}
+                <Icon className={cn("size-5", active && "fill-ink/10")} aria-hidden />
+                <span className="flex flex-col items-center gap-0.5">
+                  {label}
+                  <span
+                    aria-hidden
+                    className={cn("size-1 rounded-full", active ? "bg-signature" : "bg-transparent")}
+                  />
+                </span>
               </Link>
             </li>
           );
         })}
+        {/* Last DOM item = end side (left in RTL). Circle overlaps the bar's top edge. */}
+        <li className="flex-1">
+          <Link
+            href="/new"
+            aria-label="דיווח חדש"
+            className="group flex h-full min-h-touch min-w-touch flex-col items-center justify-end gap-1 pb-2 text-caption font-medium text-ink"
+          >
+            <span className="-mt-7 mb-auto flex size-14 items-center justify-center rounded-full bg-signature text-ink shadow-raised ring-4 ring-card transition-[transform,background-color] duration-(--dur-fast) ease-(--ease-press) group-hover:bg-signature-hover group-active:scale-[0.94] group-active:bg-signature-pressed">
+              <Plus className="size-7" aria-hidden />
+            </span>
+            דיווח
+          </Link>
+        </li>
       </ul>
     </nav>
   );

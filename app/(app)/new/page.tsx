@@ -3,7 +3,6 @@ import { ArrowRight } from "lucide-react";
 import { NewReportForm } from "@/components/forms/NewReportForm";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { createClient } from "@/lib/supabase/server";
-import { Waves } from "lucide-react";
 
 export default async function NewReportPage({
   searchParams,
@@ -32,11 +31,11 @@ export default async function NewReportPage({
         >
           <ArrowRight className="size-5" aria-hidden />
         </Link>
-        <h1 className="text-title font-bold text-sea-deep">דיווח חדש</h1>
+        <h1 className="text-title font-medium text-ink">דיווח חדש</h1>
       </div>
       {error || !beaches?.length ? (
         <EmptyState
-          icon={Waves}
+          mascot="oops"
           title="אופס, משהו השתבש"
           description="לא הצלחנו לטעון את רשימת החופים. נסו לרענן"
         />

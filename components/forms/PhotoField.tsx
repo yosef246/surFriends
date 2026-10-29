@@ -57,7 +57,7 @@ export function PhotoField({ onChange, uploading, uploadError, disabled }: Props
 
   return (
     <div className="flex flex-col gap-1.5">
-      <span className="text-body-sm font-semibold text-sea-deep">תמונה (לא חובה)</span>
+      <span className="text-body-sm font-medium text-ink">תמונה (לא חובה)</span>
       <input
         ref={inputRef}
         id={id}
@@ -73,7 +73,7 @@ export function PhotoField({ onChange, uploading, uploadError, disabled }: Props
           <img
             src={preview}
             alt="תצוגה מקדימה של התמונה שנבחרה"
-            className="size-24 rounded-lg border border-border object-cover"
+            className="size-24 rounded-lg object-cover"
           />
           <div className="flex flex-col gap-1 text-body-sm">
             <span className="flex items-center gap-1 text-success" role="status">
@@ -100,7 +100,7 @@ export function PhotoField({ onChange, uploading, uploadError, disabled }: Props
       ) : (
         <label
           htmlFor={id}
-          className={`flex min-h-touch w-fit cursor-pointer items-center gap-2 rounded-lg border border-dashed border-input bg-card px-4 text-body-sm font-semibold text-sea-deep has-[:focus-visible]:outline-2 ${
+          className={`flex min-h-touch w-fit cursor-pointer items-center gap-2 rounded-card border-2 border-dashed border-input bg-card px-5 text-body-sm font-medium text-ink has-[:focus-visible]:outline-2 ${
             disabled || processing ? "opacity-50" : ""
           }`}
         >

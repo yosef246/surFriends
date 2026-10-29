@@ -21,8 +21,8 @@ import { WaveRatingInput } from "./WaveRatingInput";
 type Props = { beaches: BeachOption[]; defaultBeachId: number | null };
 
 const chip = (on: boolean) =>
-  `min-h-touch rounded-full border px-4 text-body-sm font-medium ${
-    on ? "border-primary bg-primary text-primary-foreground" : "border-input bg-card text-foreground"
+  `min-h-touch rounded-pill px-4 text-body-sm font-medium ${
+    on ? "bg-signature text-ink" : "bg-card text-copy shadow-card"
   }`;
 
 export function NewReportForm({ beaches, defaultBeachId }: Props) {
@@ -148,7 +148,7 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
       <WaveRatingInput value={rating} onChange={setRating} />
 
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="report-text" className="text-body-sm font-semibold text-sea-deep">
+        <label htmlFor="report-text" className="text-body-sm font-medium text-ink">
           מה קורה בחוף?
         </label>
         <textarea
@@ -159,7 +159,7 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
           onBlur={() => setTouched((s) => ({ ...s, text: true }))}
           aria-invalid={textError ? true : undefined}
           aria-describedby="report-text-meta"
-          className="w-full resize-y rounded-lg border border-input bg-card p-3 text-body text-foreground aria-invalid:border-destructive"
+          className="w-full resize-y rounded-lg border border-input bg-card px-3.5 py-3 text-body text-copy placeholder:text-muted-text focus:border-link-blue focus:ring-3 focus:ring-link-blue/30 focus:outline-none aria-invalid:border-danger"
         />
         <div className="flex flex-wrap gap-2" role="group" aria-label="טקסט מהיר">
           {QUICK_TEXTS.map((t) => (
@@ -172,14 +172,14 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
           <span role={textError ? "alert" : undefined} className="text-danger">
             {textError ? `⚠ ${textError}` : ""}
           </span>
-          <span className={`font-mono ${tooLong ? "text-danger" : "text-mist-text"}`}>
+          <span className={`font-mono ${tooLong ? "text-danger" : "text-muted-text"}`}>
             {len}/{REPORT_TEXT_MAX}
           </span>
         </div>
       </div>
 
       <fieldset className="flex flex-col gap-1.5">
-        <legend className="mb-1.5 text-body-sm font-semibold text-sea-deep">גובה גל (לא חובה)</legend>
+        <legend className="mb-1.5 text-body-sm font-medium text-ink">גובה גל (לא חובה)</legend>
         <div className="flex flex-wrap gap-2">
           {WAVE_HEIGHTS.map((h) => (
             <button
@@ -198,10 +198,10 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
 
       <PhotoField onChange={setPhoto} uploading={stage === "uploading"} uploadError={photoError} disabled={busy} />
 
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+      <div className="fixed inset-x-0 bottom-0 z-30 rounded-t-card bg-card px-4 pt-3 shadow-nav pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
         <div className="mx-auto flex w-full max-w-feed flex-col gap-2">
           {banner ? (
-            <p role="alert" className="rounded-lg border border-destructive p-3 text-body-sm text-danger">
+            <p role="alert" className="rounded-lg border border-danger p-3 text-body-sm text-danger">
               ⚠ {banner}
             </p>
           ) : null}

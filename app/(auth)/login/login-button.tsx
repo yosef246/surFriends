@@ -65,7 +65,7 @@ export function LoginButton({ next, hasError }: { next: string; hasError?: boole
         </p>
       ) : null}
       {offline ? (
-        <p role="status" className="text-body-sm text-mist-text">
+        <p role="status" className="text-body-sm text-muted-text">
           אין חיבור לאינטרנט
         </p>
       ) : null}

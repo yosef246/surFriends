@@ -23,7 +23,7 @@ export function BeachPicker({ beaches, value, onChange, error, onBlur }: Props) 
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-body-sm font-semibold text-sea-deep">
+      <label htmlFor={id} className="text-body-sm font-medium text-ink">
         חוף
       </label>
       <select
@@ -33,7 +33,7 @@ export function BeachPicker({ beaches, value, onChange, error, onBlur }: Props) 
         onBlur={onBlur}
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? `${id}-err` : undefined}
-        className="h-11 w-full rounded-lg border border-input bg-card px-3 text-body text-foreground aria-invalid:border-destructive"
+        className="h-12 w-full rounded-lg border border-input bg-card px-3.5 text-body text-copy focus:border-link-blue focus:ring-3 focus:ring-link-blue/30 focus:outline-none aria-invalid:border-danger"
       >
         <option value="">בחרו חוף</option>
         {groups.map(([region, list]) => (

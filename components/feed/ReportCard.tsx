@@ -22,18 +22,18 @@ export function ReportCard({ report }: { report: FeedReport }) {
   ].filter(Boolean);
 
   return (
-    <article className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 shadow-card">
+    <article className="flex flex-col gap-3 rounded-card bg-card p-4 shadow-card">
       <header className="flex items-center gap-3">
         <Link
           href={`/profile/${report.user_id}`}
-          className="flex min-h-touch min-w-0 items-center gap-3 text-body font-semibold text-sea-deep"
+          className="flex min-h-touch min-w-0 items-center gap-3 text-body font-medium text-ink"
         >
           <UserAvatar name={name} src={report.author?.avatar_url} />
           <span className="truncate">{name}</span>
         </Link>
         <RelativeTime
           iso={report.created_at}
-          className="ms-auto shrink-0 text-body-sm text-mist-text"
+          className="ms-auto shrink-0 text-body-sm text-muted-text"
         />
       </header>
 
@@ -43,23 +43,26 @@ export function ReportCard({ report }: { report: FeedReport }) {
           className="-my-2 flex min-h-touch items-center gap-1 text-body-sm font-medium text-link"
         >
           <span>{beach.name_he}</span>
-          <span className="text-mist-text">· {beach.city}</span>
+          <span className="text-muted-text">· {beach.city}</span>
         </Link>
       ) : null}
 
       {report.wave_rating !== null || report.wave_height_estimate ? (
-        <div className="flex flex-col gap-1">
-          {report.wave_rating !== null ? <WaveRating value={report.wave_rating} /> : null}
+        <div className="flex items-center justify-between gap-3">
+          {report.wave_rating !== null ? <WaveRating value={report.wave_rating} /> : <span />}
           {report.wave_height_estimate ? (
-            <p className="text-body-sm text-shadow">גובה: {report.wave_height_estimate}</p>
+            <p className="flex flex-col items-end text-end">
+              <span className="text-caption text-muted-text">גובה גל</span>
+              <span className="text-heading font-medium text-ink">{report.wave_height_estimate}</span>
+            </p>
           ) : null}
         </div>
       ) : null}
 
-      <p className="text-body break-words whitespace-pre-line text-shadow">{report.text}</p>
+      <p className="text-body break-words whitespace-pre-line text-copy">{report.text}</p>
 
       {report.image_url ? (
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-muted">
+        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-surface">
           <Image
             src={report.image_url}
             alt={beach ? `תמונה מהדיווח ב${beach.name_he}` : "תמונה מהדיווח"}
@@ -71,7 +74,7 @@ export function ReportCard({ report }: { report: FeedReport }) {
       ) : null}
 
       {counts.length > 0 ? (
-        <p className="text-body-sm text-mist-text">{counts.join(" · ")}</p>
+        <p className="text-body-sm text-muted-text">{counts.join(" · ")}</p>
       ) : null}
     </article>
   );
@@ -81,7 +84,7 @@ export function ReportCardSkeleton() {
   return (
     <div
       aria-hidden
-      className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 shadow-card"
+      className="flex flex-col gap-3 rounded-card bg-card p-4 shadow-card"
     >
       <div className="flex items-center gap-3">
         <div className="skeleton size-9 rounded-full" />

@@ -86,3 +86,18 @@ export function RelativeTime({ iso, className }: { iso: string; className?: stri
     </time>
   );
 }
+
+/**
+ * Relative-only variant: renders nothing until hydrated (so there is no absolute/relative flicker next to a
+ * clock that is already shown). `prefix` is rendered with it, e.g. " · " or "עודכן ".
+ */
+export function RelativeAgo({ iso, prefix = "", className }: { iso: string; prefix?: string; className?: string }) {
+  const now = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  if (now === null) return null;
+  return (
+    <time dateTime={iso} title={formatAbsolute(iso)} className={className}>
+      {prefix}
+      {formatRelative(iso, now)}
+    </time>
+  );
+}

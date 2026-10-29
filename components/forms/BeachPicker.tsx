@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useId, useMemo, useRef } from "react";
+import Image from "next/image";
 import { Check } from "lucide-react";
+import { beachPhotoSrc } from "@/lib/beach-photo";
 
 export type BeachOption = {
   id: number;
@@ -20,7 +22,7 @@ type Props = {
   onBlur?: () => void;
 };
 
-/** Horizontal scroll row of bubble chips grouped by region. Radiogroup with roving tabindex + arrow keys. */
+/** Horizontal scroll row of small photo tiles grouped by region. Radiogroup with roving tabindex + arrow keys. */
 export function BeachPicker({ beaches, value, onChange, error, onBlur }: Props) {
   const id = useId();
   const refs = useRef(new Map<number, HTMLButtonElement>());
@@ -53,8 +55,8 @@ export function BeachPicker({ beaches, value, onChange, error, onBlur }: Props) 
 
   return (
     <div className="flex flex-col gap-1.5">
-      <span id={`${id}-label`} className="text-body-sm font-medium text-ink">
-        חוף
+      <span id={`${id}-label`} className="section-title">
+        איזה חוף?
       </span>
       <div
         role="radiogroup"
@@ -88,12 +90,23 @@ export function BeachPicker({ beaches, value, onChange, error, onBlur }: Props) 
                     tabIndex={b.id === tabStop ? 0 : -1}
                     title={`${b.name_he} · ${b.city}`}
                     onClick={() => onChange(b.id)}
-                    className={`bubble-chip inline-flex h-12 shrink-0 snap-center items-center gap-1.5 rounded-full px-5 text-body-sm font-semibold whitespace-nowrap ${
-                      on ? "motion-pop-in" : ""
-                    }`}
+                    className="tile motion-press w-24 snap-center text-start aria-checked:ring-2 aria-checked:ring-brand aria-checked:ring-offset-2"
                   >
-                    {on ? <Check className="size-4" aria-hidden /> : null}
-                    {b.name_he}
+                    {beachPhotoSrc(b.image_path) ? (
+                      <Image src={beachPhotoSrc(b.image_path)!} alt="" fill sizes="96px" className="object-cover" />
+                    ) : null}
+                    <span className="photo-overlay-tile" aria-hidden />
+                    {on ? (
+                      <span
+                        aria-hidden
+                        className="absolute start-1.5 top-1.5 flex size-5 items-center justify-center rounded-full bg-brand text-white"
+                      >
+                        <Check className="size-3.5" strokeWidth={3} />
+                      </span>
+                    ) : null}
+                    <span className="absolute inset-x-0 bottom-0 p-1.5">
+                      <span className="tile-title line-clamp-3 text-caption leading-4">{b.name_he}</span>
+                    </span>
                   </button>
                 );
               })}

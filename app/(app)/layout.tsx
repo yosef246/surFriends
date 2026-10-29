@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { OfflineBanner } from "@/components/layout/OfflineBanner";
 import { TopBar } from "@/components/layout/TopBar";
@@ -20,6 +21,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <OfflineBanner />
       <main className="motion-page mx-auto w-full max-w-feed px-4 pt-2 pb-[calc(var(--spacing-bottomnav)+env(safe-area-inset-bottom)+5rem)]">
         {children}
+        <p className="mt-8 text-center text-caption text-muted-text">
+          <Link href="/credits" className="inline-flex min-h-touch items-center underline underline-offset-4">
+            קרדיט לתמונות החופים
+          </Link>
+        </p>
       </main>
       <BottomNav />
     </div>

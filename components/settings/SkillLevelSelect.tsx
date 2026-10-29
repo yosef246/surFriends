@@ -23,7 +23,7 @@ export function SkillLevelSelect({ value, onChange, disabled }: Props) {
 
   return (
     <div className="flex flex-col gap-2">
-      <span id="skill-label" className="text-body-sm font-medium text-ink">
+      <span id="skill-label" className="text-body-sm font-semibold text-ink">
         רמת גלישה (לא חובה)
       </span>
       <div role="radiogroup" aria-labelledby="skill-label" className="flex flex-wrap gap-2">
@@ -40,7 +40,7 @@ export function SkillLevelSelect({ value, onChange, disabled }: Props) {
             disabled={disabled}
             onClick={() => onChange(level)}
             onKeyDown={(e) => onKeyDown(e, i)}
-            className="bubble-chip h-11 rounded-full px-5 text-body-sm font-semibold disabled:opacity-50"
+            className="chip-coast min-h-touch disabled:opacity-50"
           >
             {value === level ? "✓ " : ""}
             {SKILL_LABELS[level]}
@@ -51,7 +51,7 @@ export function SkillLevelSelect({ value, onChange, disabled }: Props) {
             type="button"
             disabled={disabled}
             onClick={() => onChange(null)}
-            className="min-h-touch rounded-pill px-3 text-body-sm text-link-blue underline-offset-4 hover:underline"
+            className="min-h-touch rounded-pill px-3 text-body-sm text-brand underline-offset-4 hover:underline"
           >
             לא לציין
           </button>

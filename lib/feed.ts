@@ -158,7 +158,12 @@ const LIVE_WINDOW_MS = HERO_WINDOW_MS;
 
 export type HeroSummary = {
   recentCount: number;
-  latest: { created_at: string; beachName: string | null } | null;
+  latest: {
+    created_at: string;
+    beachName: string | null;
+    imagePath: string | null;
+    imageCredit: string | null;
+  } | null;
 };
 
 /** Reports in the last 2h (count) + the latest report overall. Two cheap parallel queries. */
@@ -171,7 +176,7 @@ export async function fetchHeroSummary(
     supabase.from("reports").select("id", { count: "exact", head: true }).gt("created_at", since),
     supabase
       .from("reports")
-      .select("created_at, beaches(name_he)")
+      .select("created_at, beaches(name_he, image_path, image_credit)")
       .gt("created_at", cutoff)
       .order("created_at", { ascending: false })
       .limit(1)
@@ -179,11 +184,18 @@ export async function fetchHeroSummary(
   ]);
   const row = latestRes.data as unknown as {
     created_at: string;
-    beaches: { name_he: string } | null;
+    beaches: { name_he: string; image_path: string | null; image_credit: string | null } | null;
   } | null;
   return {
     recentCount: countRes.count ?? 0,
-    latest: row?.created_at ? { created_at: row.created_at, beachName: row.beaches?.name_he ?? null } : null,
+    latest: row?.created_at
+      ? {
+          created_at: row.created_at,
+          beachName: row.beaches?.name_he ?? null,
+          imagePath: row.beaches?.image_path ?? null,
+          imageCredit: row.beaches?.image_credit ?? null,
+        }
+      : null,
   };
 }
 
@@ -233,4 +245,19 @@ export async function fetchBeachCircles(
     imagePath: r.image_path,
     imageCredit: r.image_credit,
   }));
+}
+
+/** Active (not yet expired) report count for one author: the profile stats row. */
+export async function countActiveReports(
+  supabase: SupabaseClient<Database>,
+  cutoff: string,
+  authorId: string
+): Promise<number> {
+  if (!UUID.test(authorId)) return 0;
+  const { count } = await supabase
+    .from("reports")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", authorId)
+    .gt("created_at", cutoff);
+  return count ?? 0;
 }

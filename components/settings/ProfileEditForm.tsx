@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Check, Loader2 } from "lucide-react";
 import { updateProfile } from "@/app/actions/profile";
 import { Button } from "@/components/ui/button";
+import { INPUT_CLASS } from "@/components/ui/field";
 import type { SkillLevel } from "@/lib/database.types";
 import { BIO_MAX, DISPLAY_NAME_MAX, profileTextLength, validateProfileInput } from "@/lib/profile";
 import { SkillLevelSelect } from "./SkillLevelSelect";
@@ -11,7 +12,7 @@ import { SkillLevelSelect } from "./SkillLevelSelect";
 type Initial = { display_name: string; skill_level: SkillLevel | null; bio: string | null };
 
 const INPUT =
-  "block min-h-12 w-full rounded-pill border-[1.5px] border-input bg-white/90 px-5 py-3 text-body text-copy shadow-card backdrop-blur-sm placeholder:text-muted-text focus:border-link-blue focus:ring-3 focus:ring-link/25 focus:outline-none aria-invalid:border-danger";
+  INPUT_CLASS;
 
 export function ProfileEditForm({ initial }: { initial: Initial }) {
   const [name, setName] = useState(initial.display_name);
@@ -80,7 +81,7 @@ export function ProfileEditForm({ initial }: { initial: Initial }) {
   return (
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
       <div className="flex flex-col gap-2">
-        <label htmlFor="profile-name" className="text-body-sm font-medium text-ink">
+        <label htmlFor="profile-name" className="text-body-sm font-semibold text-ink">
           שם
         </label>
         <input
@@ -111,7 +112,7 @@ export function ProfileEditForm({ initial }: { initial: Initial }) {
       <SkillLevelSelect value={skill} onChange={setSkill} disabled={pending} />
 
       <div className="flex flex-col gap-2">
-        <label htmlFor="profile-bio" className="text-body-sm font-medium text-ink">
+        <label htmlFor="profile-bio" className="text-body-sm font-semibold text-ink">
           כמה מילים עליכם (לא חובה)
         </label>
         <textarea
@@ -141,12 +142,12 @@ export function ProfileEditForm({ initial }: { initial: Initial }) {
       </div>
 
       {banner ? (
-        <p role="alert" className="rounded-lg border border-danger bg-white/90 p-3 text-body-sm text-danger">
+        <p role="alert" className="alert-coast text-body-sm">
           ⚠ {banner}
         </p>
       ) : null}
 
-      <Button type="submit" variant="ocean" size="lg" disabled={pending || !dirty} aria-busy={pending} className="w-full">
+      <Button type="submit" size="lg" disabled={pending || !dirty} aria-busy={pending} className="btn-primary w-full">
         {pending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
         {pending ? "שומרים..." : "שמירה"}
       </Button>

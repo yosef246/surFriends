@@ -3,28 +3,27 @@
 import { useId } from "react";
 
 import { WAVE_RATING_LABELS as LABELS } from "@/lib/reports";
+import { cn } from "@/lib/utils";
 
 type Props = { value: number | null; onChange: (v: number | null) => void };
 
-/** Mini wave whose crest grows with the rating. */
-function WaveGlyph({ n }: { n: number }) {
-  const crest = 22 - (3 + n * 3.4);
-  return (
-    <svg viewBox="0 0 24 24" className="size-7" aria-hidden>
-      <path d={`M1 22 C7 ${crest} 15 ${crest} 23 22 Z`} fill="currentColor" opacity={0.9} />
-    </svg>
-  );
-}
-
-/** Radiogroup 1-5 (optional: tapping the selected value clears it). Number + shape + label, not color-only. */
+/**
+ * Compact segmented control 1-5 (optional: tapping the selected value clears it).
+ * Number bars + word label under each segment, so it never relies on color alone.
+ */
 export function WaveRatingInput({ value, onChange }: Props) {
   const id = useId();
   return (
-    <div className="flex flex-col gap-1.5">
-      <span id={`${id}-label`} className="text-body-sm font-medium text-ink">
-        איך הגלים? (לא חובה)
+    <div className="flex flex-col gap-2">
+      <span id={`${id}-label`} className="section-title">
+        איך הגלים?{" "}
+        <span className="text-body-sm font-normal text-muted-text">(לא חובה)</span>
       </span>
-      <div role="radiogroup" aria-labelledby={`${id}-label`} className="grid grid-cols-5 gap-2">
+      <div
+        role="radiogroup"
+        aria-labelledby={`${id}-label`}
+        className="grid grid-cols-5 overflow-hidden rounded-lg border border-mist-border bg-white"
+      >
         {[1, 2, 3, 4, 5].map((n) => {
           const checked = value === n;
           return (
@@ -46,15 +45,19 @@ export function WaveRatingInput({ value, onChange }: Props) {
                 onChange(target);
                 (e.currentTarget.parentElement?.children[target - 1] as HTMLElement | undefined)?.focus();
               }}
-              className={`bubble-chip motion-press flex h-20 flex-col items-center justify-center gap-0.5 rounded-full px-1 text-center ${
-                checked ? "motion-pop-in" : ""
-              }`}
+              className={cn(
+                "flex h-11 min-w-0 flex-col items-center justify-center gap-1 border-s border-card-line px-0.5 text-ink transition-colors duration-(--dur-fast) first:border-s-0 hover:bg-brand-soft",
+                checked && "bg-brand-soft text-brand shadow-[inset_0_-2px_0_var(--color-brand)]"
+              )}
             >
-              <WaveGlyph n={n} />
-              <span aria-hidden className="numeral text-body-sm font-medium">
-                {n}
+              <span className="level-bar" data-level={n} aria-hidden>
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <i key={i} className="w-1.5!" />
+                ))}
               </span>
-              <span className="text-caption leading-none">{LABELS[n - 1]}{n === 5 ? " 🔥" : ""}</span>
+              <span aria-hidden className="truncate text-caption font-bold leading-none">
+                {LABELS[n - 1]}
+              </span>
             </button>
           );
         })}

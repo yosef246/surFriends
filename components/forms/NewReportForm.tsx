@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { INPUT_CLASS } from "@/components/ui/field";
+import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { createReport } from "@/app/actions/reports";
 import {
@@ -175,8 +177,8 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
   const section = (i: number) => ({ "--i": i }) as React.CSSProperties;
 
   return (
-    <form onSubmit={onSubmit} noValidate className="flex flex-col gap-6 pb-28">
-      <div className="motion-fade-up" style={section(0)}>
+    <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4 pb-28">
+      <div className="motion-fade-up card-coast" style={section(0)}>
         <BeachPicker
           beaches={beaches}
           value={beachId}
@@ -186,13 +188,13 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
         />
       </div>
 
-      <div className="motion-fade-up" style={section(1)}>
+      <div className="motion-fade-up card-coast" style={section(1)}>
         <WaveRatingInput value={rating} onChange={setRating} />
       </div>
 
-      <div className="motion-fade-up flex flex-col gap-2" style={section(2)}>
-        <label htmlFor="report-text" className="text-body-sm font-medium text-ink">
-          מה קורה בחוף?{rating !== null ? " (לא חובה)" : ""}
+      <div className="motion-fade-up card-coast flex flex-col gap-2.5" style={section(2)}>
+        <label htmlFor="report-text" className="section-title">
+          מה קורה בחוף?{rating !== null ? <span className="text-body-sm font-normal text-muted-text"> (לא חובה)</span> : null}
         </label>
         <textarea
           id="report-text"
@@ -203,7 +205,7 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
           onBlur={() => setTouched((s) => ({ ...s, text: true }))}
           aria-invalid={textError ? true : undefined}
           aria-describedby="report-text-meta"
-          className="block min-h-12 w-full resize-none rounded-pill border-[1.5px] border-input bg-white/90 px-5 py-3 text-body text-copy shadow-card backdrop-blur-sm placeholder:text-muted-text focus:border-link-blue focus:ring-3 focus:ring-link/25 focus:outline-none aria-invalid:border-danger"
+          className={cn(INPUT_CLASS, "resize-none")}
         />
         <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]" role="group" aria-label="טקסט מהיר">
           {QUICK_TEXTS.map((t) => (
@@ -211,7 +213,7 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
               key={t}
               type="button"
               onClick={() => addQuick(t)}
-              className="bubble-chip h-12 shrink-0 rounded-full px-5 text-body-sm font-semibold whitespace-nowrap"
+              className="chip-coast min-h-touch shrink-0"
             >
               {t}
             </button>
@@ -229,8 +231,8 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
         </div>
       </div>
 
-      <fieldset className="motion-fade-up flex flex-col gap-1.5" style={section(3)}>
-        <legend className="mb-1.5 text-body-sm font-medium text-ink">גובה גל (לא חובה)</legend>
+      <fieldset className="motion-fade-up card-coast flex flex-col gap-1.5" style={section(3)}>
+        <legend className="section-title mb-2">גובה גל <span className="text-body-sm font-normal text-muted-text">(לא חובה)</span></legend>
         <div className="flex flex-wrap gap-2">
           {WAVE_HEIGHTS.map((h) => (
             <button
@@ -238,7 +240,7 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
               type="button"
               aria-pressed={height === h}
               onClick={() => setHeight(height === h ? null : h)}
-              className="bubble-chip h-12 rounded-full px-5 text-body-sm font-semibold"
+              className="chip-coast min-h-touch"
             >
               {height === h ? "✓ " : ""}
               {h}
@@ -247,18 +249,18 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
         </div>
       </fieldset>
 
-      <div className="motion-fade-up" style={section(4)}>
+      <div className="motion-fade-up card-coast" style={section(4)}>
         <PhotoField onChange={setPhoto} onProcessing={setProcessing} uploading={stage === "uploading"} uploadError={photoError} disabled={busy} />
       </div>
 
-      <div className="glass-bar fixed inset-x-0 bottom-0 z-30 rounded-t-card px-4 pt-3 shadow-nav pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+      <div className="bar-coast fixed inset-x-0 bottom-0 z-30 border-t px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
         <div className="mx-auto flex w-full max-w-feed flex-col gap-2">
           {banner ? (
-            <p role="alert" className="rounded-lg border border-danger bg-white/90 p-3 text-body-sm text-danger">
+            <p role="alert" className="alert-coast text-body-sm">
               ⚠ {banner}
             </p>
           ) : null}
-          <Button type="submit" variant="ocean" size="lg" disabled={blocked} aria-busy={blocked} className="w-full">
+          <Button type="submit" size="lg" disabled={blocked} aria-busy={blocked} className="btn-gradient w-full">
             {blocked ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
             {label}
           </Button>

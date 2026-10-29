@@ -37,10 +37,10 @@ export function QuickReactionBar({ comingCount, onTheWayCount, myComing, myOnThe
   }
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-1">
       <div className="flex flex-wrap items-center gap-2" role="group" aria-label="תגובות מהירות">
         {isOwn ? (
-          <p className="text-body-sm text-muted-text">
+          <p className="text-label text-muted-text">
             {[comingCount > 0 ? `🤙 ${comingCount} באים` : null, onTheWayCount > 0 ? `🚗 ${onTheWayCount} בדרך` : null]
               .filter(Boolean)
               .join(" · ") || "עוד אין תגובות מהירות"}
@@ -55,14 +55,14 @@ export function QuickReactionBar({ comingCount, onTheWayCount, myComing, myOnThe
                 aria-pressed={pressed[kind]}
                 disabled={pending}
                 onClick={() => tap(kind)}
-                className="bubble-chip inline-flex min-h-touch items-center gap-1.5 rounded-full px-4 text-body-sm font-semibold whitespace-nowrap disabled:opacity-70"
+                className="chip-coast min-h-touch disabled:opacity-70"
               >
                 <span key={pops[kind]} aria-hidden className={cn(pops[kind] > 0 && pressed[kind] && "motion-pop-in")}>
                   {emoji}
                 </span>
                 <span>{label}</span>
                 {counts[kind] > 0 ? (
-                  <span className="font-mono text-data" aria-label={`${counts[kind]}`}>
+                  <span className="text-data tabular-nums" aria-label={`${counts[kind]}`}>
                     {counts[kind]}
                   </span>
                 ) : null}

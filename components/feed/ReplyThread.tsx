@@ -4,8 +4,9 @@ import { Send } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { deleteReply, replyToReport } from "@/app/actions/replies";
 import { UserAvatar } from "@/components/layout/UserAvatar";
-import { RelativeTime } from "@/components/shared/RelativeTime";
+import { RelativeAgo } from "@/components/shared/RelativeTime";
 import { buttonVariants } from "@/components/ui/button";
+import { formatClock, senderColor } from "@/lib/bubbles";
 import { subscribeReplyEvents } from "@/lib/realtime/reply-events";
 import {
   REACTION_LABEL,
@@ -19,6 +20,7 @@ import {
   validateReplyInput,
   type ReplyItem,
 } from "@/lib/replies";
+import { INPUT_CLASS } from "@/components/ui/field";
 import { textLength } from "@/lib/reports";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
@@ -141,23 +143,23 @@ export function ReplyThread({ reportId, panelId, me }: { reportId: string; panel
   const metaError = sendError ?? (tooLong ? `התגובה ארוכה מדי (עד ${REPLY_TEXT_MAX} תווים)` : null);
 
   return (
-    <div id={panelId} role="region" aria-label="תגובות" className="flex flex-col gap-3 border-t border-line pt-3">
+    <div id={panelId} role="region" aria-label="תגובות" className="flex flex-col gap-2.5 border-t border-card-line pt-2.5">
       {!loaded ? (
         <div aria-hidden className="flex flex-col gap-2">
-          <div className="skeleton h-10 w-2/3 rounded-2xl" />
-          <div className="skeleton h-10 w-1/2 rounded-2xl" />
+          <div className="skeleton h-9 w-2/3 rounded-xl" />
+          <div className="skeleton h-9 w-1/2 rounded-xl" />
         </div>
       ) : loadError && items.length === 0 ? (
         <p role="alert" className="text-body-sm text-danger">
           לא הצלחנו לטעון תגובות.{" "}
-          <button type="button" onClick={() => void load()} className="min-h-touch font-medium text-link underline">
+          <button type="button" onClick={() => void load()} className="min-h-touch font-semibold text-brand underline">
             נסו שוב
           </button>
         </p>
       ) : items.length === 0 ? (
         <p className="py-2 text-center text-body-sm text-muted-text">עוד אין תגובות. תהיו הראשונים 🤙</p>
       ) : (
-        <ul className="flex flex-col gap-3" aria-live="polite" aria-relevant="additions">
+        <ul className="flex flex-col gap-2" aria-live="polite" aria-relevant="additions">
           {items.map((r) => (
             <ReplyRow
               key={r.id}
@@ -174,7 +176,7 @@ export function ReplyThread({ reportId, panelId, me }: { reportId: string; panel
           e.preventDefault();
           if (canSend) void send();
         }}
-        className="flex items-end gap-2"
+        className="flex items-end gap-2 rounded-3xl bg-page p-1.5"
       >
         <div className="min-w-0 flex-1">
           <label htmlFor={`${panelId}-text`} className="sr-only">
@@ -196,14 +198,14 @@ export function ReplyThread({ reportId, panelId, me }: { reportId: string; panel
             }}
             aria-invalid={metaError ? true : undefined}
             aria-describedby={`${panelId}-meta`}
-            className="block min-h-12 w-full resize-none rounded-pill border-[1.5px] border-input bg-white/90 px-5 py-3 text-body text-copy shadow-card backdrop-blur-sm placeholder:text-muted-text focus:border-link-blue focus:ring-3 focus:ring-link/25 focus:outline-none aria-invalid:border-danger"
+            className={cn(INPUT_CLASS, "resize-none rounded-3xl px-4")}
           />
         </div>
         <button
           type="submit"
           disabled={!canSend}
           aria-label="שלחו תגובה"
-          className={cn(buttonVariants({ variant: "ocean", size: "icon" }))}
+          className={cn(buttonVariants({ variant: "ocean", size: "icon" }), "shrink-0 rounded-full")}
         >
           <Send aria-hidden className="rtl:-scale-x-100" />
         </button>
@@ -255,24 +257,36 @@ function ReplyRow({
   }
 
   return (
-    <li className={cn("motion-fade-up flex gap-2.5", (reply.pending || busy) && "opacity-60")}>
-      <UserAvatar name={name} src={reply.author?.avatar_url} className="size-8" />
-      <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center gap-x-2">
-          <span className="truncate text-body-sm font-medium text-ink">{name}</span>
-          {reply.pending ? (
-            <span className="text-caption text-muted-text">שולח...</span>
-          ) : (
-            <RelativeTime iso={reply.created_at} className="text-caption text-muted-text" />
-          )}
+    <li className={cn("motion-fade-up flex items-start gap-2", mine && "justify-end", (reply.pending || busy) && "opacity-60")}>
+      {!mine ? <UserAvatar name={name} src={reply.author?.avatar_url} className="size-7 text-caption" /> : null}
+      <div
+        data-own={mine ? "true" : undefined}
+        className="bubble-msg min-w-0 max-w-[85%] before:hidden"
+      >
+        {!mine ? (
+          <p data-c={senderColor(reply.user_id)} className="bubble-sender truncate">
+            {name}
+          </p>
+        ) : null}
+        {badge ? (
+          <span className="chip-link my-0.5 h-6 text-caption">
+            <span aria-hidden>{badge.emoji}</span>
+            {badge.label}
+          </span>
+        ) : null}
+        {reply.text ? <p className="text-body-sm break-words whitespace-pre-line text-copy">{reply.text}</p> : null}
+        <p role="alert" className="text-body-sm text-danger empty:hidden">
+          {error ? `⚠ ${error}` : null}
+        </p>
+        <div className="flex items-center justify-end gap-1">
           {mine && !reply.pending ? (
             confirming ? (
-              <span className="ms-auto flex items-center gap-1">
+              <span className="flex items-center">
                 <button
                   type="button"
                   disabled={busy}
                   onClick={() => void remove()}
-                  className="min-h-touch px-2 text-body-sm font-medium text-danger"
+                  className="min-h-touch px-2 text-label font-semibold text-danger"
                 >
                   מחקו
                 </button>
@@ -280,7 +294,7 @@ function ReplyRow({
                   type="button"
                   disabled={busy}
                   onClick={() => setConfirming(false)}
-                  className="min-h-touch px-2 text-body-sm text-muted-text"
+                  className="min-h-touch px-2 text-label text-muted-text"
                 >
                   ביטול
                 </button>
@@ -290,23 +304,21 @@ function ReplyRow({
                 type="button"
                 onClick={() => setConfirming(true)}
                 aria-label="מחקו את התגובה"
-                className="bubble-ghost ms-auto min-h-touch rounded-pill px-3 text-body-sm text-muted-text"
+                className="min-h-touch px-2 text-label text-muted-text underline-offset-2 hover:underline"
               >
                 מחיקה
               </button>
             )
           ) : null}
+          {reply.pending ? (
+            <span className="bubble-time">שולח...</span>
+          ) : (
+            <span className="bubble-time">
+              <time dateTime={reply.created_at}>{formatClock(reply.created_at)}</time>
+              <RelativeAgo iso={reply.created_at} prefix=" · " />
+            </span>
+          )}
         </div>
-        {badge ? (
-          <span className="bubble-chip mt-0.5 inline-flex items-center gap-1 rounded-full px-3 py-0.5 text-body-sm">
-            <span aria-hidden>{badge.emoji}</span>
-            {badge.label}
-          </span>
-        ) : null}
-        {reply.text ? <p className="mt-0.5 text-body break-words whitespace-pre-line text-copy">{reply.text}</p> : null}
-        <p role="alert" className="text-body-sm text-danger empty:hidden">
-          {error ? `⚠ ${error}` : null}
-        </p>
       </div>
     </li>
   );

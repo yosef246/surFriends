@@ -11,7 +11,7 @@ export function NewReportsPill({ count, onClick }: { count: number; onClick: () 
           type="button"
           onClick={onClick}
           className={cn(
-            "bubble-ocean motion-pop-in pointer-events-auto min-h-touch rounded-pill border px-5 text-body-sm font-medium"
+            "btn-primary shadow-raised motion-pop-in pointer-events-auto min-h-touch rounded-pill px-5 text-body-sm font-semibold"
           )}
         >
           {count === 1 ? "דיווח חדש ↑" : `${count} דיווחים חדשים ↑`}

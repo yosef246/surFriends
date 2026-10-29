@@ -91,7 +91,7 @@ export function NotificationsCard({ accountEnabled, favorites }: Props) {
   const on = env === "on";
 
   return (
-    <section aria-labelledby="notifications-heading" className="glass-card flex flex-col gap-4 rounded-card p-5">
+    <section aria-labelledby="notifications-heading" className="card-coast flex flex-col gap-4 p-5">
       <div className="flex items-center gap-4">
         <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-signature-soft text-ink ring-1 ring-line">
           {env === "denied" || env === "unsupported" ? (
@@ -101,7 +101,7 @@ export function NotificationsCard({ accountEnabled, favorites }: Props) {
           )}
         </span>
         <div className="min-w-0 flex-1">
-          <h2 id="notifications-heading" className="text-heading heading-tight font-display font-normal text-ink">
+          <h2 id="notifications-heading" className="section-title">
             התראות
           </h2>
           <p id="notifications-desc" className="mt-1 text-body-sm text-muted-text">
@@ -144,7 +144,7 @@ export function NotificationsCard({ accountEnabled, favorites }: Props) {
       )}
 
       {env === "off" && (
-        <Button variant="ocean" onClick={turnOn} disabled={busy} className="w-full">
+        <Button onClick={turnOn} disabled={busy} className="w-full">
           <Bell aria-hidden />
           הפעילו התראות
         </Button>

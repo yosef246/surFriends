@@ -61,7 +61,9 @@ export function PhotoField({ onChange, onProcessing, uploading, uploadError, dis
 
   return (
     <div className="flex flex-col gap-1.5">
-      <span className="text-body-sm font-medium text-ink">תמונה (לא חובה)</span>
+      <span className="section-title">
+        תמונה <span className="text-body-sm font-normal text-muted-text">(לא חובה)</span>
+      </span>
       <input
         ref={inputRef}
         id={id}
@@ -72,7 +74,7 @@ export function PhotoField({ onChange, onProcessing, uploading, uploadError, dis
         className="sr-only"
       />
       {preview ? (
-        <div className="motion-pop-in relative aspect-[4/3] w-full overflow-hidden rounded-card bg-surface shadow-card">
+        <div className="motion-pop-in relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-surface">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={preview}
@@ -84,13 +86,13 @@ export function PhotoField({ onChange, onProcessing, uploading, uploadError, dis
             onClick={clear}
             disabled={uploading || disabled}
             aria-label="הסירו תמונה"
-            className="bubble-glass motion-press absolute end-3 top-3 flex size-11 items-center justify-center rounded-full text-ink disabled:opacity-50"
+            className="motion-press absolute end-3 top-3 flex size-11 items-center justify-center rounded-full bg-white text-ink shadow-raised disabled:opacity-50"
           >
             <X className="size-5" aria-hidden />
           </button>
           <span
             role="status"
-            className="glass-card absolute start-3 bottom-3 flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-body-sm font-medium text-ink"
+            className="absolute start-3 bottom-3 flex items-center gap-1.5 rounded-pill bg-white px-3 py-1.5 text-body-sm font-semibold text-ink shadow-raised"
           >
             {uploading ? (
               <>
@@ -111,7 +113,7 @@ export function PhotoField({ onChange, onProcessing, uploading, uploadError, dis
       ) : (
         <label
           htmlFor={id}
-          className={`bubble-glass motion-press inline-flex min-h-12 w-fit cursor-pointer items-center gap-2 rounded-full px-5 text-body-sm font-semibold text-ink has-[:focus-visible]:outline-2 ${
+          className={`btn-secondary motion-press inline-flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-lg px-5 text-body-sm font-semibold has-[:focus-visible]:outline-2 ${
             disabled || processing ? "opacity-50" : ""
           }`}
         >

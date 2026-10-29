@@ -39,11 +39,11 @@ export default async function SettingsPage() {
         >
           <ArrowRight aria-hidden />
         </Link>
-        <h1 className="text-title heading-tight font-display font-normal text-ink">הגדרות</h1>
+        <h1 className="text-title font-bold text-ink">הגדרות</h1>
       </header>
 
-      <section aria-labelledby="edit-heading" className="glass-card flex flex-col gap-4 rounded-card p-5">
-        <h2 id="edit-heading" className="text-heading heading-tight font-display font-normal text-ink">
+      <section aria-labelledby="edit-heading" className="card-coast flex flex-col gap-4 p-5">
+        <h2 id="edit-heading" className="section-title">
           הפרופיל שלי
         </h2>
         <ProfileEditForm initial={initial} />

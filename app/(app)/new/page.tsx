@@ -29,14 +29,14 @@ export default async function NewReportPage({
         <Link
           href="/"
           aria-label="חזרה לפיד"
-          className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
+          className={buttonVariants({ variant: "ghost", size: "icon" })}
         >
           <ArrowRight className="size-5" aria-hidden />
         </Link>
         <div className="min-w-0">
           <p className="eyebrow">מה המצב בים? ספרו לכולם</p>
-          <h1 className="text-title heading-tight font-display font-normal text-gradient-sea">דיווח חדש</h1>
-          <p className="text-caption text-muted-text">הדיווח נעלם אחרי {REPORT_TTL_HOURS} שעות ⏳</p>
+          <h1 className="text-title font-bold text-ink">דיווח חדש</h1>
+          <p className="text-label text-muted-text">הדיווח נעלם אחרי {REPORT_TTL_HOURS} שעות</p>
         </div>
       </div>
       {error || !beaches?.length ? (

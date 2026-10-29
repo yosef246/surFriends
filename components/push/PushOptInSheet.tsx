@@ -49,7 +49,7 @@ export function PushOptInSheet({ onClose }: { onClose: () => void }) {
     <div
       role="dialog"
       aria-labelledby="push-optin-title"
-      className="glass-card fixed inset-x-4 bottom-24 z-50 mx-auto flex max-w-md flex-col gap-3 rounded-card p-4 shadow-card"
+      className="card-coast fixed inset-x-4 bottom-24 z-50 mx-auto flex max-w-md flex-col gap-3 rounded-card p-4 shadow-card"
     >
       <div className="flex items-start gap-3">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-signature-soft text-ink ring-1 ring-line">

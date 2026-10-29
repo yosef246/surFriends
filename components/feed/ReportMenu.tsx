@@ -68,7 +68,7 @@ export function ReportMenu({ reportId, onDeleted }: { reportId: string; onDelete
         <div
           id={menuId}
           role="menu"
-          className="glass-card motion-pop-in absolute end-0 top-full z-10 mt-1 min-w-40 rounded-2xl p-1"
+          className="card-coast shadow-raised motion-pop-in absolute end-0 top-full z-10 mt-1 min-w-40 p-1!"
         >
           <button
             type="button"

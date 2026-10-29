@@ -109,7 +109,7 @@ export function WaveChart({
 
   if (win.length < 2 || !hasWaves) {
     return (
-      <div className="glass-card rounded-card p-5 text-center text-body-sm text-muted-text" role="status">
+      <div className="card-coast p-5 text-center text-body-sm text-muted-text" role="status">
         גרף הגלים לא זמין כרגע
       </div>
     );
@@ -174,7 +174,7 @@ export function WaveChart({
   const windColor = (h: WindHint | null) => (h === "offshore" ? WIND_CLASS.offshore : WIND_CLASS.other);
 
   return (
-    <figure aria-labelledby={captionId} className="glass-card flex flex-col gap-3 rounded-card p-4">
+    <figure aria-labelledby={captionId} className="card-coast flex flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div role="group" aria-label="טווח זמן" className="flex gap-2">
           {(
@@ -191,7 +191,7 @@ export function WaveChart({
                 setRange(v);
                 setSel(null);
               }}
-              className="bubble-chip min-h-touch rounded-full px-4 text-body-sm font-semibold"
+              className="chip-coast min-h-touch"
             >
               {label}
             </button>
@@ -376,7 +376,7 @@ export function WaveChart({
         {selPoint ? (
           <div
             dir="rtl"
-            className="glass-card pointer-events-none absolute top-0 z-10 flex w-max max-w-[min(15rem,90%)] flex-col gap-0.5 rounded-xl px-3 py-2 text-caption text-copy"
+            className="card-coast pointer-events-none absolute top-0 z-10 flex w-max max-w-[min(15rem,90%)] flex-col gap-0.5 rounded-xl px-3! py-2! text-caption text-copy shadow-raised"
             style={{ left: Math.min(Math.max(selX, 80), width - 80), transform: "translateX(-50%)" }}
           >
             <span className="font-semibold text-ink">

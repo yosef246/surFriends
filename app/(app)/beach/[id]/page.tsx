@@ -2,12 +2,14 @@ import { cache } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronLeft } from "lucide-react";
 import { ForecastSummary } from "@/components/forecast/ForecastSummary";
 import { WaveChart } from "@/components/forecast/WaveChart";
 import { ReportList } from "@/components/feed/ReportList";
 import { Mascot } from "@/components/mascot";
 import { FavoriteToggle } from "@/components/shared/FavoriteToggle";
+import { PhotoHero } from "@/components/shared/PhotoHero";
+import { RelativeAgo } from "@/components/shared/RelativeTime";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { buttonVariants } from "@/components/ui/button";
 import { DEFAULT_DISPLAY_NAME } from "@/lib/profile";
@@ -59,35 +61,55 @@ export default async function BeachPage({ params }: { params: Promise<{ id: stri
   const avatarUrl = profile?.avatar_url ?? (user?.user_metadata?.avatar_url as string | undefined) ?? null;
 
   return (
-    <div className="flex flex-col gap-5">
-      <header className="flex flex-col gap-3">
-        <div className="flex items-center gap-2">
+    <div className="flex flex-col gap-6">
+      <PhotoHero
+        priority
+        imagePath={beach.image_path}
+        imageCredit={beach.image_credit}
+        eyebrow={
+          <nav aria-label="נתיב" className="flex items-center gap-1">
+            <Link href="/" className="py-1">
+              חופים
+            </Link>
+            <ChevronLeft className="size-3.5" aria-hidden />
+            <span aria-current="page">{beach.city}</span>
+          </nav>
+        }
+        title={<h1>{beach.name_he}</h1>}
+        topStart={
           <Link
             href="/"
             aria-label="חזרה לפיד"
-            className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "-ms-2 size-touch shrink-0")}
+            className="motion-press flex size-11 items-center justify-center rounded-full bg-white text-ink shadow-raised"
           >
-            <ArrowRight aria-hidden />
+            <ArrowRight className="size-5" aria-hidden />
           </Link>
-          <div className="min-w-0 flex-1">
-            <p className="eyebrow">
-              {beach.city} · {beach.region}
-            </p>
-            <h1 className="text-display heading-tight font-display font-normal text-gradient-sea">{beach.name_he}</h1>
-          </div>
-          {userId ? (
+        }
+        topEnd={
+          userId ? (
             <FavoriteToggle beachId={beach.id} beachName={beach.name_he} initialFavorite={isFavorite} />
-          ) : null}
-        </div>
-        {beach.difficulty ? (
-          <p>
-            <span className="inline-flex h-7 items-center rounded-pill bg-signature-soft px-3 text-body-sm font-medium text-ink ring-1 ring-line">
-              רמת קושי: {DIFFICULTY_LABELS[beach.difficulty]}
-            </span>
-          </p>
+          ) : null
+        }
+      >
+        {forecastRes.ok ? (
+          <RelativeAgo
+            iso={forecastRes.forecast.fetchedAt}
+            prefix="עודכן "
+            className="text-label font-semibold text-coral-on-photo"
+          />
         ) : null}
-        {beach.description ? <p className="text-body-sm text-copy prose-he">{beach.description}</p> : null}
-      </header>
+      </PhotoHero>
+
+      {beach.difficulty || beach.description ? (
+        <section className="card-coast flex flex-col gap-2" aria-label="על החוף">
+          {beach.difficulty ? (
+            <p>
+              <span className="chip-link">רמת קושי: {DIFFICULTY_LABELS[beach.difficulty]}</span>
+            </p>
+          ) : null}
+          {beach.description ? <p className="text-body-sm text-copy prose-he">{beach.description}</p> : null}
+        </section>
+      ) : null}
 
       {forecastRes.ok ? (
         <>
@@ -99,10 +121,10 @@ export default async function BeachPage({ params }: { params: Promise<{ id: stri
           />
         </>
       ) : (
-        <section className="glass-card flex items-center gap-4 rounded-card p-5" role="status">
+        <section className="card-coast flex items-center gap-4 p-5" role="status">
           <Mascot.Oops size={96} />
           <div>
-            <p className="text-heading heading-tight font-display font-normal text-ink">תחזית לא זמינה כרגע</p>
+            <p className="text-heading font-bold text-ink">תחזית לא זמינה כרגע</p>
             <p className="mt-1 text-body-sm text-muted-text">הדיווחים מהחוף ממשיכים לעבוד כרגיל</p>
           </div>
         </section>
@@ -116,9 +138,8 @@ export default async function BeachPage({ params }: { params: Promise<{ id: stri
         beachId={beachId}
         heading={
           <>
-            <p className="eyebrow eyebrow-coral">מהחוף · עכשיו</p>
-            <h2 className="text-title heading-tight font-display font-normal text-ink">דיווחים מהחוף</h2>
-            <p className="mt-1 text-caption text-muted-text">דיווחים נעלמים אחרי {REPORT_TTL_HOURS} שעות ⏳</p>
+            <h2 className="section-title">דיווחים מהחוף</h2>
+            <p className="text-label text-muted-text">דיווחים נעלמים אחרי {REPORT_TTL_HOURS} שעות</p>
           </>
         }
         emptyState={

@@ -44,9 +44,9 @@ export function ConfirmDialog({
       onClick={(e) => {
         if (e.target === ref.current && !busy) onCancel(); // backdrop click
       }}
-      className="glass-card bubble-post m-auto w-[min(92vw,24rem)] p-6 text-copy backdrop:bg-abyss/50"
+      className="card-coast m-auto w-[min(92vw,24rem)] p-6 text-copy backdrop:bg-abyss/50"
     >
-      <h2 id="confirm-title" className="font-display text-heading font-normal text-ink">
+      <h2 id="confirm-title" className="text-heading font-bold text-ink">
         {title}
       </h2>
       <p id="confirm-desc" className="mt-2 text-body text-copy">

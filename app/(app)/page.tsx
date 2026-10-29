@@ -1,12 +1,12 @@
 import { Suspense } from "react";
-import { BeachCircleRow } from "@/components/feed/BeachCircleRow";
+import { BeachSlider } from "@/components/feed/BeachSlider";
+import { FeedGreeting, greetingFor } from "@/components/feed/FeedGreeting";
 import { HeroSummary } from "@/components/feed/HeroSummary";
 import { PostedNotice } from "@/components/feed/PostedNotice";
 import { ReportList } from "@/components/feed/ReportList";
-import { FeedHeader, greetingFor } from "@/components/layout/FeedHeader";
 import { fetchBeachCircles, fetchHeroSummary, fetchReports } from "@/lib/feed";
 import { DEFAULT_DISPLAY_NAME, firstNameOf } from "@/lib/profile";
-import { REPORT_TTL_HOURS, reportCutoffIso } from "@/lib/reports";
+import { reportCutoffIso } from "@/lib/reports";
 import { getCurrentProfile, getCurrentUser, getSupabase } from "@/lib/auth";
 
 export default async function FeedPage() {
@@ -30,30 +30,19 @@ export default async function FeedPage() {
   const firstName = firstNameOf(displayName);
 
   return (
-    <div className="flex flex-col gap-5">
-      <FeedHeader
-        greeting={greetingFor()}
-        firstName={firstName}
-        displayName={displayName}
-        avatarUrl={avatarUrl}
-      />
+    <div className="flex flex-col gap-6">
+      <FeedGreeting greeting={greetingFor()} firstName={firstName} />
       <Suspense fallback={null}>
         <PostedNotice />
       </Suspense>
       <HeroSummary summary={summary} />
-      <BeachCircleRow beaches={beaches} />
+      <BeachSlider beaches={beaches} />
       <ReportList
         initialReports={reports}
         currentUserId={userId}
         currentUserName={displayName}
         currentUserAvatar={avatarUrl}
-        heading={
-          <>
-            <p className="eyebrow eyebrow-coral">חופי ישראל · עכשיו</p>
-            <h2 className="text-title heading-tight font-display font-normal text-ink">דיווחים אחרונים</h2>
-            <p className="mt-1 text-caption text-muted-text">דיווחים נעלמים אחרי {REPORT_TTL_HOURS} שעות ⏳</p>
-          </>
-        }
+        heading={<h2 className="section-title">דיווחים אחרונים</h2>}
       />
     </div>
   );

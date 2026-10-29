@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { Mascot } from "@/components/mascot";
-import { WaveStrip } from "@/components/shared/WaveStrip";
+import { DEFAULT_BEACH_PHOTO } from "@/lib/beach-photo";
 import { SPLASH_FADE_MS, splashDismissDelay } from "@/lib/splash";
 
 export const SPLASH_FLAG = "sf_splash_seen";
@@ -56,16 +57,18 @@ export function Splash({ ready }: { ready: boolean }) {
       aria-label="טוען את surFriends"
       inert={phase === "fading"}
       style={{ transitionDuration: `${SPLASH_FADE_MS}ms` }}
-      className={`fixed inset-0 z-[100] overflow-hidden bg-sea-page transition-opacity ease-out ${
+      className={`fixed inset-0 z-[100] overflow-hidden bg-ocean-deep transition-opacity ease-out ${
         phase === "fading" ? "opacity-0" : "opacity-100"
       }`}
     >
-      <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-sm flex-col items-center justify-center gap-3 px-6 py-10 text-center text-foreground">
-        <Mascot.Wave size={180} className="motion-float" />
-        <p className="text-display heading-tight font-display font-normal text-gradient-sea">surFriends</p>
-        <p className="text-body text-muted-text">קהילת הגולשים של ישראל</p>
+      <Image src={DEFAULT_BEACH_PHOTO.path} alt="" fill priority sizes="100vw" className="object-cover" />
+      <div className="photo-overlay" aria-hidden />
+      <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-sm flex-col items-center justify-end gap-3 px-6 pt-10 pb-24 text-center text-white">
+        <Mascot.Wave size={96} />
+        <p className="font-display text-hero font-normal text-white drop-shadow">surFriends</p>
+        <p className="eyebrow eyebrow-light">קהילת הגולשים של ישראל</p>
       </div>
-      <WaveStrip tone="light" className="h-24" />
+      <span className="credit">© {DEFAULT_BEACH_PHOTO.credit} · CC</span>
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { toggleReaction } from "@/app/actions/replies";
 import { loadMoreReports } from "@/app/(app)/feed-actions";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { buttonVariants } from "@/components/ui/button";
+import { groupWithPrevious } from "@/lib/bubbles";
 import { fetchReportById, fetchReports, FEED_PAGE_SIZE, type FeedReport } from "@/lib/feed";
 import {
   addIncoming,
@@ -29,7 +30,7 @@ import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import { LiveDot } from "./LiveDot";
 import { NewReportsPill } from "./NewReportsPill";
-import { ReportCard } from "./ReportCard";
+import { StatusBubble } from "./StatusBubble";
 
 const NEAR_TOP_PX = 120;
 const LEAVE_MS = 220;
@@ -196,6 +197,7 @@ export function ReportList({
     return err;
   }, []);
 
+  const grouped = groupWithPrevious(reports);
   const me = { id: currentUserId, name: currentUserName, avatarUrl: currentUserAvatar };
 
   const status = useFeedRealtime({ onReportInsert, onReportDelete, onReplyInsert, onReplyDelete, onResync: resync });
@@ -227,7 +229,7 @@ export function ReportList({
 
   const top = (
     <>
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">{heading}</div>
         <LiveDot status={status} />
       </div>
@@ -247,7 +249,7 @@ export function ReportList({
         {top}
         {emptyState ?? (
           <EmptyState title="עדיין שקט בים" description="היו הראשונים לספר מה קורה בחוף">
-            <Link href="/new" className={cn(buttonVariants(), "min-h-touch")}>
+            <Link href="/new" className={cn(buttonVariants(), "btn-primary min-h-touch")}>
               היה הראשון לדווח
             </Link>
           </EmptyState>
@@ -260,14 +262,14 @@ export function ReportList({
     <div className="flex flex-col gap-4">
       {top}
       {beachId == null && authorId == null ? <h1 className="sr-only">פיד דיווחים</h1> : null}
-      <ul className="flex flex-col gap-5 px-1 py-1" aria-busy={pending}>
+      <ul className="flex flex-col py-1" aria-busy={pending}>
         {reports.map((r, i) => (
           <li
             key={r.id}
-            className={leaving.has(r.id) ? "animate-card-out" : "motion-fade-up"}
+            className={cn(leaving.has(r.id) ? "animate-card-out" : "motion-fade-up", i > 0 && (grouped[i] ? "mt-0.5" : "mt-3"))}
             style={{ "--i": Math.min(i, 8) } as React.CSSProperties}
           >
-            <ReportCard report={r} me={me} onToggleReaction={onToggleReaction} onDeleted={onReportDelete} />
+            <StatusBubble report={r} me={me} grouped={grouped[i]} onToggleReaction={onToggleReaction} onDeleted={onReportDelete} />
           </li>
         ))}
       </ul>
@@ -283,7 +285,7 @@ export function ReportList({
           type="button"
           onClick={loadMore}
           disabled={pending}
-          className={cn(buttonVariants({ variant: "secondary" }), "min-h-touch self-center")}
+          className={cn(buttonVariants({ variant: "secondary" }), "btn-secondary min-h-touch self-center")}
         >
           {pending ? "טוענים..." : "טען עוד"}
         </button>

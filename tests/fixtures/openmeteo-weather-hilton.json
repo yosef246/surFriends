@@ -1,0 +1,47 @@
+{
+ "latitude": 32.09859,
+ "longitude": 34.83018,
+ "utc_offset_seconds": 7200,
+ "timezone": "Asia/Jerusalem",
+ "timezone_abbreviation": "GMT+2",
+ "hourly_units": {
+  "time": "iso8601",
+  "wind_speed_10m": "km/h",
+  "wind_direction_10m": "°",
+  "wind_gusts_10m": "km/h"
+ },
+ "hourly": {
+  "time": [
+   "2026-10-29T10:00",
+   "2026-10-29T11:00",
+   "2026-10-29T12:00",
+   "2026-10-29T13:00",
+   "2026-10-29T14:00",
+   "2026-10-29T15:00"
+  ],
+  "wind_speed_10m": [
+   15.8,
+   17.6,
+   20,
+   21.1,
+   19.5,
+   16.6
+  ],
+  "wind_direction_10m": [
+   223,
+   227,
+   232,
+   243,
+   242,
+   248
+  ],
+  "wind_gusts_10m": [
+   38.2,
+   42.5,
+   47.5,
+   50,
+   50,
+   46.8
+  ]
+ }
+}

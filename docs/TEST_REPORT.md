@@ -216,3 +216,157 @@
 - [ ] הרצת `supabase/dev/sample_reports.sql` ובדיקת דפדוף על פני גבול עמוד (BUG-002).
 - [ ] התנתקות ב-`/settings`: חזרה ל-`/login`, ו-Back אינו חושף את הפיד.
 - [ ] `/login?next=https://evil.com` ו-`/login?next=//evil.com` מתחברים ונוחתים ב-`/`.
+
+
+---
+
+## Day 13 — QA מלא (סקירת קוד)
+
+תאריך: 2026-10-29, commit בסיס ef7152b. היקף: סקירת קוד סטטית (app, components, lib, middleware, next.config, public/sw.js, כל המיגרציות). לא הורצו שרת, build, lint או Lighthouse. הורצו רק `node --test tests/*.test.ts` ו-`pnpm exec tsc --noEmit`.
+
+Lighthouse: ימולא ע"י ראש הצוות
+
+### סיכום
+
+| חומרה | כמות | מזהים |
+|---|---|---|
+| critical | 0 | |
+| high | 1 | BUG-019 |
+| medium | 2 | BUG-020, BUG-021 |
+| low | 7 | BUG-022 עד BUG-028 |
+
+בדיקות: `node --test tests/*.test.ts`: 102 בדיקות, 101 עברו, 0 נכשלו, 1 `todo` (BUG-019, נכשל בכוונה עד שהמיגרציה תיכתב). `tsc --noEmit`: נקי. נוסף `tests/security-static.test.ts` (סריקה סטטית: service role רק ב-admin.ts, כל server action בודק session, נתיבי CRON_SECRET עם `timingSafeEqual` ו-fail closed, SW same-origin).
+
+### טבלת Guards (כל ה-server actions וה-route handlers)
+
+| שם | Guard |
+|---|---|
+| `signOut` (app/(app)/actions.ts) | אין בדיקה (מכוון: מנקה session). Server Action, Origin check של Next |
+| `loadMoreReports` | `getCurrentUser()`; cursor/beachId/authorId מאומתים |
+| `createReport` | `getCurrentUser()` + `validateReportInput` + RLS + טריגר rate limit |
+| `deleteReport` | `getCurrentUser()` + `.eq(user_id)` + RLS |
+| `replyToReport`, `toggleReaction`, `deleteReply` | `getCurrentUser()` (אחרי ולידציה) + RLS + `.eq(user_id)` |
+| `updateProfile` | `getCurrentUser()`, עמודות מוגבלות (GRANT עמודות) |
+| `toggleFavoriteBeach` | `getCurrentUser()` + RLS |
+| `subscribeToPush` | `getCurrentUser()` + `validateSubscription` (allowlist) + admin upsert עם user.id מה-session |
+| `unsubscribeFromPush` | `getCurrentUser()` + `.eq(user_id)` + RLS |
+| `setPushEnabled`, `sendTestPushAction` | `getCurrentUser()`; בדיקת push מוגבלת לפעם בדקה (push_log) |
+| `GET /api/cron/purge-images` | `CRON_SECRET` Bearer, sha256 + `timingSafeEqual`, 500 אם הסוד חסר (fail closed) |
+| `POST /api/push/send` | כנ"ל + ולידציית גוף |
+| `POST /api/push/resubscribe` | session cookie (middleware + `getCurrentUser()`), `validateSubscription` |
+| `GET /api/forecast/[beachId]` | ציבורי במכוון, `parseBeachId` + קיום חוף + cache |
+| `GET /callback` | ציבורי במכוון, `safeNextPath` + origin קבוע |
+| `GET /pwa-icon/[size]` | ציבורי במכוון, allowlist של גדלים |
+| `app/manifest.ts`, `icon`, `apple-icon` | סטטיים וציבוריים |
+
+### מה נבדק ונמצא תקין
+
+- Service role: רק `createAdminClient()` ב-`lib/supabase/admin.ts` (`server-only`), בשימוש ב-`lib/push-send.ts` (server-only) וב-route ה-cron. אין שימוש בצד לקוח. `.env.local` לא במעקב git.
+- SW `notificationclick`: `safeUrl` ממיר ל-URL מול `self.location.origin` ומחזיר `/` אם ה-origin שונה (`//evil.com`, `javascript:` נחסמים). אין open redirect.
+- `push_log`: RLS פעיל, אפס policies, `REVOKE ALL` מ-anon/authenticated. תקין.
+- `push_subscriptions` UPDATE: policy עם `USING` ו-`WITH CHECK`, ובנוסף GRANT עמודות (`p256dh, auth, user_agent` בלבד), כך שאי אפשר להעביר בעלות או לשנות endpoint.
+- פונקציות SECURITY DEFINER (`handle_new_user`, `purge_expired_reports`, `expired_report_image_paths`, `purge_old_push_log`): כולן `SET search_path = ''` ו-`REVOKE` מ-PUBLIC/anon/authenticated (הערות ב-BUG-026).
+- Allowlist של endpoint (`isAllowedPushEndpoint`): https בלבד, בלי user/password/port, host = סיומת של FCM/Mozilla/Apple/Windows. תקין ברמת האפליקציה, אך נעקף ב-DB (BUG-019).
+- Headers: nosniff, Referrer-Policy, X-Frame-Options DENY, `frame-ancestors 'none'`, Permissions-Policy; `/sw.js` ללא cache. אין CSP לסקריפטים (החלטה מתועדת).
+- אין XSS (`dangerouslySetInnerHTML` לא קיים). ערכי cursor/beachId/authorId מאומתים לפני שילוב ב-`.or()`/`.eq()`.
+- 404: `/beach/999` ו-`/profile/not-a-uuid` מגיעים ל-`notFound()` (`parseBeachId`/`isUuid`), אך המסך עצמו ברירת מחדל (BUG-021).
+- Realtime: סינון `beachId`/`authorId` בהכנסה מה-payload, dedupe לפי id, resync בחיבור מחדש. TTL: חיתוך שרת (`reportCutoffIso`) ולקוח (`dropExpired` כל דקה) תואמים, בכפוף ל-BUG-027.
+- `createReport` → `after()`: רק אחרי insert טרי (נתיב 23505 חוזר מוקדם), `notifyFavoriteUsers` עטוף ב-try/catch ולא זורק. Cooldown: 30 דקות לכל משתמש+חוף מ-`push_log`.
+- `lib/database.types.ts` מול כל המיגרציות: תואם (עמודות, nullability, `push_log`, `push_enabled`, 3 הפונקציות).
+- RTL: grep ל-`ml-/mr-/pl-/pr-/left-/right-/text-left/text-right/rounded-l/r/border-l/r` מחוץ ל-`components/forecast`: אפס תוצאות. Reduced motion: בלוק גלובלי (`*` עם 0.01ms ו-iteration 1) + כיבוי מפורש לכל ה-utilities. `interactiveWidget: "resizes-content"` קיים. `Asia/Jerusalem` ב-greeting, RelativeTime ו-chart.
+
+### ממצאים חדשים
+
+### BUG-019 | high | מדיניות INSERT על `push_subscriptions` עוקפת את ה-allowlist של SSRF
+- **קבצים:** `supabase/migrations/20261028000000_init_schema.sql:162` (policy "Users add own push subscriptions"), מול `lib/push.ts:107` ו-`lib/push-send.ts` (`deliver`).
+- **תרחיש:** משתמש מחובר שולח `POST /rest/v1/push_subscriptions` עם ה-JWT שלו ו-`endpoint` שרירותי (https, כל host ופורט) ומפתחות base64 תקינים. ה-RLS מאפשר (נבדק רק `user_id = auth.uid()`, אין CHECK על endpoint). אחר כך `sendTestPushAction` (פעם בדקה) או דיווח בחוף מועדף גורם לשרת לשלוח POST ל-URL הזה. זה SSRF עיוור, עם oracle בוליאני (`sent` מוחזר ללקוח). גם מגבלת 10 המכשירים נעקפת. `DAY12_PUSH.md` מניח שה-allowlist הוא ההגנה.
+- **תיקון:** מיגרציה: `DROP POLICY "Users add own push subscriptions" ON public.push_subscriptions; REVOKE INSERT ON public.push_subscriptions FROM anon, authenticated;` (הכתיבה נעשית ממילא דרך admin). אופציונלי: CHECK על ה-host של endpoint. אחר כך להסיר את ה-`todo` ב-`tests/security-static.test.ts`.
+
+### BUG-020 | medium | כשל רשת בקריאת server action לא נתפס ב-4 מקומות
+- **קבצים:** `components/feed/ReportList.tsx:213-221` (`loadMore`), `components/feed/ReportMenu.tsx:38-48` (`doDelete`), `components/feed/ReplyThread.tsx:122` (`replyToReport`), `components/feed/ReplyThread.tsx:238` (`deleteReply`).
+- **תרחיש:** מצב טיסה או רשת נופלת. ב-`startTransition(async ...)` חריגה נזרקת ל-error boundary ב-React 19: "טען עוד" או "מחקו" מפילים את כל העמוד ל-`error.tsx`. ב-`ReplyThread` התגובה האופטימית נשארת `pending` לנצח בלי הודעה, ובמחיקת תגובה `busy` נתקע על true והכפתור מת.
+- **תיקון:** `try/catch` סביב כל קריאה, הודעת שגיאה מקומית ו-rollback (כמו ב-`ProfileEditForm` וב-`FavoriteToggle`).
+
+### BUG-021 | medium | אין `not-found.tsx` ואין `global-error.tsx`
+- **קבצים:** `app/` (חסרים), `app/(app)/error.tsx`.
+- **תרחיש:** `/beach/999`, `/profile/not-a-uuid` או כל נתיב לא קיים מציגים את דף ה-404 האנגלי של Next בלי RTL, בלי ניווט ובלי מסקוט. שגיאה בשכבת root לא מכוסה בכלל.
+- **תיקון:** `app/not-found.tsx` (עברית, `Mascot.Oops`, קישור לפיד) ו-`app/global-error.tsx` מינימלי.
+
+### BUG-022 | low | נתיב ה-push: אין `maxDuration`, וה-cooldown לא אטומי
+- **קבצים:** `lib/push-send.ts:392-397` (`push_log` נכתב רק אחרי כל השליחות), `app/actions/reports.ts:71`, `lib/push-send.ts:411-423`.
+- **תרחיש:** `after()` רץ תחת ה-timeout של ה-action. אם הפונקציה נחתכת באמצע שליחה (הרבה מנויים, endpoint איטי עד 10 שניות), `push_log` לא נכתב וההתראה תישלח שוב בדיווח הבא. שני דיווחים או שתי בדיקות push במקביל עוברים את בדיקת ה-cooldown (מתועד חלקית ב-DAY12).
+- **תיקון:** `export const maxDuration = 30` ב-route שמארח את ה-action, וכתיבת `push_log` לפני השליחה.
+
+### BUG-023 | low | a11y: מזהים כפולים ב-`ConfirmDialog`
+- **קובץ:** `components/shared/ConfirmDialog.tsx:38-52` (`confirm-title`, `confirm-desc` קבועים).
+- **תרחיש:** כל כרטיס בבעלות המשתמש מרנדר `ReportMenu` עם `<dialog>` סגור, ולכן בפרופיל עם 2+ דיווחים יש id כפול (axe `duplicate-id-aria`).
+- **תיקון:** `useId()`. נקודה חיובית: `<dialog>` נטיבי נותן focus trap ו-Escape, והפוקוס הראשוני על "ביטול".
+
+### BUG-024 | low | a11y: `PushOptInSheet` ו-`ReportMenu`
+- **קבצים:** `components/push/PushOptInSheet.tsx:126-131`, `components/feed/ReportMenu.tsx:66-85`.
+- **תרחיש:** ה-sheet הוא `role="dialog"` בלי העברת פוקוס, בלי Escape; משתמש מקלדת/קורא מסך לא יודע שהוא הופיע, והוא נסגר אוטומטית אחרי 2.5 שניות בהצלחה. ב-`ReportMenu` יש `role="menu"` בלי ניווט חצים.
+- **תיקון:** להעביר פוקוס ל"כן, הפעילו" ולהוסיף Escape, או `role="region"` עם `aria-live`.
+
+### BUG-025 | low | מטרות מגע קטנות מ-44px
+- **קבצים:** `components/settings/NotificationsCard.tsx:116-120` (מתג 28x48), `components/ui/button.tsx` (`sm`=40px, `xs`/`icon-xs`=32px), כפתורי הטקסט "חידוש" / "השהיה בכל המכשירים" (`NotificationsCard.tsx:157,163`).
+- **תיקון:** `min-h-touch` או עוטף שקוף של 44px.
+
+### BUG-026 | low | היגיינת DB קטנה
+- **קבצים:** `20261029010000_day7_hardening.sql:58-59` (`guard_*_insert` מבוטלות רק מ-PUBLIC/anon, לא מ-authenticated; פונקציות trigger אינן ניתנות לקריאה ישירה, ולכן אין ניצול), `20261029050000_push.sql:53` + `app/api/cron/purge-images/route.ts:46` (אין GRANT מפורש ל-service_role ל-`purge_old_push_log`, והקריאה לא בודקת שגיאה, כך שכשל נבלע), `profiles` SELECT פתוח לכולם כולל `push_enabled` (מי מפעיל התראות).
+- **תיקון:** `REVOKE ... FROM authenticated` ו-`GRANT EXECUTE ... TO service_role` מפורש; לבדוק `error` של ה-RPC; לשקול הסתרת `push_enabled`.
+
+### BUG-027 | low | אזורי זמן ושעוני לקוח
+- **קבצים:** `components/profile/ProfileHeader.tsx:9` (`toLocaleDateString("he-IL")` בלי `timeZone`; ב-server UTC תאריך הצטרפות בגבול חודש עלול לצאת חודש אחר), `components/feed/ReportList.tsx:115,151,205` (חיתוך ה-TTL בשאילתות הלקוח לפי שעון המכשיר).
+- **תרחיש:** מכשיר עם שעון מוקדם ביותר מ-12 שעות מציג דיווחים שפג תוקפם; שעון מאוחר מסתיר דיווחים חדשים ב-realtime.
+- **תיקון:** `timeZone: "Asia/Jerusalem"`; להעביר cutoff מהשרת.
+
+### BUG-028 | low | ליטוש ו-PWA
+- **קבצים:** `app/(app)/error.tsx:9` (הטקסט "לא הצלחנו לטעון את הפיד" מוצג גם ב-/new, /settings, /profile), `next.config.ts:14` (`geolocation=(self)` ללא שימוש בקוד; מומלץ `geolocation=()`), `app/layout.tsx` (אין `viewportFit: "cover"`, ולכן `env(safe-area-inset-*)` יהיה 0 ב-iOS standalone; בטוח אך לא edge-to-edge), `app/manifest.ts` (אייקון maskable זהה ל-any, עלול להיחתך).
+- **תיקון:** כותרת שגיאה כללית, צמצום Permissions-Policy, אייקון maskable עם safe zone.
+
+### סטטוס 4 הבאגים הנדחים
+
+| באג | סטטוס | חומרה מעודכנת | הערה |
+|---|---|---|---|
+| BUG-007 | עדיין קיים | low | `fetchHeroSummary` לא בודק `error` (`lib/feed.ts:170-187`), `fetchBeachCircles` מחזיר `[]` (`:215`), וכן `fetchFavoriteBeaches` (`lib/profile-data.ts:36`) ו-`getProfileById` (שגיאת DB מוצגת כ-404). אחרי השקה. |
+| BUG-010 | נסגר (מטופל) | closed | `expired_report_image_paths` מוחק כל אובייקט בגיל 12 שעות ומעלה ב-bucket, ולכן יתומים נמחקים (עד ~36 שעות כי ה-cron יומי). |
+| BUG-014 | עדיין קיים | low | אין פוקוס לשדה שגוי ב-`NewReportForm` (יש `role="alert"`, ולכן מוקרא); אין `h1` במצב פיד ריק (`ReportList.tsx:240-253`); `OfflineBanner` נוצר יחד עם התוכן. אחרי השקה. |
+| BUG-017 | חלקי | low | JetBrains Mono עדיין נטען רק בשביל 5 מונים (`font-mono`), משקל 700 של Plex לא בשימוש (`font-bold` אפס), אין `priority` על תמונת הכרטיס הראשון (`ReportCard.tsx:100`). גודל bundle של `/login` לא נמדד מחדש (ללא build). |
+
+### Perf סטטי
+
+- גופנים: Suez One (400), IBM Plex Sans Hebrew (400/500/600/700, hebrew+latin), JetBrains Mono (latin). אפשר להסיר 700 ואת JetBrains (להחליף ב-`tabular-nums`).
+- 28 קבצי `"use client"`; אין קובץ גדול שניתן בקלות להפוך לשרת (`WaveChart` ו-`ReplyThread` אינטראקטיביים).
+- `next/image`: `sizes` קיים; אין `priority`.
+
+### פסק דין להשקה
+
+**BLOCKERS למחר:**
+1. BUG-019 (high): מיגרציה של שורה אחת (`DROP POLICY` + `REVOKE INSERT`). חובה לפני חשיפת התראות למשתמשים.
+2. BUG-021 (medium, מומלץ מאוד): `not-found.tsx` בעברית, כי 404 הוא מסך שמשתמשים עלולים לראות מהיום הראשון (קישור שבור מהתראה).
+3. תצורת Vercel (לא באג קוד): `CRON_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `VAPID_*` (כולל `NEXT_PUBLIC_VAPID_PUBLIC_KEY` לפני ה-build), והוספת הדומיין ל-Supabase Auth redirect URLs.
+
+**אחרי השקה:** BUG-020 (רצוי בשבוע הראשון), 022 עד 028, 007, 014, 017.
+
+### צ'קליסט ידני מעודכן
+
+טלפון (iPhone Safari + Android Chrome):
+- [ ] התחברות Google מהדומיין הסופי; חזרה ל-`/` ללא לולאה; `/new` כשמנותקים חוזר ל-`/new`.
+- [ ] דיווח מלא (חוף+דירוג, טקסט בלבד, תמונה מהמצלמה); מצב טיסה באמצע שליחה (טקסט נשמר, אין כפילות).
+- [ ] מצב טיסה: "טען עוד", מחיקת דיווח, שליחת תגובה (BUG-020: כרגע הדף קורס).
+- [ ] `/beach/999` ו-`/profile/not-a-uuid`: מסך 404 בעברית (BUG-021).
+- [ ] PWA: Android Chrome מציע התקנה (ה-SW נרשם רק אחרי opt-in, לוודא שה-manifest לבדו מספיק); iOS: שיתוף > הוספה למסך הבית, פתיחה משם, אייקון, שורת סטטוס, BottomNav מעל ה-home indicator.
+- [ ] Push (Android): ⭐ על חוף > sheet > אישור הרשאה > "שלחו התראת בדיקה" מגיעה; חשבון שני מדווח באותו חוף > מגיעה התראה, לחיצה פותחת `/beach/<id>`; דיווח שני תוך 30 דקות לא שולח; המדווח עצמו לא מקבל.
+- [ ] Push (iOS 16.4+): רק מהאפליקציה המותקנת; ב-Safari רגיל מוצג `InstallHint`.
+- [ ] כיבוי: מתג ב-`/settings`, "השהיה בכל המכשירים", חסימה בהגדרות המערכת.
+- [ ] מקלדת פתוחה ב-`/new` וב-ReplyThread לא מסתירה את כפתור השליחה.
+- [ ] טקסט מערכת 130%, Reduce Motion, VoiceOver/TalkBack בפיד ובדיאלוג המחיקה.
+
+מחשב (Chrome + Firefox):
+- [ ] ניווט מקלדת מלא (`/new`, דיאלוג מחיקה, תפריט ⋯, מתג התראות); טבעת focus.
+- [ ] Realtime בשני חלונות: דיווח חדש (בלי כפילות), `NewReportsPill` בגלילה, תגובת "בא"/"בדרך", מחיקה.
+- [ ] `/beach/<id>`: תחזית וגרף, שעות בשעון ישראל, מצב "תחזית לא זמינה" (חסימת הרשת ל-open-meteo).
+- [ ] אבטחה: `curl` ל-`/api/cron/purge-images` ול-`/api/push/send` בלי סוד או עם סוד שגוי = 401; עם הסוד הנכון = 200.
+- [ ] אבטחה (אחרי תיקון BUG-019): `POST /rest/v1/push_subscriptions` עם JWT של משתמש ו-endpoint שרירותי נדחה.
+- [ ] `/login?next=https://evil.com` ו-`//evil.com` נוחתים ב-`/`.
+- [ ] DevTools: `/sw.js` מוגש עם `no-cache`; headers של האבטחה קיימים; Console נקי משגיאות.

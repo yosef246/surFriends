@@ -5,6 +5,7 @@ import { PostedNotice } from "@/components/feed/PostedNotice";
 import { ReportList } from "@/components/feed/ReportList";
 import { FeedHeader, greetingFor } from "@/components/layout/FeedHeader";
 import { fetchBeachCircles, fetchHeroSummary, fetchReports } from "@/lib/feed";
+import { REPORT_TTL_HOURS, reportCutoffIso } from "@/lib/reports";
 import { getCurrentProfile, getCurrentUser, getSupabase } from "@/lib/auth";
 
 export default async function FeedPage() {
@@ -12,9 +13,10 @@ export default async function FeedPage() {
   const user = await getCurrentUser();
   const userId = user?.id ?? "";
 
+  const cutoff = reportCutoffIso();
   const [reports, summary, beaches, profile] = await Promise.all([
-    fetchReports(supabase),
-    fetchHeroSummary(supabase),
+    fetchReports(supabase, cutoff),
+    fetchHeroSummary(supabase, cutoff),
     fetchBeachCircles(supabase, userId),
     getCurrentProfile(),
   ]);
@@ -44,6 +46,7 @@ export default async function FeedPage() {
       <div>
         <p className="eyebrow eyebrow-coral">חופי ישראל · עכשיו</p>
         <h2 className="text-title heading-tight font-display font-normal text-ink">דיווחים אחרונים</h2>
+        <p className="mt-1 text-caption text-muted-text">דיווחים נעלמים אחרי {REPORT_TTL_HOURS} שעות ⏳</p>
       </div>
       <ReportList initialReports={reports} />
     </div>

@@ -1,6 +1,7 @@
 -- surFriends DEV ONLY: sample feed data. NOT a migration.
 -- Run in the Supabase SQL Editor (after you have logged in once, so a profile exists).
 -- Re-runnable: removes previous sample rows (texts ending with " #dev") first.
+-- Reports expire after 12h (docs/DAY7_TTL.md): all timestamps below are within ~10h; re-run to refresh.
 -- Remove everything: run only the DELETE statement below.
 
 DELETE FROM public.reports WHERE text LIKE '% #dev';  -- replies go too (ON DELETE CASCADE)
@@ -24,11 +25,11 @@ BEGIN
     (r3, uid, (SELECT id FROM public.beaches WHERE slug = 'keshatot-gandhi'),
       'מלא קבוצות במים, הרוח התחזקה #dev', 2, NULL, NOW() - INTERVAL '3 hours'),
     (gen_random_uuid(), uid, (SELECT id FROM public.beaches WHERE slug = 'bat-galim'),
-      'סט גדול נכנס עכשיו, מעולה! #dev', 5, 'ראש', NOW() - INTERVAL '1 day'),
+      'סט גדול נכנס עכשיו, מעולה! #dev', 5, 'ראש', NOW() - INTERVAL '7 hours'),
     (gen_random_uuid(), uid, (SELECT id FROM public.beaches WHERE slug = 'poleg'),
-      'שטוח לגמרי היום #dev', 1, NULL, NOW() - INTERVAL '1 day 6 hours'),
+      'שטוח לגמרי היום #dev', 1, NULL, NOW() - INTERVAL '9 hours'),
     (gen_random_uuid(), uid, (SELECT id FROM public.beaches WHERE slug = 'ha-sira'),
-      'מישהו מגיע בערב? #dev', NULL, NULL, NOW() - INTERVAL '2 days');
+      'מישהו מגיע בערב? #dev', NULL, NULL, NOW() - INTERVAL '10 hours');
 
   INSERT INTO public.replies (report_id, user_id, text, quick_reaction, created_at) VALUES
     (r1, uid, NULL, 'coming', NOW() - INTERVAL '3 minutes'),

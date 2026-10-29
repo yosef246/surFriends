@@ -239,7 +239,13 @@ export type Database = {
       };
     };
     Views: { [_ in never]: never };
-    Functions: { [_ in never]: never };
+    Functions: {
+      purge_expired_reports: { Args: Record<PropertyKey, never>; Returns: number };
+      expired_report_image_paths: {
+        Args: { limit_count?: number };
+        Returns: { name: string }[];
+      };
+    };
     Enums: { [_ in never]: never };
     CompositeTypes: { [_ in never]: never };
   };

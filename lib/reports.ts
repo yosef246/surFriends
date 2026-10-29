@@ -4,6 +4,12 @@ export const WAVE_HEIGHTS = ["קרסול", "ברך", "מותן", "כתף", "רא
 export const QUICK_TEXTS = ["גלים נקיים", "עמוס בחוף", "ריק ושקט", "רוח חזקה", "גלים גדולים"] as const;
 export const REPORT_BUCKET = "report-images";
 export const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+/** Reports (and their replies/images) live this long. Keep in sync with the 12 hours in
+ *  supabase/migrations/20261029020000_report_ttl_cleanup.sql. */
+export const REPORT_TTL_HOURS = 12;
+export const REPORT_TTL_MS = REPORT_TTL_HOURS * 3600 * 1000;
+/** ISO cutoff: reports with created_at <= this are expired. Compute server-side only. */
+export const reportCutoffIso = (nowMs: number = Date.now()) => new Date(nowMs - REPORT_TTL_MS).toISOString();
 export const LAST_BEACH_KEY = "surfriends:lastBeach";
 
 /** Single source for the 1-5 wave rating words (form + feed card). */

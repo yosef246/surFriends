@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/login", "/callback", "/api/forecast"];
+const PUBLIC_PATHS = ["/login", "/callback", "/api/forecast", "/api/cron"]; // /api/cron/* is protected by CRON_SECRET
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });

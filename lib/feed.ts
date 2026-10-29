@@ -46,6 +46,8 @@ type Row = Omit<FeedReport, "author" | "beach" | "replyCount" | "comingCount"> &
  */
 export async function fetchReports(
   supabase: SupabaseClient<Database>,
+  /** TTL cutoff from reportCutoffIso(): only reports newer than this are returned. */
+  cutoff: string,
   cursor?: FeedCursor | null
 ): Promise<FeedReport[]> {
   let query = supabase
@@ -58,6 +60,7 @@ export async function fetchReports(
        coming:replies(count)`
     )
     .eq("coming.quick_reaction", "coming")
+    .gt("created_at", cutoff)
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
     .limit(FEED_PAGE_SIZE);
@@ -86,6 +89,7 @@ export async function fetchReports(
   }));
 }
 
+// Both windows are shorter than the 12h TTL, so expired reports can never count as "recent".
 // One window for "recent" everywhere (hero count says "2 hours"; the live dots use the same).
 const HERO_WINDOW_MS = 2 * 3600 * 1000;
 const LIVE_WINDOW_MS = HERO_WINDOW_MS;
@@ -96,13 +100,17 @@ export type HeroSummary = {
 };
 
 /** Reports in the last 2h (count) + the latest report overall. Two cheap parallel queries. */
-export async function fetchHeroSummary(supabase: SupabaseClient<Database>): Promise<HeroSummary> {
+export async function fetchHeroSummary(
+  supabase: SupabaseClient<Database>,
+  cutoff: string
+): Promise<HeroSummary> {
   const since = new Date(Date.now() - HERO_WINDOW_MS).toISOString();
   const [countRes, latestRes] = await Promise.all([
     supabase.from("reports").select("id", { count: "exact", head: true }).gt("created_at", since),
     supabase
       .from("reports")
       .select("created_at, beaches(name_he)")
+      .gt("created_at", cutoff)
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),

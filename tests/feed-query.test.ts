@@ -2,7 +2,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 // @ts-expect-error -- .ts extension is required by node --test, not allowed by tsc config
-import { fetchReports, parseFeedCursor, FEED_PAGE_SIZE } from "../lib/feed.ts";
+import { fetchReports, fetchHeroSummary, parseFeedCursor, FEED_PAGE_SIZE } from "../lib/feed.ts";
+// @ts-expect-error -- .ts extension is required by node --test, not allowed by tsc config
+import { reportCutoffIso, REPORT_TTL_HOURS } from "../lib/reports.ts";
+
+const CUTOFF = "2026-10-28T20:00:00.000Z";
 
 function fakeClient(rows: unknown[] = []) {
   const calls: [string, ...unknown[]][] = [];
@@ -10,6 +14,8 @@ function fakeClient(rows: unknown[] = []) {
   const q: any = {
     select: (...a: unknown[]) => (calls.push(["select", ...a]), q),
     eq: (...a: unknown[]) => (calls.push(["eq", ...a]), q),
+    gt: (...a: unknown[]) => (calls.push(["gt", ...a]), q),
+    maybeSingle: () => Promise.resolve({ data: null, error: null }),
     lt: (...a: unknown[]) => (calls.push(["lt", ...a]), q),
     or: (...a: unknown[]) => (calls.push(["or", ...a]), q),
     order: (...a: unknown[]) => (calls.push(["order", ...a]), q),
@@ -22,7 +28,7 @@ function fakeClient(rows: unknown[] = []) {
 
 test("first page: newest first, page size limit, counts embedded", async () => {
   const { client, calls } = fakeClient();
-  await fetchReports(client);
+  await fetchReports(client, CUTOFF);
   assert.deepEqual(calls.filter((c) => c[0] === "order"), [
     ["order", "created_at", { ascending: false }],
     ["order", "id", { ascending: false }],
@@ -39,7 +45,7 @@ test("maps embedded aggregates and tolerates null relations", async () => {
     { id: "b", user_id: "u", text: "x", image_url: null, wave_rating: null, wave_height_estimate: null,
       created_at: "2026-10-29T07:00:00+00:00", profiles: null, beaches: null, replies: null, coming: null },
   ]);
-  const [a, b] = await fetchReports(client);
+  const [a, b] = await fetchReports(client, CUTOFF);
   assert.equal(a.replyCount, 3);
   assert.equal(a.comingCount, 1);
   assert.equal(b.replyCount, 0);
@@ -50,7 +56,7 @@ const CUR = { created_at: "2026-10-29T07:39:04.061515+00:00", id: "11111111-1111
 
 test("cursor pagination is keyset on (created_at, id): strict lt OR (eq AND id lt)", async () => {
   const { client, calls } = fakeClient();
-  await fetchReports(client, CUR);
+  await fetchReports(client, CUTOFF, CUR);
   assert.ok(!calls.some((c) => c[0] === "lt"));
   assert.deepEqual(calls.find((c) => c[0] === "or"), [
     "or",
@@ -67,5 +73,25 @@ test("cursor is validated strictly (no filter injection)", async () => {
   assert.equal(parseFeedCursor("2026-10-29T07:39:04Z"), null);
   assert.equal(parseFeedCursor(null), null);
   const { client } = fakeClient();
-  await assert.rejects(() => fetchReports(client, { created_at: "bad", id: CUR.id }));
+  await assert.rejects(() => fetchReports(client, CUTOFF, { created_at: "bad", id: CUR.id }));
+});
+
+test("TTL cutoff: reportCutoffIso is exactly REPORT_TTL_HOURS before now", () => {
+  assert.equal(REPORT_TTL_HOURS, 12);
+  const now = Date.parse("2026-10-29T12:00:00.000Z");
+  assert.equal(reportCutoffIso(now), "2026-10-29T00:00:00.000Z");
+});
+
+test("first page and keyset pages both filter created_at > cutoff", async () => {
+  for (const cur of [undefined, CUR]) {
+    const { client, calls } = fakeClient();
+    await fetchReports(client, CUTOFF, cur);
+    assert.deepEqual(calls.filter((c) => c[0] === "gt"), [["gt", "created_at", CUTOFF]]);
+  }
+});
+
+test("hero summary filters the latest report by the cutoff too", async () => {
+  const { client, calls } = fakeClient();
+  await fetchHeroSummary(client, CUTOFF);
+  assert.ok(calls.filter((c) => c[0] === "gt").some((c) => c[2] === CUTOFF));
 });

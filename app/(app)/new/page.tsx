@@ -1,3 +1,4 @@
+import { REPORT_TTL_HOURS } from "@/lib/reports";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { NewReportForm } from "@/components/forms/NewReportForm";
@@ -35,6 +36,7 @@ export default async function NewReportPage({
         <div className="min-w-0">
           <p className="eyebrow">מה המצב בים? ספרו לכולם</p>
           <h1 className="text-title heading-tight font-display font-normal text-gradient-sea">דיווח חדש</h1>
+          <p className="text-caption text-muted-text">הדיווח נעלם אחרי {REPORT_TTL_HOURS} שעות ⏳</p>
         </div>
       </div>
       {error || !beaches?.length ? (

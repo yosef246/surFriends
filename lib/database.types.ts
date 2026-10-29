@@ -121,17 +121,17 @@ export type Database = {
           image_url: string | null;
           wave_rating: number | null;
           wave_height_estimate: string | null;
-          created_at: string | null;
+          created_at: string;
         };
         Insert: {
           id?: string;
           user_id: string;
           beach_id: number;
-          text: string | null;
+          text?: string | null;
           image_url?: string | null;
           wave_rating?: number | null;
           wave_height_estimate?: string | null;
-          created_at?: string | null;
+          created_at?: string;
         };
         Update: {
           id?: string;
@@ -141,7 +141,7 @@ export type Database = {
           image_url?: string | null;
           wave_rating?: number | null;
           wave_height_estimate?: string | null;
-          created_at?: string | null;
+          created_at?: string;
         };
         Relationships: [
           {
@@ -167,15 +167,15 @@ export type Database = {
           user_id: string;
           text: string | null;
           quick_reaction: QuickReaction | null;
-          created_at: string | null;
+          created_at: string;
         };
         Insert: {
           id?: string;
           report_id: string;
           user_id: string;
-          text: string | null;
+          text?: string | null;
           quick_reaction?: QuickReaction | null;
-          created_at?: string | null;
+          created_at?: string;
         };
         Update: {
           id?: string;
@@ -183,7 +183,7 @@ export type Database = {
           user_id?: string;
           text?: string | null;
           quick_reaction?: QuickReaction | null;
-          created_at?: string | null;
+          created_at?: string;
         };
         Relationships: [
           {

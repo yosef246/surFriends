@@ -60,3 +60,50 @@ test("imagePathFromUrl rejects garbage without throwing", () => {
 test("WAVE_HEIGHTS is the closed allow-list used by the server", () => {
   assert.deepEqual([...WAVE_HEIGHTS], ["קרסול", "ברך", "מותן", "כתף", "ראש"]);
 });
+
+// ---- validateReportInput (shared client + server rules) ----
+// @ts-expect-error -- .ts extension is required by node --test
+import { validateReportInput, isBlankText } from "../lib/reports.ts";
+
+const RID = "44444444-4444-4444-8444-444444444444";
+const base = { id: RID, beachId: 1, text: "נקי", waveRating: null, waveHeight: null, imageUrl: null };
+const IMG = { userId: UID, supabaseUrl: SB };
+
+test("validateReportInput accepts text only, rating only, and trims", () => {
+  const a = validateReportInput({ ...base, text: "  נקי  " });
+  assert.ok(a.ok && a.value.text === "נקי" && a.value.id === RID);
+  const b = validateReportInput({ ...base, text: "", waveRating: 3 });
+  assert.ok(b.ok && b.value.text === null && b.value.waveRating === 3);
+});
+
+test("validateReportInput rejects bad id, beach, rating, height, empty", () => {
+  assert.equal(validateReportInput({ ...base, id: "nope" }).ok, false);
+  assert.equal(validateReportInput({ ...base, id: undefined }).ok, false);
+  assert.equal(validateReportInput({ ...base, beachId: 0 }).ok, false);
+  assert.equal(validateReportInput({ ...base, beachId: 1.5 }).ok, false);
+  assert.equal(validateReportInput({ ...base, waveRating: 6 }).ok, false);
+  assert.equal(validateReportInput({ ...base, waveRating: 2.5 }).ok, false);
+  assert.equal(validateReportInput({ ...base, waveHeight: "ענק" }).ok, false);
+  assert.equal(validateReportInput({ ...base, text: "", waveRating: null }).ok, false);
+  assert.equal(validateReportInput(null).ok, false);
+});
+
+test("validateReportInput: blank/zero-width text counts as empty; newline runs collapse", () => {
+  assert.ok(isBlankText(" \n\t​‏"));
+  assert.equal(validateReportInput({ ...base, text: "​​" }).ok, false);
+  assert.equal(validateReportInput({ ...base, text: "\n\n" }).ok, false);
+  const r = validateReportInput({ ...base, text: "a\n\n\n\n\nb" });
+  assert.ok(r.ok && r.value.text === "a\n\nb");
+});
+
+test("validateReportInput enforces the 500 code point limit", () => {
+  assert.equal(validateReportInput({ ...base, text: "🤙".repeat(REPORT_TEXT_MAX) }).ok, true);
+  assert.equal(validateReportInput({ ...base, text: "🤙".repeat(REPORT_TEXT_MAX + 1) }).ok, false);
+});
+
+test("validateReportInput checks imageUrl against the user's own folder", () => {
+  assert.equal(validateReportInput({ ...base, imageUrl: url(UID) }, IMG).ok, true);
+  assert.equal(validateReportInput({ ...base, imageUrl: url(OTHER) }, IMG).ok, false);
+  assert.equal(validateReportInput({ ...base, imageUrl: url(UID) }).ok, false); // no context -> reject
+  assert.equal(validateReportInput({ ...base, imageUrl: 5 }, IMG).ok, false);
+});

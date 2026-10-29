@@ -1,75 +1,68 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser, getSupabase } from "@/lib/auth";
 import {
   REPORT_BUCKET,
-  REPORT_TEXT_MAX,
-  WAVE_HEIGHTS,
   imagePathFromUrl,
-  textLength,
+  validateReportInput,
   type ActionResult,
   type CreateReportInput,
 } from "@/lib/reports";
 
 const GENERIC = "הפרסום נכשל. הטקסט נשמר, נסו שוב";
+const RATE_LIMITED = "יותר מדי דיווחים, נסו שוב בעוד כמה דקות";
 
 export async function createReport(input: CreateReportInput): Promise<ActionResult> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) return { error: "ההתחברות פגה. התחברו מחדש" };
+  const supabase = await getSupabase();
 
-  const raw = (input ?? {}) as Partial<Record<keyof CreateReportInput, unknown>>;
+  const v = validateReportInput(input, {
+    userId: user.id,
+    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+  });
+  if (!v.ok) return { error: v.error, rejected: true };
+  const r = v.value;
 
-  const beachId = raw.beachId;
-  if (typeof beachId !== "number" || !Number.isInteger(beachId) || beachId <= 0) {
-    return { error: "בחרו חוף" };
-  }
-  if (raw.text != null && typeof raw.text !== "string") return { error: "ספרו מה קורה בחוף" };
-  const text = typeof raw.text === "string" ? raw.text.trim() : "";
-  if (textLength(text) > REPORT_TEXT_MAX) {
-    return { error: `הטקסט ארוך מדי (עד ${REPORT_TEXT_MAX} תווים)` };
-  }
-
-  const rating = raw.waveRating ?? null;
-  if (
-    rating !== null &&
-    (typeof rating !== "number" || !Number.isInteger(rating) || rating < 1 || rating > 5)
-  ) {
-    return { error: "דירוג לא תקין" };
-  }
-  // Text is optional only when a wave rating is given.
-  if (text.length === 0 && rating === null) return { error: "ספרו מה קורה בחוף או דרגו את הגלים" };
-  const height = raw.waveHeight ?? null;
-  if (
-    height !== null &&
-    !(typeof height === "string" && (WAVE_HEIGHTS as readonly string[]).includes(height))
-  ) {
-    return { error: "גובה גל לא תקין" };
-  }
-  let imageUrl: string | null = null;
-  if (raw.imageUrl != null) {
-    const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    if (typeof raw.imageUrl !== "string" || !base || !imagePathFromUrl(raw.imageUrl, user.id, base)) {
-      return { error: "התמונה לא תקינה" };
-    }
-    imageUrl = raw.imageUrl;
-  }
-
-  const { data: beach } = await supabase.from("beaches").select("id").eq("id", beachId).maybeSingle();
-  if (!beach) return { error: "בחרו חוף" };
+  const { data: beach } = await supabase.from("beaches").select("id").eq("id", r.beachId).maybeSingle();
+  if (!beach) return { error: "בחרו חוף", rejected: true };
 
   const { error } = await supabase.from("reports").insert({
+    id: r.id, // client-generated: a retry of the same submit hits the PK instead of duplicating
     user_id: user.id, // always from the session, never from the client
-    beach_id: beachId,
-    text: text.length > 0 ? text : null,
-    wave_rating: rating,
-    wave_height_estimate: height,
-    image_url: imageUrl,
+    beach_id: r.beachId,
+    text: r.text,
+    wave_rating: r.waveRating,
+    wave_height_estimate: r.waveHeight,
+    image_url: r.imageUrl,
   });
-  if (error) return { error: GENERIC };
+  if (error) {
+    if (error.code === "23505") {
+      // Same id again: success only if that report is ours (an earlier attempt landed).
+      const { data: mine } = await supabase
+        .from("reports")
+        .select("id")
+        .eq("id", r.id)
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (mine) {
+        revalidatePath("/");
+        return { ok: true };
+      }
+      return { error: GENERIC };
+    }
+    const msg = error.message ?? "";
+    if (msg.includes("rate_limit")) return { error: RATE_LIMITED };
+    if (error.code === "23514") {
+      if (msg.includes("reports_image_url_own_folder")) return { error: "התמונה לא תקינה", rejected: true };
+      if (msg.includes("reports_wave_height_allowed")) return { error: "גובה גל לא תקין", rejected: true };
+      if (msg.includes("reports_text_or_rating")) {
+        return { error: "ספרו מה קורה בחוף או דרגו את הגלים", rejected: true };
+      }
+    }
+    return { error: GENERIC };
+  }
 
   revalidatePath("/");
   return { ok: true };
@@ -77,11 +70,9 @@ export async function createReport(input: CreateReportInput): Promise<ActionResu
 
 export async function deleteReport(id: string): Promise<ActionResult> {
   if (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id)) return { error: "הדיווח לא נמצא" };
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) return { error: "ההתחברות פגה. התחברו מחדש" };
+  const supabase = await getSupabase();
 
   const { data: row } = await supabase
     .from("reports")

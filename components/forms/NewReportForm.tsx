@@ -12,7 +12,9 @@ import {
   REPORT_BUCKET,
   REPORT_TEXT_MAX,
   WAVE_HEIGHTS,
+  isBlankText,
   textLength,
+  validateReportInput,
 } from "@/lib/reports";
 import { BeachPicker, type BeachOption } from "./BeachPicker";
 import { PhotoField } from "./PhotoField";
@@ -32,7 +34,12 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
   const [banner, setBanner] = useState<string | null>(null);
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [touched, setTouched] = useState({ beach: false, text: false });
+  const [processing, setProcessing] = useState(false);
   const submitting = useRef(false);
+  // Stable across retries: a resubmit after a lost response hits the PK instead of duplicating.
+  const reportId = useRef<string | null>(null);
+  // Photo already uploaded for the current blob, reused on retry (no orphan, same URL).
+  const uploaded = useRef<{ blob: Blob; path: string; url: string } | null>(null);
   const taRef = useRef<HTMLTextAreaElement>(null);
 
   // Single-line pill that grows (max 3 lines) only when the text wraps.
@@ -56,7 +63,7 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
   }, [defaultBeachId, beaches]);
 
   const len = textLength(text);
-  const trimmedEmpty = text.trim().length === 0;
+  const trimmedEmpty = isBlankText(text);
   // Text is optional once a wave rating is picked.
   const missingText = trimmedEmpty && rating === null;
   const tooLong = len > REPORT_TEXT_MAX;
@@ -67,6 +74,7 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
       ? "ספרו מה קורה בחוף או דרגו את הגלים"
       : null;
   const busy = stage !== "idle" || done;
+  const blocked = busy || processing;
 
   function addQuick(t: string) {
     setText((cur) => (cur.trim() ? `${cur.trimEnd()} ${t}` : t));
@@ -75,7 +83,7 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (submitting.current) return;
+    if (submitting.current || processing) return;
     setBanner(null);
     setPhotoError(null);
     setTouched({ beach: true, text: true });
@@ -85,12 +93,22 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
       return;
     }
 
+    reportId.current ??= crypto.randomUUID();
+    const id = reportId.current;
+    const pre = validateReportInput({ id, beachId, text, waveRating: rating, waveHeight: height, imageUrl: null });
+    if (!pre.ok) {
+      setBanner(pre.error);
+      return;
+    }
+
     submitting.current = true;
     const supabase = createClient();
-    let uploadedPath: string | null = null;
     try {
       let imageUrl: string | null = null;
-      if (photo) {
+      if (photo && uploaded.current?.blob === photo) {
+        imageUrl = uploaded.current.url;
+      } else if (photo) {
+        uploaded.current = null;
         setStage("uploading");
         const {
           data: { user },
@@ -104,23 +122,30 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
           .from(REPORT_BUCKET)
           .upload(path, photo, { contentType: "image/jpeg", upsert: false });
         if (upErr) {
-          setPhotoError("ההעלאה נכשלה. נסו שוב או הסירו את התמונה");
+          setPhotoError(
+            /row-level security|policy/i.test(upErr.message)
+              ? "יותר מדי העלאות, נסו שוב בעוד כמה דקות"
+              : "ההעלאה נכשלה. נסו שוב או הסירו את התמונה"
+          );
           return;
         }
-        uploadedPath = path;
         imageUrl = supabase.storage.from(REPORT_BUCKET).getPublicUrl(path).data.publicUrl;
+        uploaded.current = { blob: photo, path, url: imageUrl };
       }
 
       setStage("saving");
       let res: Awaited<ReturnType<typeof createReport>>;
       try {
-        res = await createReport({ beachId, text, waveRating: rating, waveHeight: height, imageUrl });
+        res = await createReport({ id, beachId, text, waveRating: rating, waveHeight: height, imageUrl });
       } catch {
         res = { error: "הפרסום נכשל. הטקסט נשמר, נסו שוב" };
       }
       if ("error" in res) {
-        if (uploadedPath) {
-          await supabase.storage.from(REPORT_BUCKET).remove([uploadedPath]).catch(() => {}); // avoid orphans
+        // Only a definitive validation rejection discards the photo. After a thrown/unknown error the
+        // report may already exist and reference it, so the image must stay.
+        if (res.rejected && uploaded.current) {
+          await supabase.storage.from(REPORT_BUCKET).remove([uploaded.current.path]).catch(() => {});
+          uploaded.current = null;
         }
         setBanner(res.error);
         return;
@@ -139,8 +164,13 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
     }
   }
 
-  const label =
-    stage === "uploading" ? "מעלים תמונה..." : stage === "saving" || done ? "מפרסמים..." : "פרסמו 🤙";
+  const label = processing
+    ? "מעבדים תמונה..."
+    : stage === "uploading"
+      ? "מעלים תמונה..."
+      : stage === "saving" || done
+        ? "מפרסמים..."
+        : "פרסמו 🤙";
 
   const section = (i: number) => ({ "--i": i }) as React.CSSProperties;
 
@@ -218,7 +248,7 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
       </fieldset>
 
       <div className="motion-fade-up" style={section(4)}>
-        <PhotoField onChange={setPhoto} uploading={stage === "uploading"} uploadError={photoError} disabled={busy} />
+        <PhotoField onChange={setPhoto} onProcessing={setProcessing} uploading={stage === "uploading"} uploadError={photoError} disabled={busy} />
       </div>
 
       <div className="glass-bar fixed inset-x-0 bottom-0 z-30 rounded-t-card px-4 pt-3 shadow-nav pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
@@ -228,8 +258,8 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
               ⚠ {banner}
             </p>
           ) : null}
-          <Button type="submit" variant="ocean" size="lg" disabled={busy} aria-busy={busy} className="w-full">
-            {busy ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
+          <Button type="submit" variant="ocean" size="lg" disabled={blocked} aria-busy={blocked} className="w-full">
+            {blocked ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
             {label}
           </Button>
         </div>

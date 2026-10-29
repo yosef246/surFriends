@@ -24,7 +24,7 @@ BEGIN
     (r3, uid, (SELECT id FROM public.beaches WHERE slug = 'keshatot-gandhi'),
       'מלא קבוצות במים, הרוח התחזקה #dev', 2, NULL, NOW() - INTERVAL '3 hours'),
     (gen_random_uuid(), uid, (SELECT id FROM public.beaches WHERE slug = 'bat-galim'),
-      'סט גדול נכנס עכשיו, מעולה! #dev', 5, 'מעל הראש', NOW() - INTERVAL '1 day'),
+      'סט גדול נכנס עכשיו, מעולה! #dev', 5, 'ראש', NOW() - INTERVAL '1 day'),
     (gen_random_uuid(), uid, (SELECT id FROM public.beaches WHERE slug = 'poleg'),
       'שטוח לגמרי היום #dev', 1, NULL, NOW() - INTERVAL '1 day 6 hours'),
     (gen_random_uuid(), uid, (SELECT id FROM public.beaches WHERE slug = 'ha-sira'),

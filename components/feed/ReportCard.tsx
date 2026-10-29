@@ -5,6 +5,22 @@ import { RelativeTime } from "@/components/shared/RelativeTime";
 import type { FeedReport } from "@/lib/feed";
 import { WaveRating } from "./WaveRating";
 
+// next/image throws for hosts not in next.config; never let one bad row take the feed down.
+const IMAGE_HOST = (() => {
+  try {
+    return new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").host;
+  } catch {
+    return null;
+  }
+})();
+function isTrustedImage(url: string) {
+  try {
+    return IMAGE_HOST !== null && new URL(url).host === IMAGE_HOST;
+  } catch {
+    return false;
+  }
+}
+
 export function ReportCard({ report }: { report: FeedReport }) {
   const name = report.author?.display_name ?? "גולש/ת";
   const { beach } = report;
@@ -63,7 +79,7 @@ export function ReportCard({ report }: { report: FeedReport }) {
         <p className="text-body break-words whitespace-pre-line text-copy">{report.text}</p>
       ) : null}
 
-      {report.image_url ? (
+      {report.image_url && isTrustedImage(report.image_url) ? (
         <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-surface">
           <Image
             src={report.image_url}

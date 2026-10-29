@@ -1,9 +1,9 @@
-const LABELS: Record<number, string> = { 1: "שטוח", 2: "חלש", 3: "סביר", 4: "טוב", 5: "מעולה" };
+import { WAVE_RATING_LABELS } from "@/lib/reports";
 
 /** Display only. Number + filled/empty dots + word, so it never relies on color. */
 export function WaveRating({ value }: { value: number }) {
   const v = Math.min(5, Math.max(1, Math.round(value)));
-  const label = LABELS[v];
+  const label = WAVE_RATING_LABELS[v - 1];
   return (
     <div role="img" aria-label={`דירוג גלים ${v} מתוך 5, ${label}`} className="flex items-center gap-3">
       <span aria-hidden className="numeral font-display text-numeral-md font-normal">

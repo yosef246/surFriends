@@ -45,7 +45,7 @@ export function LoginButton({ next, hasError }: { next: string; hasError?: boole
     setLoading(true);
     setError(false);
     // Short-lived cookie carries the post-login target through the OAuth round trip.
-    document.cookie = `sf_next=${encodeURIComponent(next)}; path=/; max-age=600; samesite=lax`;
+    document.cookie = `sf_next=${encodeURIComponent(next)}; path=/; max-age=600; samesite=lax${window.location.protocol === "https:" ? "; secure" : ""}`;
     const supabase = createClient();
     const { error: err } = await supabase.auth.signInWithOAuth({
       provider: "google",

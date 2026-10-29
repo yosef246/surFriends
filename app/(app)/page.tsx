@@ -5,29 +5,27 @@ import { PostedNotice } from "@/components/feed/PostedNotice";
 import { ReportList } from "@/components/feed/ReportList";
 import { FeedHeader, greetingFor } from "@/components/layout/FeedHeader";
 import { fetchBeachCircles, fetchHeroSummary, fetchReports } from "@/lib/feed";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentProfile, getCurrentUser, getSupabase } from "@/lib/auth";
 
 export default async function FeedPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const supabase = await getSupabase();
+  const user = await getCurrentUser();
   const userId = user?.id ?? "";
 
   const [reports, summary, beaches, profile] = await Promise.all([
     fetchReports(supabase),
     fetchHeroSummary(supabase),
     fetchBeachCircles(supabase, userId),
-    supabase.from("profiles").select("display_name, avatar_url").eq("id", userId).maybeSingle(),
+    getCurrentProfile(),
   ]);
 
   const displayName =
-    profile.data?.display_name ??
+    profile?.display_name ??
     (user?.user_metadata?.full_name as string | undefined) ??
     user?.email ??
     "משתמש";
   const avatarUrl =
-    profile.data?.avatar_url ?? (user?.user_metadata?.avatar_url as string | undefined) ?? null;
+    profile?.avatar_url ?? (user?.user_metadata?.avatar_url as string | undefined) ?? null;
   const firstName = displayName.trim().split(/\s+/)[0] ?? "";
 
   return (

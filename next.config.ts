@@ -4,7 +4,20 @@ import type { NextConfig } from "next";
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseHost = supabaseUrl ? new URL(supabaseUrl) : null;
 
+// Conservative headers. No script CSP on purpose (next/font, Supabase, Next inline scripts);
+// frame-ancestors alone is safe and blocks clickjacking.
+const securityHeaders = [
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "X-Frame-Options", value: "DENY" },
+  { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
+  { key: "Permissions-Policy", value: "camera=(self), microphone=(), geolocation=(self)" },
+];
+
 const nextConfig: NextConfig = {
+  async headers() {
+    return [{ source: "/:path*", headers: securityHeaders }];
+  },
   // Verification builds use NEXT_DIST_DIR=.next-verify so they never clobber a running `pnpm dev`.
   distDir: process.env.NEXT_DIST_DIR || ".next",
   images: {

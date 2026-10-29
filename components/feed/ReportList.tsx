@@ -20,7 +20,7 @@ export function ReportList({ initialReports }: { initialReports: FeedReport[] })
     if (!last) return;
     setFailed(false);
     startTransition(async () => {
-      const res = await loadMoreReports(last.created_at);
+      const res = await loadMoreReports({ created_at: last.created_at, id: last.id });
       if (!res.ok) {
         setFailed(true);
         return;

@@ -1,19 +1,17 @@
 "use server";
 
-import { fetchReports, type FeedReport } from "@/lib/feed";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser, getSupabase } from "@/lib/auth";
+import { fetchReports, parseFeedCursor, type FeedCursor, type FeedReport } from "@/lib/feed";
 
 export type LoadMoreResult = { ok: true; reports: FeedReport[] } | { ok: false };
 
-export async function loadMoreReports(cursor: string): Promise<LoadMoreResult> {
-  if (typeof cursor !== "string" || Number.isNaN(Date.parse(cursor))) return { ok: false };
+export async function loadMoreReports(cursor: FeedCursor): Promise<LoadMoreResult> {
+  const parsed = parseFeedCursor(cursor);
+  if (!parsed) return { ok: false };
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
     if (!user) return { ok: false };
-    return { ok: true, reports: await fetchReports(supabase, cursor) };
+    return { ok: true, reports: await fetchReports(await getSupabase(), parsed) };
   } catch {
     return { ok: false };
   }

@@ -17,8 +17,22 @@ export type FeedReport = {
   comingCount: number;
 };
 
-type Row = Omit<FeedReport, "author" | "beach" | "replyCount" | "comingCount" | "created_at"> & {
-  created_at: string | null;
+/** Keyset cursor: the (created_at, id) of the last report already shown. */
+export type FeedCursor = { created_at: string; id: string };
+
+const ISO_TS = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,6})?(Z|[+-]\d{2}:\d{2})$/;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Strict validation: the values are interpolated into a PostgREST filter string. */
+export function parseFeedCursor(c: unknown): FeedCursor | null {
+  if (!c || typeof c !== "object") return null;
+  const { created_at, id } = c as Record<string, unknown>;
+  if (typeof created_at !== "string" || typeof id !== "string") return null;
+  if (!ISO_TS.test(created_at) || !UUID.test(id)) return null;
+  return { created_at, id };
+}
+
+type Row = Omit<FeedReport, "author" | "beach" | "replyCount" | "comingCount"> & {
   profiles: FeedReport["author"];
   beaches: FeedReport["beach"];
   replies: { count: number }[] | null;
@@ -26,13 +40,13 @@ type Row = Omit<FeedReport, "author" | "beach" | "replyCount" | "comingCount" | 
 };
 
 /**
- * Latest reports (newest first). `cursor` is the created_at of the last report
- * already shown; only strictly older reports are returned.
+ * Latest reports (newest first, ties broken by id). `cursor` is the (created_at, id) of the last
+ * report already shown; only reports strictly after it in that order are returned.
  * Counts use embedded aggregates, so they respect RLS (replies are public-read).
  */
 export async function fetchReports(
   supabase: SupabaseClient<Database>,
-  cursor?: string | null
+  cursor?: FeedCursor | null
 ): Promise<FeedReport[]> {
   let query = supabase
     .from("reports")
@@ -45,9 +59,14 @@ export async function fetchReports(
     )
     .eq("coming.quick_reaction", "coming")
     .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
     .limit(FEED_PAGE_SIZE);
 
-  if (cursor) query = query.lt("created_at", cursor);
+  if (cursor) {
+    const c = parseFeedCursor(cursor);
+    if (!c) throw new Error("invalid cursor");
+    query = query.or(`created_at.lt.${c.created_at},and(created_at.eq.${c.created_at},id.lt.${c.id})`);
+  }
 
   const { data, error } = await query;
   if (error) throw new Error(error.message);
@@ -59,7 +78,7 @@ export async function fetchReports(
     image_url: r.image_url,
     wave_rating: r.wave_rating,
     wave_height_estimate: r.wave_height_estimate,
-    created_at: r.created_at ?? new Date(0).toISOString(),
+    created_at: r.created_at,
     author: r.profiles,
     beach: r.beaches,
     replyCount: r.replies?.[0]?.count ?? 0,
@@ -67,8 +86,9 @@ export async function fetchReports(
   }));
 }
 
+// One window for "recent" everywhere (hero count says "2 hours"; the live dots use the same).
 const HERO_WINDOW_MS = 2 * 3600 * 1000;
-const LIVE_WINDOW_MS = 3 * 3600 * 1000;
+const LIVE_WINDOW_MS = HERO_WINDOW_MS;
 
 export type HeroSummary = {
   recentCount: number;
@@ -88,7 +108,7 @@ export async function fetchHeroSummary(supabase: SupabaseClient<Database>): Prom
       .maybeSingle(),
   ]);
   const row = latestRes.data as unknown as {
-    created_at: string | null;
+    created_at: string;
     beaches: { name_he: string } | null;
   } | null;
   return {
@@ -108,7 +128,7 @@ type BeachRow = {
 };
 
 /**
- * One query: beaches + embedded own favorites + embedded count of reports in the last 3h.
+ * One query: beaches + embedded own favorites + embedded count of reports in the last 2h.
  * Favorites first (if any), otherwise all beaches north to south.
  */
 export async function fetchBeachCircles(

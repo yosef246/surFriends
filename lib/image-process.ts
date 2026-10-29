@@ -1,7 +1,9 @@
 import { MAX_IMAGE_BYTES } from "@/lib/reports";
 
 export const IMAGE_READ_ERROR = "לא הצלחנו לקרוא את התמונה. נסו JPG או PNG";
-export const IMAGE_TOO_BIG_ERROR = "התמונה לא מתאימה. אפשר JPG, PNG או WEBP עד 5MB";
+export const IMAGE_TOO_BIG_ERROR = "התמונה גדולה מדי. נסו תמונה קטנה יותר (JPG, PNG או WEBP)";
+/** Reject before decoding: a huge file can exhaust memory on weak devices. */
+const MAX_INPUT_BYTES = 25 * 1024 * 1024;
 
 const MAX_SIDE = 1600;
 const QUALITY = 0.8;
@@ -35,6 +37,7 @@ async function decode(file: File): Promise<Decoded> {
 /** Decode (EXIF-aware), downscale to <=1600px longest side, re-encode JPEG ~0.8. */
 export async function processImage(file: File): Promise<Blob> {
   if (file.type && !file.type.startsWith("image/")) throw new ImageProcessError(IMAGE_READ_ERROR);
+  if (file.size > MAX_INPUT_BYTES) throw new ImageProcessError(IMAGE_TOO_BIG_ERROR);
   const d = await decode(file);
   try {
     if (!d.width || !d.height) throw new ImageProcessError(IMAGE_READ_ERROR);

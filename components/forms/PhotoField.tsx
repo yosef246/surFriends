@@ -7,12 +7,14 @@ import { processImage, ImageProcessError, IMAGE_READ_ERROR } from "@/lib/image-p
 type Props = {
   /** Called with the processed JPEG (or null when removed / failed). */
   onChange: (blob: Blob | null) => void;
+  /** True while a picked photo is being decoded/resized (submit must wait). */
+  onProcessing?: (processing: boolean) => void;
   uploading: boolean;
   uploadError?: string | null;
   disabled?: boolean;
 };
 
-export function PhotoField({ onChange, uploading, uploadError, disabled }: Props) {
+export function PhotoField({ onChange, onProcessing, uploading, uploadError, disabled }: Props) {
   const id = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -38,6 +40,7 @@ export function PhotoField({ onChange, uploading, uploadError, disabled }: Props
     if (!file) return;
     setError(null);
     setProcessing(true);
+    onProcessing?.(true);
     setPreview(null);
     onChange(null);
     try {
@@ -50,6 +53,7 @@ export function PhotoField({ onChange, uploading, uploadError, disabled }: Props
       if (inputRef.current) inputRef.current.value = "";
     } finally {
       setProcessing(false);
+      onProcessing?.(false);
     }
   }
 

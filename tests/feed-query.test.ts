@@ -2,7 +2,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 // @ts-expect-error -- .ts extension is required by node --test, not allowed by tsc config
-import { fetchReports, FEED_PAGE_SIZE } from "../lib/feed.ts";
+import { fetchReports, parseFeedCursor, FEED_PAGE_SIZE } from "../lib/feed.ts";
 
 function fakeClient(rows: unknown[] = []) {
   const calls: [string, ...unknown[]][] = [];
@@ -23,7 +23,10 @@ function fakeClient(rows: unknown[] = []) {
 test("first page: newest first, page size limit, counts embedded", async () => {
   const { client, calls } = fakeClient();
   await fetchReports(client);
-  assert.deepEqual(calls.find((c) => c[0] === "order"), ["order", "created_at", { ascending: false }]);
+  assert.deepEqual(calls.filter((c) => c[0] === "order"), [
+    ["order", "created_at", { ascending: false }],
+    ["order", "id", { ascending: false }],
+  ]);
   assert.deepEqual(calls.find((c) => c[0] === "limit"), ["limit", FEED_PAGE_SIZE]);
   assert.ok(!calls.some((c) => c[0] === "lt"));
   assert.match(String(calls.find((c) => c[0] === "select")?.[1]), /coming:replies\(count\)/);
@@ -34,26 +37,35 @@ test("maps embedded aggregates and tolerates null relations", async () => {
     { id: "a", user_id: "u", text: null, image_url: null, wave_rating: 4, wave_height_estimate: null,
       created_at: "2026-10-29T07:39:04.061515+00:00", profiles: null, beaches: null, replies: [{ count: 3 }], coming: [{ count: 1 }] },
     { id: "b", user_id: "u", text: "x", image_url: null, wave_rating: null, wave_height_estimate: null,
-      created_at: null, profiles: null, beaches: null, replies: null, coming: null },
+      created_at: "2026-10-29T07:00:00+00:00", profiles: null, beaches: null, replies: null, coming: null },
   ]);
   const [a, b] = await fetchReports(client);
   assert.equal(a.replyCount, 3);
   assert.equal(a.comingCount, 1);
   assert.equal(b.replyCount, 0);
-  assert.equal(b.created_at, new Date(0).toISOString()); // null created_at silently becomes 1970 (see report)
+  assert.equal(b.created_at, "2026-10-29T07:00:00+00:00");
 });
 
-test("cursor page uses a strict created_at < cursor filter", async () => {
+const CUR = { created_at: "2026-10-29T07:39:04.061515+00:00", id: "11111111-1111-4111-8111-111111111111" };
+
+test("cursor pagination is keyset on (created_at, id): strict lt OR (eq AND id lt)", async () => {
   const { client, calls } = fakeClient();
-  await fetchReports(client, "2026-10-29T07:39:04.061515+00:00");
-  assert.deepEqual(calls.find((c) => c[0] === "lt"), ["lt", "created_at", "2026-10-29T07:39:04.061515+00:00"]);
+  await fetchReports(client, CUR);
+  assert.ok(!calls.some((c) => c[0] === "lt"));
+  assert.deepEqual(calls.find((c) => c[0] === "or"), [
+    "or",
+    `created_at.lt.${CUR.created_at},and(created_at.eq.${CUR.created_at},id.lt.${CUR.id})`,
+  ]);
+  assert.equal(calls.filter((c) => c[0] === "order").length, 2);
 });
 
-// KNOWN BUG (BUG-002 in docs/TEST_REPORT.md): rows sharing created_at with the last row of a page are skipped.
-// Expected fix: keyset (created_at, id): .or("created_at.lt.X,and(created_at.eq.X,id.lt.ID)") + secondary order by id.
-test("cursor pagination has an id tiebreak", { todo: "fix BUG-002" }, async () => {
-  const { client, calls } = fakeClient();
-  await fetchReports(client, "2026-10-29T07:39:04.061515+00:00");
-  assert.ok(calls.some((c) => c[0] === "or"), "expected an .or() keyset filter");
-  assert.ok(calls.filter((c) => c[0] === "order").length >= 2, "expected a secondary order by id");
+test("cursor is validated strictly (no filter injection)", async () => {
+  assert.deepEqual(parseFeedCursor(CUR), CUR);
+  assert.equal(parseFeedCursor({ created_at: "1", id: CUR.id }), null);
+  assert.equal(parseFeedCursor({ created_at: CUR.created_at, id: "x),or(id.neq.0" }), null);
+  assert.equal(parseFeedCursor({ created_at: "2026-10-29T07:39:04Z,id.gt.0", id: CUR.id }), null);
+  assert.equal(parseFeedCursor("2026-10-29T07:39:04Z"), null);
+  assert.equal(parseFeedCursor(null), null);
+  const { client } = fakeClient();
+  await assert.rejects(() => fetchReports(client, { created_at: "bad", id: CUR.id }));
 });

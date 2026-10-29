@@ -18,12 +18,7 @@ export function HeroSummary({ summary }: { summary: Summary }) {
         <p className="eyebrow eyebrow-light">סיכום חי</p>
         {recentCount > 0 ? (
           <>
-            <p
-              className="numeral font-display text-numeral-xl font-normal text-white"
-              aria-label={`${recentCount} דיווחים בשעתיים האחרונות`}
-            >
-              <span aria-hidden>{recentCount}</span>
-            </p>
+            <p className="numeral font-display text-numeral-xl font-normal text-white">{recentCount}</p>
             <p className="text-heading heading-tight font-display font-normal text-white">
               {recentCount === 1 ? "דיווח בשעתיים האחרונות" : "דיווחים בשעתיים האחרונות"}
             </p>

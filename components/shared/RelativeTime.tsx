@@ -81,7 +81,7 @@ export function RelativeTime({ iso, className }: { iso: string; className?: stri
   const now = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const absolute = formatAbsolute(iso);
   return (
-    <time dateTime={iso} title={absolute} aria-label={absolute} className={className}>
+    <time dateTime={iso} title={absolute} className={className}>
       {now === null ? absolute : formatRelative(iso, now)}
     </time>
   );

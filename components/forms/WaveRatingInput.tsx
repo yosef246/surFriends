@@ -2,7 +2,7 @@
 
 import { useId } from "react";
 
-const LABELS = ["שטוח", "קטן", "סביר", "טוב", "אש 🔥"];
+import { WAVE_RATING_LABELS as LABELS } from "@/lib/reports";
 
 type Props = { value: number | null; onChange: (v: number | null) => void };
 
@@ -33,6 +33,7 @@ export function WaveRatingInput({ value, onChange }: Props) {
               type="button"
               role="radio"
               aria-checked={checked}
+              aria-label={`${n} מתוך 5, ${LABELS[n - 1]}`}
               tabIndex={checked || (value === null && n === 1) ? 0 : -1}
               onClick={() => onChange(checked ? null : n)}
               onKeyDown={(e) => {
@@ -53,7 +54,7 @@ export function WaveRatingInput({ value, onChange }: Props) {
               <span aria-hidden className="numeral text-body-sm font-medium">
                 {n}
               </span>
-              <span className="text-caption leading-none">{LABELS[n - 1]}</span>
+              <span className="text-caption leading-none">{LABELS[n - 1]}{n === 5 ? " 🔥" : ""}</span>
             </button>
           );
         })}

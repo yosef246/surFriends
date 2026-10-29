@@ -2,20 +2,13 @@ import { redirect } from "next/navigation";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { OfflineBanner } from "@/components/layout/OfflineBanner";
 import { TopBar } from "@/components/layout/TopBar";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentProfile, getCurrentUser } from "@/lib/auth";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("display_name, avatar_url")
-    .eq("id", user.id)
-    .maybeSingle();
+  const profile = await getCurrentProfile();
 
   const displayName =
     profile?.display_name ??

@@ -39,8 +39,8 @@ export function ProfileHero({ profile, isMe = false, cover, reportCount, favorit
   const coverSrc = beachPhotoSrc(cover?.path);
   const credit = coverSrc ? creditLabel(cover?.credit) : null;
   return (
-    <header className="card-coast flex flex-col overflow-hidden p-0">
-      <div className="cover-brand relative h-28 overflow-hidden">
+    <header className="card-coast flex flex-col p-0">
+      <div className="cover-brand relative h-28 overflow-hidden rounded-t-[inherit]">
         {coverSrc ? (
           <>
             <Image src={coverSrc} alt="" fill priority sizes="(max-width: 576px) 100vw, 576px" className="object-cover" />
@@ -57,7 +57,7 @@ export function ProfileHero({ profile, isMe = false, cover, reportCount, favorit
         <UserAvatar
           name={profile.display_name}
           src={profile.avatar_url}
-          className="-mt-10 size-20 text-title ring-4 ring-white"
+          className="relative z-10 -mt-10 size-20 shrink-0 text-title ring-4 ring-white"
         />
         <h1 className="max-w-full font-display text-display font-normal break-words text-ink">{profile.display_name}</h1>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">

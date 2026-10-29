@@ -46,7 +46,7 @@ export function WaveRatingInput({ value, onChange }: Props) {
                 (e.currentTarget.parentElement?.children[target - 1] as HTMLElement | undefined)?.focus();
               }}
               className={cn(
-                "flex h-11 min-w-0 flex-col items-center justify-center gap-1 border-s border-card-line px-0.5 text-ink transition-colors duration-(--dur-fast) first:border-s-0 hover:bg-brand-soft",
+                "flex min-h-11 min-w-0 flex-col items-center justify-center gap-1 border-s border-card-line px-0.5 text-ink transition-colors duration-(--dur-fast) first:border-s-0 hover:bg-brand-soft",
                 checked && "bg-brand-soft text-brand shadow-[inset_0_-2px_0_var(--color-brand)]"
               )}
             >
@@ -55,7 +55,7 @@ export function WaveRatingInput({ value, onChange }: Props) {
                   <i key={i} className="w-1.5!" />
                 ))}
               </span>
-              <span aria-hidden className="truncate text-caption font-bold leading-none">
+              <span aria-hidden className="text-caption font-bold leading-tight whitespace-nowrap">
                 {LABELS[n - 1]}
               </span>
             </button>

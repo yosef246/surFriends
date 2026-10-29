@@ -2,18 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, PlusCircle, Settings, User } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Home, Plus, Settings, User } from "lucide-react";
 
 // DOM order = RTL order: first item on the right.
 const ITEMS = [
-  { href: "/", label: "פיד", icon: Home, accent: false, match: (p: string) => p === "/" || p.startsWith("/beach/") },
-  { href: "/new", label: "דיווח", icon: PlusCircle, accent: true, match: (p: string) => p.startsWith("/new") },
-  { href: "/profile", label: "פרופיל", icon: User, accent: false, match: (p: string) => p.startsWith("/profile") },
-  { href: "/settings", label: "הגדרות", icon: Settings, accent: false, match: (p: string) => p.startsWith("/settings") },
+  { href: "/", label: "פיד", icon: Home, match: (p: string) => p === "/" || p.startsWith("/beach/") },
+  { href: "/profile", label: "פרופיל", icon: User, match: (p: string) => p.startsWith("/profile") },
+  { href: "/settings", label: "הגדרות", icon: Settings, match: (p: string) => p.startsWith("/settings") },
 ] as const;
 
-/** Bottom nav (DESIGN_SYSTEM 5h): white bar + hairline, 4 equal items, brand blue when active, no raised FAB. */
+/** Bottom nav (DESIGN_SYSTEM 5h): white bar + hairline, 4 equal items, brand blue when active, raised report button at the end side. */
 export function BottomNav() {
   const pathname = usePathname();
   if (pathname === "/new") return null;
@@ -24,7 +22,7 @@ export function BottomNav() {
       className="bar-coast fixed inset-x-0 bottom-0 z-30 border-t pb-[env(safe-area-inset-bottom)]"
     >
       <ul className="mx-auto flex h-bottomnav w-full max-w-feed items-stretch">
-        {ITEMS.map(({ href, label, icon: Icon, accent, match }) => {
+        {ITEMS.map(({ href, label, icon: Icon, match }) => {
           const active = match(pathname);
           return (
             <li key={href} className="flex-1">
@@ -32,10 +30,7 @@ export function BottomNav() {
                 href={href}
                 prefetch
                 aria-current={active ? "page" : undefined}
-                className={cn(
-                  "nav-item motion-press h-full min-w-touch transition-colors duration-(--dur-fast)",
-                  accent && "text-brand!"
-                )}
+                className="nav-item motion-press h-full min-w-touch transition-colors duration-(--dur-fast)"
               >
                 <Icon className="size-6" strokeWidth={active ? 2.5 : 2} aria-hidden />
                 {label}
@@ -43,6 +38,20 @@ export function BottomNav() {
             </li>
           );
         })}
+        {/* Last DOM item = end side (left in RTL). Raised circle overlaps the bar's top edge. */}
+        <li className="flex-1">
+          <Link
+            href="/new"
+            prefetch
+            aria-label="דיווח חדש"
+            className="nav-item motion-press h-full min-w-touch justify-end pb-2 text-ink!"
+          >
+            <span className="bubble-ocean-raised -mt-7 mb-auto flex size-14 items-center justify-center rounded-full ring-4 ring-white">
+              <Plus className="size-7" aria-hidden />
+            </span>
+            דיווח
+          </Link>
+        </li>
       </ul>
     </nav>
   );

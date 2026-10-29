@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { Waves } from "lucide-react";
 import { Mascot } from "@/components/mascot";
 import { DEFAULT_BEACH_PHOTO } from "@/lib/beach-photo";
 import { SPLASH_FADE_MS, splashDismissDelay } from "@/lib/splash";
@@ -65,7 +66,10 @@ export function Splash({ ready }: { ready: boolean }) {
       <div className="photo-overlay" aria-hidden />
       <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-sm flex-col items-center justify-end gap-3 px-6 pt-10 pb-24 text-center text-white">
         <Mascot.Wave size={96} />
-        <p className="font-display text-hero font-normal text-white drop-shadow">surFriends</p>
+        <p className="flex items-center gap-2 font-display text-hero font-normal text-white drop-shadow">
+          <Waves className="size-9 shrink-0" aria-hidden />
+          surFriends
+        </p>
         <p className="eyebrow eyebrow-light">קהילת הגולשים של ישראל</p>
       </div>
       <span className="credit">© {DEFAULT_BEACH_PHOTO.credit} · CC</span>

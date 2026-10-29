@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Waves } from "lucide-react";
 import { UserAvatar } from "./UserAvatar";
 
 type Props = { displayName: string; avatarUrl: string | null };
@@ -13,8 +14,9 @@ export function TopBar({ displayName, avatarUrl }: Props) {
         <Link
           href="/"
           aria-label="surFriends, לדף הבית"
-          className="flex min-h-touch items-center font-display text-section font-normal text-brand"
+          className="flex min-h-touch items-center gap-2 font-display text-section font-normal text-brand"
         >
+          <Waves className="size-6 shrink-0" aria-hidden />
           surFriends
         </Link>
         <Link

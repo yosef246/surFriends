@@ -25,6 +25,12 @@
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
   --color-chart-5: var(--chart-5);
+  --color-chart-wave: var(--chart-wave);
+  --color-chart-swell: var(--chart-swell);
+  --color-chart-grid: var(--chart-grid);
+  --color-chart-now: var(--chart-now);
+  --color-chart-wind-offshore: var(--chart-wind-offshore);
+  --color-chart-wind-other: var(--chart-wind-other);
   --color-chart-4: var(--chart-4);
   --color-chart-3: var(--chart-3);
   --color-chart-2: var(--chart-2);
@@ -399,6 +405,15 @@
   --chart-3: #062b4a;
   --chart-4: #7fe3ee;
   --chart-5: #ff6b57;
+  /* Wave chart (components/forecast/WaveChart.tsx). Lines pass 3:1 on white/sky. */
+  --chart-wave: #0b6c9e; /* total wave height line */
+  --chart-swell: #083d6e; /* swell line (dashed) */
+  --chart-fill-top: #1cc8da; /* area gradient, top (ocean -> turquoise) */
+  --chart-fill-bottom: #7fe3ee; /* area gradient, bottom */
+  --chart-grid: #cde9ef; /* gridlines + day separators (decorative) */
+  --chart-now: #062b4a; /* "now" marker */
+  --chart-wind-offshore: #0f7b5f; /* offshore wind arrow + number (= success) */
+  --chart-wind-other: #456479; /* onshore / cross / calm (= muted-text) */
 
   --radius: 0.875rem; /* 14px inputs */
 
@@ -927,6 +942,8 @@
   .motion-drift-slow,
   .motion-pulse-ring,
   .motion-squish,
+  .motion-chart-draw,
+  .motion-chart-fade,
   .motion-page {
     animation: none !important;
   }
@@ -948,4 +965,29 @@
       transform: none !important;
     }
   }
+}
+
+/* Wave chart: subtle line draw-in + area fade-in. Re-keyed on range change. Disabled under reduced motion above. */
+@keyframes chart-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes chart-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@utility motion-chart-draw {
+  stroke-dasharray: 1;
+  animation: chart-draw 900ms var(--ease-out-soft) both;
+}
+@utility motion-chart-fade {
+  animation: chart-fade 700ms var(--ease-out-soft) both;
 }

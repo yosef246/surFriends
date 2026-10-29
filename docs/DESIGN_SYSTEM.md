@@ -286,3 +286,6 @@ Hover lift וכפתורים (`bubble-*`) מוגדרים ב-§8. כל hover רק 
 7. רשימות: `motion-fade-up` + `style={{"--i": i}}`; עמוד: `motion-page` על `<main>`; מסקוט ב-hero/login: `motion-float`.
 8. `wave-underline` מקסימום 1-2 כותרות. `text-gradient-sea` רק ב-≥22px.
 9. RTL: אין `ml/mr`; המסקוט לא מתהפך; כפתור "דיווח" בשמאל.
+
+## 13. טוקני גרף תחזית (Day 11)
+`WaveChart` (SVG ידני, ללא ספריות) משתמש רק ב-CSS vars: `--chart-wave` (קו גובה גל, `stroke-chart-wave`), `--chart-swell` (קו swell מקווקו), `--chart-fill-top/bottom` (גרדיאנט השטח, ocean->turquoise), `--chart-grid` (קווי רשת ומפרידי ימים), `--chart-now` (סמן "עכשיו"), `--chart-wind-offshore` (חץ+מספר רוח אופשור) ו-`--chart-wind-other` (אונשור/צדדית/חלשה). כלי Tailwind: `stroke-chart-wave`, `text-chart-wind-offshore` וכו'. הצבע לא נושא את המשמעות לבד: חץ + מספר + תווית. אנימציות: `motion-chart-draw` (קו) ו-`motion-chart-fade` (שטח), מכובות ב-reduced motion. הגרף עצמו `dir="ltr"` בכוונה (זמן זורם שמאל->ימין).

@@ -91,7 +91,9 @@ export async function fetchReports(
   cutoff: string,
   cursor?: FeedCursor | null,
   /** Viewer id: fills myComing / myOnTheWay (embedded replies filtered to this user). */
-  userId?: string | null
+  userId?: string | null,
+  /** Only this beach's reports (beach page). Omit for the global feed. */
+  beachId?: number | null
 ): Promise<FeedReport[]> {
   let query = supabase
     .from("reports")
@@ -103,6 +105,11 @@ export async function fetchReports(
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
     .limit(FEED_PAGE_SIZE);
+
+  if (beachId != null) {
+    if (!Number.isInteger(beachId) || beachId <= 0) throw new Error("invalid beach id");
+    query = query.eq("beach_id", beachId);
+  }
 
   if (cursor) {
     const c = parseFeedCursor(cursor);

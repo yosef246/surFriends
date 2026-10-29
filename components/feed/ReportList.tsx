@@ -43,12 +43,18 @@ export function ReportList({
   currentUserName,
   currentUserAvatar,
   heading,
+  beachId,
+  emptyState,
 }: {
   initialReports: FeedReport[];
   currentUserId: string;
   currentUserName: string;
   currentUserAvatar: string | null;
   heading?: ReactNode;
+  /** Beach page: list only this beach (load-more, resync and realtime inserts are filtered). */
+  beachId?: number;
+  /** Replaces the default empty state. */
+  emptyState?: ReactNode;
 }) {
   const router = useRouter();
   const [state, setState] = useState<FeedState>({ items: initialReports, queue: [] });
@@ -99,7 +105,8 @@ export function ReportList({
   }, []);
 
   const onReportInsert = useCallback(
-    async (id: string) => {
+    async (id: string, insertBeachId?: number) => {
+      if (beachId != null && insertBeachId !== beachId) return; // another beach
       if (stateRef.current.items.some((r) => r.id === id)) return; // own optimistic / server render
       const report = await fetchReportById(getClient(), id, reportCutoffIso(), currentUserId);
       if (!report) return;
@@ -107,7 +114,7 @@ export function ReportList({
       setState((s) => addIncoming(s, report, { direct }));
       refreshHero();
     },
-    [currentUserId, refreshHero]
+    [currentUserId, refreshHero, beachId]
   );
 
   const leavingRef = useRef<Set<string>>(new Set());
@@ -137,14 +144,14 @@ export function ReportList({
 
   const resync = useCallback(async () => {
     try {
-      const page = await fetchReports(getClient(), reportCutoffIso(), null, currentUserId);
+      const page = await fetchReports(getClient(), reportCutoffIso(), null, currentUserId, beachId);
       setState((s) => healWithFirstPage(dropExpired(s, reportCutoffIso()), page));
       refreshHero();
       emitReplyResync(); // open threads refetch too
     } catch {
       /* next visibility/online event retries */
     }
-  }, [refreshHero, currentUserId]);
+  }, [refreshHero, currentUserId, beachId]);
 
   const onReplyInsert = useCallback(
     (row: ReplyRow) => {
@@ -200,7 +207,7 @@ export function ReportList({
     if (!last) return;
     setFailed(false);
     startTransition(async () => {
-      const res = await loadMoreReports({ created_at: last.created_at, id: last.id });
+      const res = await loadMoreReports({ created_at: last.created_at, id: last.id }, beachId);
       if (!res.ok) {
         setFailed(true);
         return;
@@ -230,11 +237,13 @@ export function ReportList({
     return (
       <div className="flex flex-col gap-5">
         {top}
-        <EmptyState title="עדיין שקט בים" description="היו הראשונים לספר מה קורה בחוף">
-          <Link href="/new" className={cn(buttonVariants(), "min-h-touch")}>
-            היה הראשון לדווח
-          </Link>
-        </EmptyState>
+        {emptyState ?? (
+          <EmptyState title="עדיין שקט בים" description="היו הראשונים לספר מה קורה בחוף">
+            <Link href="/new" className={cn(buttonVariants(), "min-h-touch")}>
+              היה הראשון לדווח
+            </Link>
+          </EmptyState>
+        )}
       </div>
     );
   }
@@ -242,7 +251,7 @@ export function ReportList({
   return (
     <div className="flex flex-col gap-4">
       {top}
-      <h1 className="sr-only">פיד דיווחים</h1>
+      {beachId == null ? <h1 className="sr-only">פיד דיווחים</h1> : null}
       <ul className="flex flex-col gap-5 px-1 py-1" aria-busy={pending}>
         {reports.map((r, i) => (
           <li

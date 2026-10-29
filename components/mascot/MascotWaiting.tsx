@@ -1,42 +1,40 @@
-import { BLUE, INK, ORANGE, WHITE, SealHead, type MascotProps } from "./parts";
+import { AQUA, Arm, Hand, INK, SHIRT, SHORTS, SKIN, SKIN_SHADE, TURQ, WHITE, Frame, SurferHead, type MascotProps } from "./parts";
 
-/** ימי sits on his board, staring at a flat sea. For empty states. */
+/** גל sits on his board on a flat sea, chin on hand, "..." bubble. For empty states. */
 export function MascotWaiting({ size = 160, className }: MascotProps) {
   return (
-    <svg
-      viewBox="0 0 200 200"
-      width={size}
-      height={size}
-      className={className}
-      role="img"
-      aria-label="ימי, כלב הים, יושב על הלוח ומחכה לגלים"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      {/* waiting dots */}
-      <g fill={INK}>
-        <circle cx="152" cy="30" r="3.5" />
-        <circle cx="164" cy="30" r="3.5" />
-        <circle cx="176" cy="30" r="3.5" />
-      </g>
-      {/* body, sitting */}
-      <ellipse cx="100" cy="122" rx="42" ry="42" fill={BLUE} stroke={INK} strokeWidth="4" />
-      <ellipse cx="100" cy="130" rx="26" ry="28" fill={WHITE} />
-      {/* flippers resting */}
-      <ellipse cx="60" cy="132" rx="10" ry="20" transform="rotate(20 60 132)" fill={BLUE} stroke={INK} strokeWidth="4" />
-      <ellipse cx="140" cy="132" rx="10" ry="20" transform="rotate(-20 140 132)" fill={BLUE} stroke={INK} strokeWidth="4" />
-      <SealHead eyes="look" mouth="flat" dy={-16} />
-      {/* board in front of the lower body */}
-      <path
-        d="M10 160 C50 146 150 146 190 160 C150 174 50 174 10 160Z"
-        fill={ORANGE}
-        stroke={INK}
-        strokeWidth="4"
-      />
-      <path d="M44 160 H156" stroke={WHITE} strokeWidth="4" fill="none" />
+    <Frame size={size} className={className} label="גל הגולש יושב על הלוח וממתין לגלים">
       {/* flat sea */}
-      <path d="M6 184 Q28 180 50 184 T94 184 T138 184 T194 184" stroke={BLUE} strokeWidth="5" fill="none" />
-      <path d="M26 196 Q48 192 70 196 T114 196 T158 196" stroke={BLUE} strokeWidth="5" fill="none" opacity=".55" />
-    </svg>
+      <ellipse cx="100" cy="180" rx="92" ry="13" fill={AQUA} stroke={INK} strokeWidth="3.5" />
+      <path d="M40 180 q8 -4 16 0 M120 182 q8 -4 16 0 M84 176 q6 -3 12 0" stroke={INK} strokeWidth="2.5" fill="none" opacity=".5" />
+      {/* board lying flat */}
+      <path d="M14 162 C40 150 160 150 186 162 C160 174 40 174 14 162Z" fill={WHITE} stroke={INK} strokeWidth="3.5" />
+      <path d="M30 162 H170" stroke={TURQ} strokeWidth="6" fill="none" />
+      {/* legs dangling over the front */}
+      <Arm d="M84 150 Q78 166 84 176" />
+      <Arm d="M116 150 Q122 166 116 176" />
+      <ellipse cx="84" cy="179" rx="9" ry="4" fill={SKIN_SHADE} stroke={INK} strokeWidth="3" />
+      <ellipse cx="116" cy="179" rx="9" ry="4" fill={SKIN_SHADE} stroke={INK} strokeWidth="3" />
+      {/* torso seated */}
+      <ellipse cx="100" cy="108" rx="10" ry="7" fill={SKIN} stroke={INK} strokeWidth="3.5" />
+      <path d="M80 109 Q100 117 120 109 L126 150 Q100 158 74 150 Z" fill={SHIRT} stroke={INK} strokeWidth="3.5" />
+      <path d="M77 132 Q100 139 123 132" stroke={TURQ} strokeWidth="4.5" fill="none" />
+      <path d="M74 146 Q100 154 126 146 L128 158 Q100 166 72 158 Z" fill={SHORTS} stroke={INK} strokeWidth="3.5" />
+      {/* arm on knee + chin-on-hand arm */}
+      <Arm d="M80 114 Q68 130 82 146" />
+      <Hand cx={83} cy={147} />
+      <Arm d="M120 114 Q140 124 122 104" />
+      <Hand cx={114} cy={102} />
+      <SurferHead mouth="smile" />
+      {/* "..." thought bubble */}
+      <circle cx="140" cy="54" r="3" fill={WHITE} stroke={INK} strokeWidth="2.5" />
+      <circle cx="146" cy="46" r="4.5" fill={WHITE} stroke={INK} strokeWidth="2.5" />
+      <rect x="146" y="12" width="46" height="26" rx="13" fill={WHITE} stroke={INK} strokeWidth="3.5" />
+      <g fill={TURQ} stroke={INK} strokeWidth="1.5">
+        <circle cx="159" cy="25" r="3.2" />
+        <circle cx="169" cy="25" r="3.2" />
+        <circle cx="179" cy="25" r="3.2" />
+      </g>
+    </Frame>
   );
 }

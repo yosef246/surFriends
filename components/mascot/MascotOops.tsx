@@ -1,41 +1,29 @@
-import { BLUE, INK, ORANGE, WHITE, SealHead, type MascotProps } from "./parts";
+import { AQUA, Arm, Hand, INK, StandingLegs, SurferHead, TURQ, Torso, WHITE, Frame, type MascotProps } from "./parts";
 
-/** ימי, hands up, board snapped in two. For errors and offline. */
+/** גל wipes out: shades slipping down his nose, sweat drop, snapped board. For errors/offline. */
 export function MascotOops({ size = 160, className }: MascotProps) {
   return (
-    <svg
-      viewBox="0 0 200 200"
-      width={size}
-      height={size}
-      className={className}
-      role="img"
-      aria-label="ימי, כלב הים, נבהל, והלוח שלו נשבר"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      {/* body */}
-      <ellipse cx="100" cy="124" rx="44" ry="44" fill={BLUE} stroke={INK} strokeWidth="4" />
-      <ellipse cx="100" cy="134" rx="27" ry="28" fill={WHITE} />
-      {/* hands up */}
-      <ellipse cx="54" cy="112" rx="10" ry="22" transform="rotate(-30 54 112)" fill={BLUE} stroke={INK} strokeWidth="4" />
-      <ellipse cx="146" cy="112" rx="10" ry="22" transform="rotate(30 146 112)" fill={BLUE} stroke={INK} strokeWidth="4" />
-      <SealHead eyes="worried" mouth="oh" dy={-16} />
+    <Frame size={size} className={className} label="אופס, גל הגולש הופתע והלוח נשבר">
+      {/* snapped board halves */}
+      <g transform="translate(40 168) rotate(-18)">
+        <path d="M-36 0 C-24 -13 8 -13 20 -7 L12 -3 L21 2 L11 5 L17 10 C4 13 -24 12 -36 0Z" fill={WHITE} stroke={INK} strokeWidth="3.5" />
+        <path d="M-30 0 H4" stroke={TURQ} strokeWidth="4" fill="none" />
+      </g>
+      <g transform="translate(160 170) rotate(22) scale(-1 1)">
+        <path d="M-34 0 C-22 -12 6 -12 18 -6 L10 -2 L19 3 L9 6 L15 10 C2 12 -22 11 -34 0Z" fill={WHITE} stroke={INK} strokeWidth="3.5" />
+        <path d="M-28 0 H2" stroke={TURQ} strokeWidth="4" fill="none" />
+      </g>
+      <StandingLegs />
+      <Torso />
+      {/* both arms up in surprise */}
+      <Arm d="M80 113 Q62 112 56 94" />
+      <Hand cx={55} cy={90} r={7} />
+      <Arm d="M120 113 Q138 112 144 94" />
+      <Hand cx={145} cy={90} r={7} />
+      <SurferHead shades="slipped" mouth="oh" />
       {/* sweat drop */}
-      <path d="M158 36 C158 36 150 48 150 54 a8 8 0 0 0 16 0 C166 48 158 36 158 36Z" fill={WHITE} stroke={INK} strokeWidth="3" />
-      {/* broken board */}
-      <path
-        d="M10 184 C26 166 62 160 96 166 L88 176 L98 184 L84 194 C54 198 28 196 10 184Z"
-        fill={ORANGE}
-        stroke={INK}
-        strokeWidth="4"
-      />
-      <path
-        d="M108 168 C140 160 172 166 190 184 C172 196 146 198 116 194 L104 186 L112 178Z"
-        fill={ORANGE}
-        stroke={INK}
-        strokeWidth="4"
-      />
-      <path d="M30 182 H74 M132 182 H170" stroke={WHITE} strokeWidth="3.5" fill="none" />
-    </svg>
+      <path d="M150 38 q9 11 0 18 q-9 -7 0 -18Z" fill={AQUA} stroke={INK} strokeWidth="3" />
+      <path d="M24 56 l6 6 M36 48 l2 8 M16 70 l8 2" stroke={INK} strokeWidth="3" fill="none" />
+    </Frame>
   );
 }

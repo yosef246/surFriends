@@ -1,240 +1,282 @@
-# surFriends — Design System v2 ("Sunset")
+# surFriends — Design System v3 ("Sea")
 
-> מחליף את v1 (הזמני). מקור הטוקנים בקוד: `app/globals.css`. מסמך זה מגדיר מראה בלבד; מבנה, מצבים וזרימות ב-`docs/UX_SPEC.md`. שמות טוקנים באנגלית והם שמות ה-utility של Tailwind v4 (`bg-signature`, `text-ink`, `shadow-card`...). Light only; dark mode מחוץ ל-scope.
+> מחליף את v2 (Sunset). מקור הטוקנים בקוד: `app/globals.css`. המסמך מגדיר מראה בלבד; מבנה וזרימות ב-`docs/UX_SPEC.md`. שמות הטוקנים הם שמות ה-utility של Tailwind v4. Light only; dark mode מחוץ ל-scope. ללא ספריות חדשות: כל התנועה CSS בלבד.
 
 ## 1. כיוון עיצובי
 
-משטחים לבנים נקיים, **צבע חתימה אחד** (כתום שקיעה) שמופיע רק בשלושה מקומות: כרטיס ה-hero, הפעולה הראשית (כפתור ראשי + כפתור "דיווח" בניווט) ופסי התקדמות. כל השאר רגוע: טקסט כהה חם, אפור לטקסט משני, צל רך מאוד. כותרות ב-Medium (לא Bold), מספרים גדולים עם יחידה קטנה, רדיוסים גדולים (19px), צ'יפים ולחצנים בצורת גלולה. מסקוט מאויר ("ימי") נותן הומור במסך הבית, במצבים ריקים ובהתחברות. השראה: מבנה ותחושה של אפליקציית Yellow, ללא הצבע הצהוב וללא העז; הזהות כאן כתומה-ימית.
+האפליקציה נראית כמו הים: רקע דף שהוא מעבר עדין משמיים בהירים (`#EAFBFE`) למים רדודים (`#C9EEF4`), כרטיס hero בגרדיאנט אוקיינוס עמוק → טורקיז, כרטיסים לבנים או זכוכית חלבית (לבן 78% + blur) מעל הים. צבע הפעולה: **טורקיז חי `#1CC8DA`** עם **טקסט נייבי (ink), לא לבן**. כפתורים בועתיים (פיל, ברק עליון, צל כחול-ים, קפיצה בלחיצה), כותרות Rubik Medium עם אפשרות גרדיאנט כחול→טורקיז, תוויות "eyebrow" מרווחות, וקו גל מצויר מתחת לכותרת מפתח. תנועה קפיצית ורכה. המסקוט: **גל**, גולש צעיר עם משקפי שמש. הכל כחול; **מבטא חם יחיד ומכוון: אלמוג `#FF6B57` ל"חי" ולתגי התראה בלבד** (לא לכפתורים, לא לכותרות). רפרנס: Yellow (מבנה) + Apple-ים-תיכוני רך (זכוכית ובועות).
 
-כלל ברזל: **טקסט לבן על כתום נכשל AA (2.61:1)**. על כתום תמיד `text-ink`.
+כלל ברזל: **לבן על טורקיז נכשל AA (2.03:1)** → על `signature` תמיד `text-ink`. על ה-hero הכהה → תמיד טקסט לבן, **לא ink**.
 
 ## 2. פלטת צבעים
 
-### 2.1 תפקידים
+### 2.1 סקאלת הים (כהה → בהיר)
 
-| Token (Tailwind) | Hex | תפקיד |
+| Token | Hex | תפקיד |
 |---|---|---|
-| `signature` | `#FF7A1A` | hero, כפתור ראשי, FAB בניווט, פסי התקדמות, נקודת "חי". **רק fill.** |
-| `signature-hover` | `#F56E0C` | hover |
-| `signature-pressed` | `#EA630A` | active |
-| `signature-soft` | `#FFF1E6` | רקע צ'יפ נבחר / שורה מודגשת |
-| `orange-text` | `#C2410C` | כתום **כטקסט** על לבן/אפור (למשל "חי", ספירה) |
-| `ink` | `#0A2540` | כותרות, מספרים גדולים, טקסט על כתום, אייקונים פעילים |
-| `copy` | `#3A3A35` | טקסט גוף חם (ברירת מחדל של `body`) |
-| `muted-text` | `#6B6B66` | טקסט משני, תוויות, זמנים |
-| `surface` | `#F4F4F4` | רקע דף מאחורי כרטיסים, צ'יפים לא-פעילים |
-| `foam` / `card` | `#FFFFFF` | כרטיסים, ניווט, מסכי login |
-| `line` | `#E6E6E1` | קווי הפרדה דקורטיביים בלבד |
-| `mist-border` / `input` | `#8A8A84` | מסגרת שדות וכפתורי outline (3:1 לרכיבי UI) |
-| `link-blue` / `link` | `#007196` | קישורים, תג "חדש", focus ring |
-| `link-soft` | `#E3F2F8` | רקע עדין סביב תוכן כחול / hover של ghost |
-| `kelp` / `success` | `#0F7B5F` | הצלחה (ירוק-ים) |
+| `abyss` | `#04213D` | עומק מרבי: overlays, גרדיאנט עמוק |
+| `ocean-deep` | `#06335C` | תחילת גרדיאנט ה-hero |
+| `ocean` | `#0B6C9E` | אמצע ה-hero, איורים |
+| `signature` / `turquoise` | `#1CC8DA` | **פעולה ראשית (fill בלבד)**, FAB, פסי התקדמות |
+| `aqua` | `#7FE3EE` | נצנוצים, גלי SVG, מילוי דקורטיבי (לא טקסט על בהיר) |
+| `sky` | `#C9EEF4` | תחתית גרדיאנט הדף |
+| `foam-blue` | `#EAFBFE` | ראש גרדיאנט הדף |
+| `foam` | `#F4FDFF` | "לבן" של מסכים נקיים (login) |
+
+### 2.2 תפקידים
+
+| Token | Hex | תפקיד |
+|---|---|---|
+| `signature` / `-hover` / `-pressed` / `-soft` | `#1CC8DA` / `#12B5C9` / `#0AA2B8` / `#DDF8FB` | פעולה ראשית, מצבים, רקע נבחר |
+| `orange-text` (alias, עכשיו טורקיז כהה) | `#07707F` | טקסט טורקיז: eyebrow, ספירות, "חי" כטקסט שאינו אלמוג |
+| `ink` / `sea-deep` | `#062B4A` | כותרות, מספרים, טקסט על טורקיז, אייקונים |
+| `copy` / `shadow` | `#1F3F57` | גוף טקסט |
+| `muted-text` / `mist-text` | `#456479` | משני, תוויות, זמנים |
+| `surface` / `sand` / `muted` | `#E3F6F9` | צ'יפים לא פעילים, שדות כבויים, פאנלים |
+| `card` | `#FFFFFF` | כרטיס אטום; לזכוכית ראו `glass-card` |
+| `line` / `border` | `#CDE9EF` | קווי הפרדה דקורטיביים בלבד |
+| `mist-border` / `input` | `#4F8196` | גבול שדות וכפתורי outline |
+| `link-blue` / `link` / `ring` | `#0B6A8F` | קישורים, תג "חדש", focus |
+| `link-soft` / `accent` | `#DDF3F9` / `#DDF3F9` | hover עדין |
+| `sea-wave` | `#1AA7D8` | דקורטיבי בלבד (איורים, גרפים) |
+| `mist` | `#7FB4C6` | דקורטיבי בלבד |
+| `kelp` / `success` | `#0F7B5F` | הצלחה |
 | `danger` / `destructive` | `#C62828` | שגיאה |
-| `sea-wave` | `#0EA5E9` | **דקורטיבי בלבד** (איורים, גרפים). לא פעולה ולא טקסט |
-| `mist` | `#9A9A94` | דקורטיבי בלבד, לעולם לא טקסט |
+| `live` / `coral` | `#FF6B57` | **המבטא החם היחיד.** נקודת "חי", תג "חי", באדג'ים של התראות. fill בלבד, טקסט עליו `ink` |
+| `live-text` / `coral-text` | `#B83A0A` | אלמוג כטקסט |
+| `sunset`, `sunset-text` | `#1CC8DA`, `#07707F` | aliases ישנים, deprecated |
 
-אין יותר רקע בז'. `sand` נשאר כ-alias ל-`surface`.
+### 2.3 גרדיאנטים (CSS vars + utilities)
 
-### 2.2 טבלת ניגודיות (WCAG, מחושב)
+| Var | ערך | שימוש |
+|---|---|---|
+| `--gradient-page` | `180deg #EAFBFE → #D9F4F8 45% → #C9EEF4` | רקע ה-`body` (אוטומטי), `bg-sea-page` |
+| `--gradient-hero` | `160deg #06335C → #0B6C9E 55% → #0C7FA6` | `bg-hero-sea` (כולל זוהר טורקיז עדין בפינה התחתונה-שמאלית, שם המסקוט) |
+| `--gradient-action` | `180deg #4ADBE8 → #1CC8DA 60% → #14BCD0` | כפתור ראשי, צ'יפ נבחר |
+| `--gradient-fab` | `160deg #5BE3EE → #1CC8DA → #0B9FC4` | כפתור "דיווח" בניווט |
+| `--gradient-text` | `100deg #083D6E → #07707F` | `text-gradient-sea` |
+| `--gradient-text-light` | `100deg #FFFFFF → #A5F3FA` | `text-gradient-sea-light` (על ה-hero) |
 
-| חזית על רקע | יחס | תוצאה | שימוש |
+### 2.4 טבלת ניגודיות (WCAG, מחושב)
+
+| חזית על רקע | יחס | תוצאה | הערה |
 |---|---|---|---|
-| `ink` על `signature` | 5.96:1 | AA | טקסט/אייקון על hero, כפתור ראשי, FAB |
-| `ink` על `signature-hover` | 5.27:1 | AA | |
-| `ink` על `signature-pressed` | 4.66:1 | AA | |
-| **לבן** על `signature` | **2.61:1** | **נכשל** | אסור |
-| `orange-text` על לבן | 5.17:1 | AA | טקסט כתום |
-| `orange-text` על `surface` | 4.70:1 | AA | |
-| `orange-text` על `signature-soft` | 4.67:1 | AA | |
-| `ink` על לבן / `surface` | 15.5 / 14.1 | AAA | |
-| `copy` על לבן / `surface` | 11.4 / 10.4 | AAA | |
-| `muted-text` על לבן / `surface` | 5.36 / 4.87 | AA | |
-| `link-blue` על לבן / `surface` | 5.53 / 5.03 | AA | |
-| לבן על `link-blue` | 5.53:1 | AA | תג "חדש" |
-| `kelp` על לבן / `surface` | 5.23 / 4.75 | AA | |
-| לבן על `kelp` | 5.23:1 | AA | |
-| `danger` על לבן / `surface` | 5.62 / 5.12 | AA | |
-| לבן על `danger` | 5.62:1 | AA | |
-| `mist-border` על לבן / `surface` | 3.47 / 3.16 | 3:1 UI | מסגרת שדה |
-| `signature` על לבן (לא טקסט) | 2.61:1 | | מותר רק כשיש טקסט/מספר לצד (פס התקדמות עם מספר, כפתור עם תווית). לא לתקשר מידע בכתום בלבד |
+| `ink` על `signature` `#1CC8DA` | 7.11 | AAA | כפתורים, FAB |
+| `ink` על hover `#12B5C9` / pressed `#0AA2B8` | 5.84 / 4.73 | AA | |
+| `ink` על כל עצירות `--gradient-action` (עד `#14BCD0`) | ≥ 6.29 | AA | |
+| `ink` על `--gradient-fab` (עד `#0B9FC4`) | ≥ 4.66 | AA | |
+| **לבן** על `signature` | **2.03** | **נכשל** | אסור |
+| `ink` על `signature-soft` | 13.2 | AAA | |
+| לבן על `ocean-deep` `#06335C` | 12.8 | AAA | hero, תחילה |
+| לבן על `ocean` `#0B6C9E` | 5.75 | AA | hero, אמצע |
+| לבן על `#0C7FA6` (סוף ה-hero) | 4.56 | AA | המינימום ב-hero: אסור לוותר על הערך הזה |
+| `#A5F3FA` על `ocean` `#0B6C9E` / על `ocean-deep` | 4.6 / 9.1 | AA | `eyebrow-light` רק בחצי העליון/ימני של ה-hero. לא בפינה התחתונה (3.65) |
+| `ink` על לבן / `surface` / `sky` | 14.5 / 13.0 / 11.7 | AAA | |
+| `copy` על לבן / `sky` | 11.0 / 8.9 | AAA | |
+| `muted-text` על לבן / `surface` / `sky` | 6.2 / 5.6 / 5.1 | AA | |
+| `orange-text` `#07707F` על לבן / `surface` / `sky` | 5.78 / 5.18 / 4.68 | AA | eyebrow, טקסט טורקיז |
+| `link-blue` על לבן / `surface` / `sky` | 6.05 / 5.4 / 4.9 | AA | |
+| לבן על `link-blue` | 6.05 | AA | תג "חדש" |
+| גרדיאנט טקסט (`#083D6E→#07707F`) על לבן / `sky` | ≥ 5.78 / ≥ 4.68 | AA | הקצה הבהיר `#07707F` הוא המינימום |
+| `#A5F3FA`→לבן על עצירות עליונות של ה-hero | ≥ 4.6 | AA | `text-gradient-sea-light` רק למעלה |
+| `ink` על `live` `#FF6B57` | 5.16 | AA | תג "חי" |
+| `coral-text` `#B83A0A` על לבן / `sky` | 5.76 / 4.67 | AA | |
+| `mist-border` על לבן / `sky` | 4.28 / 3.46 | 3:1 UI | גבול שדה |
+| `#0E9FB3` (גבול כפתור זכוכית) על לבן | 3.17 | 3:1 UI | התווית מזהה את הכפתור בכל מקרה |
+| `kelp` / `danger` על לבן | 5.23 / 5.62 | AA | |
+| טקסט על `glass-card` (לבן 78%) מעל `sky` | כמו על `sky` או טוב יותר | AA | לא לרדת מ-78% אטימות |
 
-## 3. טיפוגרפיה
+כללי שימוש: טורקיז/אקווה בהיר **אף פעם לא כטקסט** על רקע בהיר. טקסט טורקיז = `text-orange-text` (`#07707F`). טקסט כחול = `text-link`. אינפורמציה אף פעם לא בצבע בלבד.
 
-Rubik (כבר נטען ב-`app/layout.tsx` כ-variable font, כל המשקלים זמינים). **משקלים במערכת: Light 300, Regular 400, Medium 500 בלבד.** המחלקות הקיימות `font-bold` ו-`font-semibold` מוגדרות ב-theme כ-500, כך שכותרות קיימות כבר Medium. בקוד חדש כתבו `font-medium`. JetBrains Mono נשאר רק ל-`text-data` (קואורדינטות/מספרים טכניים).
+## 3. טיפוגרפיה (עיצובי טקסט)
 
-| Token | גודל / שורה | משקל | שימוש |
-|---|---|---|---|
-| `text-numeral-xl` | 64 / 1 | 300 | גובה גל ב-hero |
-| `text-numeral-lg` | 44 / 1 | 300 | גובה גל בכרטיס דיווח / BeachCircle מורחב |
-| `text-numeral-md` | 28 / 1 | 500 | דירוג inline |
-| `text-unit` | 16 / 1 | 400 | היחידה/העשרוני הקטן ליד מספר |
-| `text-display` | 28 / 34 | 500 | "ערב טוב יונתן," בהקשר hero |
-| `text-title` | 22 / 28 | 500 | כותרות מסך |
-| `text-heading` | 18 / 24 | 500 | כותרות כרטיס |
-| `text-body` | 16 / 24 | 400 | גוף |
-| `text-body-sm` | 14 / 20 | 400 (500 לכפתורים/תוויות) | משני |
-| `text-caption` | 12 / 16 | 500 | תוויות ניווט, תגים |
-| `text-data` | 13 / 18 | 500 mono | נתונים |
+Rubik, משקלים 300 / 400 / 500. כותרות Medium עם `letter-spacing: -0.01em`; `font-bold`/`font-semibold` מוגדרים כ-500. סקאלה (ללא שינוי): `text-numeral-xl/lg/md`, `text-unit`, `text-display` 28/34, `text-title` 22/28, `text-heading` 18/24, `text-body` 16/24, `text-body-sm` 14/20, `text-caption` 12/16, `text-data` 13/18 mono.
 
-צבעי טקסט: כותרות ומספרים `text-ink`; גוף `text-copy` (ברירת מחדל מ-`body`); משני `text-muted-text` (שם קיים `text-mist-text`).
+### Utilities חדשים (ב-`globals.css`)
 
-### BigNumber (סגנון המספר הגדול)
-מספר שלם גדול ב-Light, היחידה/העשרוני קטנים ב-Regular, מיושרים ל-baseline. דוגמה: `1` `.2` `מ'`. משתמשים ב-utility `numeral` (ink, tabular-nums, `direction:ltr`, baseline, gap) כדי שהספרות והנקודה העשרונית לא יתהפכו ב-RTL.
+| Class | מה עושה | איפה משתמשים |
+|---|---|---|
+| `text-gradient-sea` | טקסט בגרדיאנט כחול-עמוק→טורקיז-כהה (`background-clip:text`), fallback `ink` אם אין תמיכה | כותרת ברכה ("ערב טוב יונתן"), מספרי hero על רקע בהיר, מספר גל גדול בכרטיס. גדלים ≥ 22px |
+| `text-gradient-sea-light` | לבן→אקווה בהיר, fallback לבן | כותרת/מספר גדול בתוך `bg-hero-sea` (חצי עליון) |
+| `eyebrow` | 12px, Medium, ריווח `0.14em`, אותיות גדולות ללטינית, צבע `#07707F`, נקודת טורקיז קטנה לפני | מעל כותרות סקציה ("החופים שלך", "דיווחים אחרונים") |
+| `eyebrow-light` | מוסיף צבע `#A5F3FA` (לשלב עם `eyebrow`) | על ה-hero |
+| `numeral` | ספרות tabular, ריווח `-0.04em`, ltr | כל מספר גדול (נשאר + הידוק) |
+| `heading-tight` | `letter-spacing -0.025em`, line-height 1.15, `text-wrap:balance` | כותרות מסך, display |
+| `prose-he` | line-height 1.7, `text-wrap:pretty` | פסקאות עברית ארוכות (תיאור דיווח, הסברים) |
+| `wave-underline` | קו גל SVG טורקיז מתחת (`::after`), מתחבר עם `text-gradient-sea` | **מקסימום 1-2 כותרות**: ברכת הבית וכותרת ה-EmptyState/login |
 
+דוגמה:
 ```
-<span class="numeral">
-  <span class="text-numeral-lg font-light">1</span>
-  <span class="text-unit">.2 מ'</span>
-</span>
+<p class="eyebrow">החופים שלך</p>
+<h1 class="text-display heading-tight text-gradient-sea wave-underline">ערב טוב יונתן</h1>
 ```
-על hero כתום הצבע נשאר `ink`. אם אין ערך: "—" באותו גודל ב-`text-muted-text` (על hero: ink בשקיפות 60% אסורה; השתמשו ב-ink מלא).
+על `text-gradient-sea` לא לשים `text-ink`/צבע אחר (`color` נעשה שקוף); לא מתחת ל-22px.
 
 ## 4. ריווח ופריסה
-סקאלת 4px: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64. רוחב טור פיד `max-w-feed` (576px). Gutter 16px במובייל, 24px מעל `sm`. ריפוד כרטיס 16px (מובייל) / 20px; hero 20px. מרווח בין כרטיסים 12px; בין סקציות 24px. יעדי מגע מינימום `min-h-touch` (44px). תוכן אחרון בדף מקבל padding תחתון של `bottomnav + 24px + safe-area` (הכפתור המורם בולט מעל הסרגל).
+סקאלת 4px (4, 8, 12, 16, 20, 24, 32, 40, 48, 64). `max-w-feed` 576px. Gutter 16/24px. ריפוד כרטיס 16-20px. מרווח בין כרטיסים 12-16px, בין סקציות 24-32px. יעד מגע ≥ 44px; כפתורים ראשיים ≥ 48px. תוכן אחרון: padding תחתון `bottomnav + 24px + safe-area`.
 
-## 5. רדיוסים, צללים, מסגרות
+## 5. רדיוסים, צללים, זכוכית
 
 | Token | ערך | שימוש |
 |---|---|---|
-| `rounded-card` / `rounded-xl` | 19px | כרטיסים, hero, sheets (הקיים `rounded-xl` ב-ReportCard כבר 19px) |
-| `rounded-pill` / `rounded-full` | 9999px | צ'יפים, כפתורים, תגים, אריחים עגולים, FAB |
-| `rounded-lg` | 12px | שדות קלט, תמונות בתוך כרטיס |
-| `rounded-md` / `rounded-sm` | 9.6 / 7.2px | אלמנטים קטנים |
+| `rounded-card` / `rounded-xl` | 24px | כרטיסים, hero, sheets |
+| `rounded-pill` / `rounded-full` | ∞ | כפתורים, צ'יפים, תגים, אריחים |
+| `rounded-lg` | 14px | שדות קלט, תמונות בכרטיס |
 
-צללים (שחור ניטרלי, רכים מאוד): `shadow-card` = `0 5px 10px rgba(0,0,0,.08)`; `shadow-raised` = `0 0 15px rgba(0,0,0,.25)` (כפתור הניווט המורם; `shadow-fab` הוא alias); `shadow-hero` = glow כתום עדין; `shadow-nav` = קצה עליון של הסרגל; `shadow-sheet`. כרטיס לבן על `surface`: **בלי border**, רק `shadow-card`. מסגרת `border-line` רק לקווי הפרדה. שדות: `border-input`. Focus: outline 2px `link-blue` עם offset 2px (גלובלי) ו-`ring-offset-background`.
+צללים (כולם מגוון כחול-ים `rgb(6 74 122)` / טורקיז, **לא אפור**): `shadow-card`, `shadow-bubble` (כפתור ראשי), `shadow-raised` = `shadow-fab` (טורקיז חזק, כפתור הניווט), `shadow-hero`, `shadow-nav`, `shadow-sheet`.
+
+משטחים:
+- `bg-sea-page`: גרדיאנט הדף (על ה-`body` כבר מוחל).
+- `glass-card`: לבן 78% + `backdrop-blur 14px` + גבול לבן 70% + `shadow-card`. כרטיס ברירת מחדל (או `bg-card shadow-card` אטום).
+- `glass-bar`: לבן 85% + blur 16px: header דביק וסרגל ניווט.
+- `bg-hero-sea`: ה-hero (גרדיאנט + זוהר + קצה עליון בהיר). טקסט: **לבן בלבד**.
 
 ## 6. RTL
-- `<html dir="rtl">`. להשתמש ב-logical properties בלבד: `ms-/me-/ps-/pe-`, `start-/end-`, `text-start`, `border-s`. אסור `ml/mr/left/right`.
-- סדר DOM = סדר חזותי מימין לשמאל. הפריט הראשון ב-DOM מופיע **בימין**.
-- מספרים: עטפו ב-`numeral` או `<bdi>`. שמות חופים/משתמשים בלטינית ב-`<bdi>`.
-- אייקוני חץ/chevron מתהפכים (`rtl:-scale-x-100`); אייקונים לא-כיווניים (בית, משתמש) לא.
-- המסקוט לא מתהפך. אל תשתמשו ב-`scale-x-[-1]` עליו.
-- ה-shimmer כבר מתהפך דרך `--shimmer-dir`.
+`dir="rtl"`; logical properties בלבד (`ms/me/ps/pe/start/end`); הפריט הראשון ב-DOM מימין. מספרים ב-`numeral`/`<bdi>`. חצים `rtl:-scale-x-100`. המסקוט לא מתהפך (ה-hero: הוא בצד end = שמאל, והזוהר הטורקיז בפינה התחתונה-שמאלית בכוונה). גלי ה-drift מתהפכים אוטומטית דרך `--drift-dir`.
 
-## 7. תנועה
-`--dur-instant` 80ms, `--dur-fast` 120ms, `--dur-base` 200ms, `--dur-slow` 320ms; easing `--ease-standard`, `--ease-out-soft`, `--ease-press`. לחיצה על כפתורים: `active:scale-[0.97]` 120ms. כפתור הניווט המורם: scale 0.94 בלחיצה. כרטיס חדש: `animate-card-in`. המסקוט ב-hero/login: `animate-mascot-bob` (ריחוף 4px, 3.2s); במצב ריק: סטטי.
-**Reduced motion**: כל האנימציות/המעברים מקוצרים ל-0.01ms, והלולאות (`skeleton`, `animate-shimmer`, `animate-live-pulse`, `animate-sending`, `animate-mascot-bob`) כבות לחלוטין. אין parallax. אין מידע שעובר באנימציה בלבד.
+## 7. מערכת תנועה (CSS בלבד)
 
-## 8. איקונוגרפיה
-lucide-react, `strokeWidth` 2, גדלים 16 / 20 (`size-5`, ניווט) / 24 (בתוך אריחים עגולים), 28 בכפתור הניווט המורם. ליד טקסט: רווח 4-8px. אייקון בלבד חייב `aria-label` או `aria-hidden` עם תווית סמוכה. אייקונים בניווט: לא פעיל `muted-text` קו בלבד; פעיל `ink` עם מילוי `ink/10`.
+### טוקנים
+| Token | ערך |
+|---|---|
+| `--ease-spring` | `cubic-bezier(.34,1.56,.64,1)` קפיצי, ל-pop/hover/לחיצה |
+| `--ease-out-soft` | `cubic-bezier(.22,1,.36,1)` חלק, ל-fade/page |
+| `--ease-standard`, `--ease-press` | יציאות/מעברים רגילים |
+| `--dur-instant` 80 · `--dur-fast` 140 · `--dur-base` 220 · `--dur-slow` 400 · `--dur-ambient` 14s | משכים |
 
-## 9. המסקוט: "ימי" (Yami)
+### Keyframes + utilities
+| Utility | Keyframe | משך | איפה משתמשים |
+|---|---|---|---|
+| `motion-fade-up` | `fade-up` (14px למעלה + fade) | 520ms, השהיה `calc(var(--i)*40ms)` | פריטי רשימה: `style={{"--i": index}}` על ReportCard, שורת BeachCircle, שורות הגדרות |
+| `motion-pop-in` | `pop-in` (scale .9→1 עם overshoot) | 420ms (גם `--i`) | אריחי BeachCircle, צ'יפים, כרטיס hero, EmptyState, מודאלים |
+| `motion-float` / `animate-mascot-bob` | `float` (±6px + רוק 1.5°) | 3.6s אינסוף | מסקוט ב-hero ובלוגין. ב-EmptyState: סטטי |
+| `motion-drift` / `motion-drift-slow` | `wave-drift` (translateX 50%) | 14s / 24s אינסוף | רצועת SVG גלים בתחתית ה-hero/login: האלמנט `w-[200%]` בתוך הורה `overflow-hidden`, האיור מחזורי כל 50% מרוחבו. שתי שכבות (אחת slow, שקופה יותר) לעומק |
+| `animate-shimmer`, `skeleton` | `shimmer` | 1.4s | מצבי טעינה (מותאם לאקווה) |
+| `motion-pulse-ring` / `animate-live-pulse` | `pulse-ring` (טבעת אלמוג) | 2s אינסוף | **נקודת "חי"** בלבד |
+| `motion-squish` / `animate-squish` | `squish` (1.1×.9 → .95×1.06 → 1) | 480ms | אישור הצלחה: אחרי שליחת דיווח, בחירת דירוג, הוספת חוף |
+| `motion-press` | `:active scale .97` | 140ms spring | קלפים/אריחים לחיצים שאינם `Button` |
+| `motion-lift` | `:hover translateY(-3px)` | 220ms spring | כרטיסים ואריחים (desktop) |
+| `motion-page` / `animate-page-enter` | `page-enter` (10px + fade) | 420ms | עטיפת `<main>` בכל עמוד |
+| `animate-card-in`, `animate-pill-in`, `animate-toast-in`, `animate-count-pop` | קיימים, עכשיו עם spring | | דיווח חדש בפיד, צ'יפים, toast, ספירה |
 
-**כלב ים קטן ועגלגל**, גולש מושבע שלא מאבד אופטימיות. גוף בצבע ים-תכלת (`#38B6DC`), בטן לבנה, לחיים כתומות, מסגרת ink בעובי 4. מחזיק תמיד לוח גלישה כתום. **אישיות**: נלהב, קצת תלותי בגלים, דרמטי כשאין גלים ("הים שטוח, אני מת"), אף פעם לא מתנשא. הטון בטקסטים: חם, עם חיוך, בלי ציניות. הוא לא דומה לעז של Yellow בשום צורה (חיה ימית, צבעים אחרים, סילואטה עגולה).
+Hover lift וכפתורים (`bubble-*`) מוגדרים ב-§8. כל hover רק על אלמנטים אינטראקטיביים. אין parallax.
 
-קבצים: `components/mascot/` (`MascotWave.tsx`, `MascotWaiting.tsx`, `MascotOops.tsx`, `parts.tsx` משותף, `index.ts`). שימוש: `import { Mascot } from "@/components/mascot"` ואז `<Mascot.Wave size={140} />`. Props: `size` (px, ברירת מחדל 160, תוכנן ל-96-200), `className`. כל קומפוננטה `role="img"` עם `aria-label` בעברית, ללא JS לקוח (בטוחה ל-Server Components).
+### Reduced motion
+תחת `prefers-reduced-motion: reduce`: כל משכי האנימציה/מעבר ל-0.01ms; **כל** utilities האנימציה (`motion-*`, `animate-*` הלולאתיים והכניסה, `skeleton`) → `animation: none`; hover-lift ו-squish של הכפתורים והצ'יפים מבוטלים (`transform:none`). אין מידע שעובר בתנועה בלבד.
 
-| פוזה | מתי | הבעה |
+## 8. כפתורים בועתיים (`components/ui/button.tsx`)
+
+מבנה: פיל מלא, ברק עליון (inset highlight 2px + גרדיאנט לבן-שקוף ב-52% העליונים), צל כחול-ים רך, hover: עלייה 2px + בהירות; active: **squish** (`scale .96`, הצל מצטמצם, inset פנימי). מעבר spring 220ms. Focus: outline גלובלי (לא box-shadow).
+
+| Variant | Class | מראה | טקסט |
+|---|---|---|---|
+| `default` / `accent` (ראשי) | `bubble-primary` | גרדיאנט טורקיז, גבול לבן 45%, `shadow-bubble` | `ink` |
+| `secondary` | `bubble-glass` | זכוכית (לבן 60% + blur) + גבול טורקיז `#0E9FB3` 1.5px | `ink` |
+| `soft` (חדש) | `bubble-soft` | מילוי אקווה בהיר, בלי גבול | `ink` |
+| `outline` | `bubble-outline` | לבן + גבול `input`; hover `accent` | `ink` |
+| `ghost` | `bubble-ghost` | שקוף; hover טורקיז 14% | `ink` |
+| `destructive` | `bubble-danger` | אדום עם ברק | לבן (5.62) |
+| `link` | `text-link` | קישור | `link` |
+
+גדלים (API זהה, גבהים עודכנו): `default` h-48 · `lg` h-56 (CTA מלא רוחב) · `sm` h-40 · `xs` h-32 · `icon` 48 · `icon-sm` 40 · `icon-xs` 32 · `icon-lg` 56. מצב `disabled`: opacity .5, בלי hover/lift. טעינה: ספינר `animate-spin` ב-ink.
+
+צ'יפים: `bubble-chip` (גובה 36-40, ריפוד `0 16px`, `text-body-sm font-medium rounded-pill`). לא נבחר: זכוכית לבנה 80% + גבול `#BFE6EE`; נבחר (`aria-pressed|aria-checked="true"`, `data-selected="true"` או `data-state="on"`): נראה כמו `bubble-primary` קטן. לחיצה: scale .95.
+
+כפתור "דיווח" בניווט: class `bubble-fab` על עיגול 56px (ראו §10).
+
+## 9. המסקוט: "גל" (Gal)
+
+**גולש צעיר, שזוף ושמש-מולבן, מאחורי משקפי שמש שחורים.** האישיות: רגוע, מחייך תמיד, "אחי, הים מחכה", אופטימי גם כשהים שטוח, אבל מופתע בגדול כשהמשקפיים נופלים. הטון בטקסטים: חם, קליל, בלי ציניות.
+
+דמות chibi (ראש גדול, גוף קטן): שיער בלונדיני-שמש פרוע עם קווצה עומדת; עור שזוף `#EDAA77`; משקפי שמש כהים (`#0F3556`) עם ברק לבן ופס טורקיז; חיוך רחב עם שיניים; גופיית רש-גארד `#0B6C9E` עם פסי טורקיז; בורדשורט נייבי `#06335C` עם פס טורקיז; לוח גלישה לבן עם פס טורקיז. מסגרת ink 3.5px אחידה. ללא כתום/אלמוג בדמות.
+
+קבצים: `components/mascot/` (`MascotWave.tsx`, `MascotWaiting.tsx`, `MascotOops.tsx`, `parts.tsx` משותף, `index.ts`). API זהה: `import { Mascot } from "@/components/mascot"`, `<Mascot.Wave size={140} />`. Props: `size` (ברירת מחדל 160, מתוכנן ל-96-220), `className`. `role="img"` + `aria-label` בעברית. SVG inline, בטוח ל-Server Components, כל קובץ ממיר ל-SVG מתחת ל-7KB.
+
+| פוזה | מתי | תיאור |
 |---|---|---|
-| `Mascot.Wave` | login, hero, onboarding | מנופף, עיניים שמחות, פה פתוח |
-| `Mascot.Waiting` | מצבים ריקים ("אין דיווחים עדיין") | יושב על הלוח, מביט בים שטוח, שלוש נקודות המתנה |
-| `Mascot.Oops` | שגיאה, offline | ידיים למעלה, טיפת זיעה, הלוח שבור |
+| `Mascot.Wave` | login, hero, onboarding | שאקה 🤙 ביד אחת, הלוח מוחזק בצד השני |
+| `Mascot.Waiting` | EmptyState | יושב על הלוח בים שטוח, סנטר על היד, בועת "..." |
+| `Mascot.Oops` | שגיאה, offline | משקפיים מחליקים על האף (העיניים נחשפות), טיפת זיעה, ידיים למעלה, הלוח שבור לשניים |
 
-כללי שימוש: על hero כתום הלוח (כתום) נבלע ברקע ונשאר קריא בזכות מסגרת ה-ink; ללא עטיפה מיוחדת. אל תצבעו אותו מחדש. אל תקטינו מתחת ל-96px (פרטי הפנים נעלמים). אל תשימו שני מסקוטים באותו מסך. מסקוט הוא דקורטיבי: ה-`aria-label` שלו לא מחליף את הטקסט של ההודעה; הכותרת וההסבר חייבים להופיע בטקסט.
+כללים: ≥ 96px. לא מתהפך ב-RTL. לא שני מסקוטים במסך. על ה-hero הכהה הדמות קריאה בזכות המילוי (הקווים הכהים נבלעים בכוונה). הוא דקורטיבי: הכותרת וההסבר חייבים להיות בטקסט.
 
 ## 10. רכיבים
 
-### Greeting header (מחליף TopBar)
-- רקע `surface` (בלי border, לא sticky כבד); גובה מינ' `topbar`; ריפוד 16px.
-- שורה 1: "ערב טוב יונתן," ב-`text-title font-medium text-ink` (ברכה לפי שעה: בוקר טוב / צהריים טובים / ערב טוב / לילה טוב; שם פרטי). שורה 2 אופציונלית: `text-body-sm text-muted-text` ("הנה מה שקורה בחופים שלך").
-- צד ה-end (שמאל): `UserAvatar` 40px עגול (`bg-secondary text-ink`, `font-medium`), הקשה פותחת פרופיל.
-- אין שם אפליקציה בכותרת; לוגו רק ב-login.
+### Greeting header
+`glass-bar` או שקוף על גרדיאנט הדף; `eyebrow` ("שלום") אופציונלי; ברכה `text-display heading-tight text-gradient-sea` ושם פרטי, עם `wave-underline` (הפעם היחידה בעמוד). שורה שנייה `text-body-sm text-muted-text prose-he`. אווטר 40px עגול `bg-secondary text-ink`. `motion-page`.
 
-### BottomNav + כפתור "דיווח" מורם
-- סרגל: `bg-card`, `shadow-nav`, גובה `bottomnav` + safe-area, בלי `border-t`. פינות עליונות `rounded-t-card` (19px).
-- 3 פריטים רגילים (פיד, פרופיל, הגדרות): אייקון 20 + תווית `text-caption font-medium` מתחתיו. פעיל: `text-ink` + אייקון מלא `ink/10` + נקודה כתומה 4px מתחת לתווית (לא רק צבע). לא פעיל: `text-muted-text`.
-- **כפתור "דיווח"**: פריט נוסף **אחרון ב-DOM** כך שב-RTL הוא בצד ה-end (שמאל). עיגול 56px, `bg-signature text-ink`, אייקון `Plus` 28, `shadow-raised`, מורם כך שמרכזו על הקצה העליון של הסרגל (`-translate-y-1/2` יחסית לסרגל, או `-mt-7`). טבעת לבנה 4px סביבו (`ring-4 ring-card`) להפרדה. hover `signature-hover`, active `signature-pressed` + scale .94. תווית "דיווח" `text-caption font-medium text-ink` מתחת לעיגול, בתוך הסרגל. `aria-label="דיווח חדש"`, קישור ל-`/new`.
-- ה-FAB הנפרד (`FAB.tsx`) מוסר. הסרגל נעלם ב-`/new` כמו היום.
+### BottomNav + כפתור "דיווח"
+- סרגל: `glass-bar` + `rounded-t-card`, גובה `bottomnav` + safe-area.
+- 3 פריטים: אייקון 20 + `text-caption font-medium`. פעיל: `text-ink`, כדור רקע `signature-soft` מאחורי האייקון (pill 32×56) + תווית; לא פעיל `muted-text`. מעבר spring.
+- **"דיווח"**: אחרון ב-DOM (שמאל ב-RTL). עיגול 56px, class `bubble-fab` (גרדיאנט `--gradient-fab`, ברק, `shadow-raised`), אייקון `Plus` 28 ב-`ink`, מורם על קצה הסרגל, טבעת `ring-4 ring-white/80`. hover: lift + scale 1.04; לחיצה: scale .92. תווית "דיווח" `text-caption font-medium text-ink`. `aria-label="דיווח חדש"`.
 
 ### Hero summary card
-- `bg-signature`, `rounded-card`, `shadow-hero`, ריפוד 20px, `overflow-hidden`, מינ' גובה 168px.
-- צד ה-start (ימין): כותרת קטנה `text-body-sm font-medium text-ink` ("סיכום חי"), משפט ראשי `text-heading font-medium text-ink` ("3 דיווחים בשעתיים האחרונות"), ומתחת BigNumber (`text-numeral-xl`, ink) של גובה הגל הגבוה ביותר + `text-unit` "מ'", ושורת משנה `text-body-sm text-ink` (שם החוף).
-- צד ה-end (שמאל): `<Mascot.Wave size={120}>` חותך קלות את הקצה התחתון (מותר לגלוש 8px).
-- כפתור משני בתוך ה-hero: pill לבן `bg-card text-ink` ("לכל הדיווחים"), לא כפתור כתום על כתום.
-- פס התקדמות (אם קיים): track `ink/15`, מילוי `ink` (על כתום לא נשתמש בכתום).
-- בלי דיווחים: ה-hero הופך ל-EmptyState (ראו להלן), לא כרטיס כתום ריק.
+`bg-hero-sea rounded-card overflow-hidden p-5 min-h-[176px]` + `motion-pop-in`. **כל הטקסט לבן.** תוויות: `eyebrow eyebrow-light` ("סיכום חי"), משפט ראשי `text-heading text-white`, גובה גל `numeral text-numeral-xl font-light text-gradient-sea-light` + `text-unit text-white` ("מ'"), שם החוף `text-body-sm text-white`. צד end: `Mascot.Wave size={120}` עם `motion-float` (מותר לגלוש 8px). בתחתית: שתי רצועות גלי SVG אקווה (`aqua` ב-20%/35% אטימות) עם `motion-drift` ו-`motion-drift-slow`, `pointer-events-none`, מאחורי הטקסט. כפתור משני בתוך ה-hero: `bubble-soft` או pill לבן, ink. פס התקדמות: track לבן 25%, מילוי `aqua`. בלי נתונים: EmptyState במקום ה-hero. אסור טקסט בפינה התחתונה-שמאלית.
 
 ### BeachCircle row
-- שורה אופקית גוללת (`flex gap-4 overflow-x-auto`, `snap-x`, בלי scrollbar), ריפוד start/end 16px.
-- אריח: עיגול 64px `bg-card shadow-card` עם אייקון 24 `ink` (או ראשי תיבות של החוף ב-`font-medium`), תווית מתחת `text-caption font-medium text-copy` שורה אחת עם `truncate`, רוחב 72px, ממורכז.
-- תג **"חי"** כשיש דיווח טרי: pill 18px גובה, `bg-signature text-ink text-caption font-medium`, ממוקם בפינת ה-end העליונה של העיגול (חופף), עם נקודה `animate-live-pulse` מימינו. לא נסמך על צבע בלבד: המילה "חי". תג "חדש" (לתכונות חדשות): `bg-link-blue text-white`.
-- אריח אחרון: "הוסף חוף" עיגול מקווקו `border-dashed border-input` עם `Plus`.
-- Focus: outline גלובלי; מצב נבחר: טבעת 2px `ink` offset 2.
+גלילה אופקית (`snap-x`, בלי scrollbar), `gap-4`. אריח: עיגול 64px `glass-card` (או `bg-card shadow-card`) עם אייקון 24 ב-`ink`, תווית `text-caption font-medium text-copy truncate`; `motion-pop-in` עם `--i`; hover `motion-lift`, לחיצה `motion-press`. נבחר: טבעת 2px טורקיז + `signature-soft`. תג **"חי"**: pill 18px `bg-live text-ink text-caption font-medium` בפינת end העליונה, עם נקודה קטנה `bg-live` + `motion-pulse-ring` (המילה "חי" נשארת). תג "חדש": `bg-link-blue text-white`. אריח "הוסף חוף": עיגול מקווקו `border-dashed border-input` + `Plus`.
 
 ### ReportCard
-- `bg-card rounded-card shadow-card`, בלי border, ריפוד 16px, על רקע `surface`.
-- שורה עליונה: אווטר 36 + שם `text-body font-medium text-ink` + זמן יחסי `text-body-sm text-muted-text`; תג חוף כקישור `text-body-sm font-medium text-link`.
-- גובה גל: `BigNumber` (`text-numeral-lg font-light`, יחידה "מ'") בצד ה-end, לצד `WaveRating`.
-- גוף: `text-body text-copy`. תמונה: `rounded-lg`, יחס 4:3, מתחת לטקסט.
-- דיווח חדש (≤15 דק'): תג "חי" קטן ליד השם (`signature` + ink). Skeleton: `skeleton` ברדיוס 19px.
+`glass-card rounded-card p-4` (או `bg-card shadow-card`), `motion-fade-up` עם `--i`. שורה עליונה: אווטר 36 + שם `font-medium text-ink` + זמן `text-body-sm text-muted-text`; תג חוף `text-link font-medium`. גובה גל: `numeral text-numeral-lg font-light text-gradient-sea` (יחידה `text-unit text-muted-text`) ב-end, לצד `WaveRating`. גוף `text-body text-copy prose-he`. תמונה `rounded-lg`. דיווח טרי (≤15 דק'): תג "חי" אלמוג. Skeleton: `skeleton rounded-card`. `motion-press` אם כל הכרטיס לחיץ.
 
-### WaveRating
-- תצוגה: 5 נקודות/גלים; מלאה = `signature`, ריקה = `surface` עם מסגרת `line`; ליד: מספר `text-data`/`numeral-md` (ink) וטקסט תיאור (`text-body-sm text-muted-text`) כדי שהמידע לא יהיה בצבע בלבד. (שימו לב: הצבע הקיים `text-sea-wave-text` כעת כחול `link-blue`; מומלץ להחליף ל-`text-ink` ולמלא ב-`signature`.)
-- קלט (`WaveRatingInput`): כפתורי pill 44px; נבחר: `bg-signature text-ink border-signature` (אפשר להשאיר `bg-primary`); לא נבחר `bg-card border-input text-copy`. פוקוס גלובלי.
+### WaveRating / WaveRatingInput
+תצוגה: 5 נקודות; מלאה `signature` (עם הטקסט/מספר לצדה), ריקה `surface` + גבול `line`. קלט: צ'יפים `bubble-chip` בגובה 44; נבחר = מצב נבחר של הצ'יפ + `motion-squish` בבחירה.
 
 ### BigNumber
-קומפוננטה שמרנדרת `numeral` + שני spans (שלם, יחידה/עשרוני). Props: `value`, `unit`, `size` (`xl|lg|md`), `tone` (`ink`|`on-signature`; שניהם ink בפועל). `aria-label` מלא ("גובה גל 1.2 מטר") על העטיפה והחלקים `aria-hidden`.
+`numeral` + שני spans; props כמו קודם. `tone`: `ink` / `on-hero` (לבן + `text-gradient-sea-light`) / `gradient` (`text-gradient-sea`). `aria-label` מלא על העטיפה.
 
-### Chips
-- Pill (`rounded-pill`), גובה 36 (יעד מגע 44 דרך ריפוד/margin), ריפוד 0 14px, `text-body-sm font-medium`.
-- לא נבחר: `bg-card` על `surface` או `bg-surface` על לבן, `text-copy`, בלי מסגרת. נבחר: `bg-signature text-ink`. נבחר-שקט: `bg-signature-soft text-orange-text`.
-- תג מידע: `text-caption font-medium`, גובה 20, `rounded-pill`, ריפוד 0 8px. "חדש": `bg-link-blue text-white`. "חי": `bg-signature text-ink`. הצלחה: `bg-success text-success-foreground`.
+### Chips / תגים
+צ'יפ: `bubble-chip`. תג מידע: `text-caption font-medium rounded-pill h-5 px-2`. "חדש" `bg-link-blue text-white`; "חי" `bg-live text-ink`; הצלחה `bg-success text-success-foreground`; badge התראה `bg-live text-ink` (המקום השני והאחרון של האלמוג).
 
-### Buttons (`components/ui/button.tsx`)
-- כולם `rounded-pill`, `text-body-sm font-medium`, גובה 44 (default) / 36 (sm) / 52 (lg, CTA מלא רוחב).
-- **default/primary**: `bg-signature text-ink`; hover `signature-hover`; active `signature-pressed`; disabled opacity .5.
-- **secondary**: `bg-surface text-ink` (על כרטיס לבן) ; hover `bg-secondary`.
-- **outline**: `bg-card border border-input text-ink`; hover `bg-accent`.
-- **ghost**: שקוף `text-ink`; hover `bg-accent`.
-- **link**: `text-link underline-offset-4 hover:underline`.
-- **destructive**: `bg-danger text-white`.
-- **action** (הווריאנט הישן `bg-sea-wave text-sea-deep`): להחליף ב-`bg-signature text-ink` או למחוק.
-- מצב טעינה: ספינר `animate-spin` ב-ink, הטקסט נשאר.
+### Buttons
+ראו §8.
 
 ### Inputs (קלט, BeachPicker, textarea)
-- `bg-card`, `border border-input` (3.47:1), `rounded-lg` (12px), גובה 48, ריפוד 12px 14px, `text-body text-copy`, placeholder `text-muted-text`.
-- Focus: `border-link-blue` + ring 3px `link-blue/30`. שגיאה: `border-danger`, טקסט עזר `text-body-sm text-danger` עם אייקון `AlertCircle` 16. Disabled: `bg-surface text-muted-text`.
-- תווית מעל: `text-body-sm font-medium text-ink`, מרווח 6px. מרווח בין שדות 16px.
+`bg-white/90` (אטום ≥ 90% כדי לשמור ניגודיות), `border-[1.5px] border-input`, `rounded-lg` (14px) — או `rounded-pill` בשדה חיפוש, גובה 48, ריפוד `12px 16px`, `text-body text-copy`, placeholder `text-muted-text`. Focus: `border-link-blue` + `ring-3 ring-link/25`, מעבר 140ms. שגיאה: `border-danger` + `text-body-sm text-danger` + `AlertCircle`. Disabled: `bg-surface text-muted-text`. תווית: `text-body-sm font-medium text-ink`.
 
 ### PhotoField
-אזור העלאה: `rounded-card border-2 border-dashed border-input bg-card`, אייקון `Camera` 24 + "הוסף תמונה" `text-body-sm font-medium text-ink`. תצוגה מקדימה `rounded-lg`. הצלחה `text-success`, שגיאה `text-danger`.
+`rounded-card border-2 border-dashed border-input glass-card`, `Camera` 24 + "הוסף תמונה" `font-medium text-ink`; hover `motion-lift`. תצוגה מקדימה `rounded-lg` עם `motion-pop-in`.
 
 ### OfflineBanner / PostedNotice / InAppBrowserNotice
-- OfflineBanner: `bg-secondary text-ink`, מרכוז, אייקון `WifiOff` 16, בלי border; ניתן לצרף `Mascot.Oops size=96` רק בדף שגיאה מלא, לא בבאנר.
-- PostedNotice (toast): `bg-success text-success-foreground rounded-pill`, ריפוד 10px 16px, `shadow-raised`, `animate-toast-in`.
-- InAppBrowserNotice: כרטיס `bg-card rounded-card shadow-card`, כותרת ink Medium, טקסט `muted-text`.
+- OfflineBanner: `bg-ocean-deep text-white` (12.8:1), `WifiOff` 16; בעמוד שגיאה מלא + `Mascot.Oops size=96`.
+- PostedNotice (toast): `bg-success text-success-foreground rounded-pill shadow-raised animate-toast-in`, בהצלחה `motion-squish` על האייקון.
+- InAppBrowserNotice: `glass-card rounded-card`, כותרת ink Medium.
 
-### EmptyState (עם מסקוט)
-ממורכז אנכית ואופקית: `Mascot.Waiting size={160}` (סטטי), כותרת `text-heading font-medium text-ink` ("הים שטוח כרגע"), הסבר `text-body-sm text-muted-text` עד 2 שורות, ו-CTA ראשי אופציונלי (pill כתום, "היה הראשון לדווח"). מרווחים: מסקוט→כותרת 16, כותרת→טקסט 4, טקסט→כפתור 20. גם ב-`ComingSoon`. מצב שגיאת רשת/טעינה: אותו מבנה עם `Mascot.Oops` וכפתור "נסה שוב" (outline).
+### EmptyState
+ממורכז: `Mascot.Waiting size={160}` (סטטי, או `motion-float` עדין), `eyebrow` אופציונלי, כותרת `text-heading heading-tight text-ink` ("הים שטוח כרגע") עם `wave-underline` אם זה המסך הראשי, הסבר `text-body-sm text-muted-text prose-he` עד 2 שורות, CTA `Button` ראשי ("היה הראשון לדווח"). כניסה: `motion-pop-in` למסקוט ו-`motion-fade-up` (`--i` 1, 2, 3) לטקסט ולכפתור. שגיאה: אותו מבנה עם `Mascot.Oops` וכפתור `secondary` "נסה שוב".
 
-### Login screen (עם מסקוט)
-רקע `bg-foam` מלא. מרכז: `Mascot.Wave size={180}` עם `animate-mascot-bob`; מתחתיו "surFriends" ב-`text-display font-medium text-ink`, שורת תיאור "קהילת הגולשים של ישראל" `text-body text-muted-text`; כפתור Google `lg` מלא רוחב: `bg-signature text-ink` (או outline לבן עם לוגו Google אם נדרש לפי הנחיות מותג; בכל מקרה מסגרת `border-input`). הערת משפטית `text-caption text-muted-text`. שגיאה: כרטיס `border-danger` כמו היום + `text-danger`. אייקון העיגול הכתום הקיים בראש הדף מוחלף במסקוט.
+### Login screen
+רקע `bg-foam` + גרדיאנט הדף ורצועות גל `motion-drift` בתחתית. מרכז: `Mascot.Wave size={200}` עם `motion-float`; "surFriends" `text-display heading-tight text-gradient-sea`; שורת תיאור `text-body text-muted-text`; כפתור Google `lg` מלא רוחב (`bubble-primary` או `outline` לפי הנחיות מותג). `motion-fade-up` מדורג לכל הבלוקים.
 
 ## 11. מיפוי טוקנים קיימים (התאימות לאחור)
 
 | קיים בקוד | ערך חדש | הערה |
 |---|---|---|
-| `text-sea-deep` | `#0A2540` (= `ink`) | אותו ערך; עדיף `text-ink` בקוד חדש |
-| `text-mist-text` | `#6B6B66` | = `muted-text` |
-| `text-shadow` | `#3A3A35` | טקסט גוף חם (= `copy`) |
-| `text-link`, `text-sea-wave-text` | `#007196` | כחול קישור |
-| `text-sunset-text`, `text-live-text` | `#C2410C` | = `orange-text` |
-| `bg-sunset`, `bg-live` | `#FF7A1A` | = `signature` |
-| `bg-sand` | `#F4F4F4` | alias deprecated |
-| `bg-primary` / `text-primary-foreground` | כתום / ink | **השתנה מניווי לכתום**: כל מקום עם `bg-primary` נהיה כתום עם טקסט ink (login icon, צ'יפ/דירוג נבחר) |
-| `bg-sea-wave` | `#0EA5E9` | **לא ערך פעולה יותר**: ב-`button.tsx` (action), `FAB.tsx`, `BottomNav.tsx` להחליף ל-`bg-signature` |
-| `bg-success`/`text-success`, `text-danger`, `border-destructive` | `#0F7B5F` / `#C62828` | |
-| `bg-background` | `#F4F4F4` | דפים עם כרטיסים; login: `bg-foam` |
-| `shadow-card` / `shadow-fab` | חדש / alias ל-`shadow-raised` | |
-| `font-bold`, `font-semibold` | 500 | alias ל-Medium |
-| `rounded-xl` | 19px | כרטיסים |
-| `text-meta` (ב-`NewReportForm`) | **לא מוגדר** | קיים בקוד אך אין לו טוקן (לא משפיע כיום); למחוק או להגדיר |
+| `bg-signature`, `bg-sunset`, `bg-primary` | `#1CC8DA` (טורקיז) | **טקסט עליהם `text-ink`**. אם ראית `text-white` על אלה: להחליף |
+| `signature-hover/pressed/soft` | `#12B5C9` / `#0AA2B8` / `#DDF8FB` | |
+| `text-orange-text`, `text-sunset-text`, `text-live-text` (live) | `#07707F` (orange-text, sunset-text), `#B83A0A` (live-text) | orange-text = טורקיז AA |
+| `bg-live`, `bg-live` + `text-live-foreground` | `#FF6B57` אלמוג, ink | **ה-hero כבר לא `bg-signature`**: להשתמש ב-`bg-hero-sea` |
+| `text-sea-deep`, `text-ink` | `#062B4A` | |
+| `text-copy`, `text-shadow` | `#1F3F57` | |
+| `text-muted-text`, `text-mist-text` | `#456479` | |
+| `bg-surface`, `bg-sand`, `bg-muted` | `#E3F6F9` | |
+| `bg-foam` | `#F4FDFF` | |
+| `bg-background` | `#E3F6F9` + גרדיאנט `body` | |
+| `text-link`, `text-link-blue`, `text-sea-wave-text` | `#0B6A8F` | |
+| `border-input`, `border-mist-border` | `#4F8196` | |
+| `bg-sea-wave` | `#1AA7D8` | דקורטיבי בלבד |
+| `rounded-xl`, `rounded-card` | 24px | |
+| `shadow-card/raised/fab/hero/nav/sheet` | גרסאות כחולות-ים | |
+| `animate-live-pulse`, `animate-mascot-bob` | עכשיו אלמוג / `float` | |
+| `text-meta` ב-`NewReportForm` | לא מוגדר | למחוק או להגדיר |
 
-## 12. צ'קליסט לפיתוח
-1. אין `text-white` על `bg-signature`/`bg-primary`. תמיד `text-ink`/`text-primary-foreground`.
-2. טקסט כתום על לבן = `text-orange-text` בלבד, לא `text-signature`.
-3. כרטיס = `bg-card rounded-card shadow-card`, בלי border.
-4. כותרות Medium. אין `font-bold` חדש.
-5. כתום מופיע לכל היותר ב-3 מקומות במסך (hero / פעולה ראשית / התקדמות).
-6. המסקוט ≥96px, `role="img"` כבר מובנה, ובצד ה-end של ה-hero.
-7. בדיקת RTL: כפתור "דיווח" משמאל, מספרים ב-`numeral`, אין `ml/mr`.
+## 12. צ'קליסט לפיתוח (לסוכן ה-Frontend)
+1. `text-ink` על `bg-signature`/`bubble-*` (ראשי); **`text-white` על `bg-hero-sea`**. מחפשים `text-ink` שנשאר בתוך ה-hero ומחליפים.
+2. Hero: להחליף `bg-signature` ב-`bg-hero-sea`; "חי" ב-`bg-live`.
+3. כרטיס: `glass-card rounded-card` או `bg-card shadow-card`.
+4. כפתורים/צ'יפים: להשתמש ב-`Button` ו-`bubble-chip`; לא לבנות פיל ידנית.
+5. טקסט טורקיז = `text-orange-text` בלבד. אקווה/טורקיז בהיר אף פעם לא כטקסט על בהיר.
+6. אלמוג: רק נקודת/תג "חי" ובאדג' התראה.
+7. רשימות: `motion-fade-up` + `style={{"--i": i}}`; עמוד: `motion-page` על `<main>`; מסקוט ב-hero/login: `motion-float`.
+8. `wave-underline` מקסימום 1-2 כותרות. `text-gradient-sea` רק ב-≥22px.
+9. RTL: אין `ml/mr`; המסקוט לא מתהפך; כפתור "דיווח" בשמאל.

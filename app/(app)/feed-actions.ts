@@ -12,7 +12,7 @@ export async function loadMoreReports(cursor: FeedCursor): Promise<LoadMoreResul
   try {
     const user = await getCurrentUser();
     if (!user) return { ok: false };
-    return { ok: true, reports: await fetchReports(await getSupabase(), reportCutoffIso(), parsed) };
+    return { ok: true, reports: await fetchReports(await getSupabase(), reportCutoffIso(), parsed, user.id) };
   } catch {
     return { ok: false };
   }

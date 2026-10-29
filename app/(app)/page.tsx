@@ -15,7 +15,7 @@ export default async function FeedPage() {
 
   const cutoff = reportCutoffIso();
   const [reports, summary, beaches, profile] = await Promise.all([
-    fetchReports(supabase, cutoff),
+    fetchReports(supabase, cutoff, null, userId),
     fetchHeroSummary(supabase, cutoff),
     fetchBeachCircles(supabase, userId),
     getCurrentProfile(),
@@ -46,6 +46,8 @@ export default async function FeedPage() {
       <ReportList
         initialReports={reports}
         currentUserId={userId}
+        currentUserName={displayName}
+        currentUserAvatar={avatarUrl}
         heading={
           <>
             <p className="eyebrow eyebrow-coral">חופי ישראל · עכשיו</p>

@@ -15,6 +15,10 @@ export type FeedReport = {
   beach: { id: number; name_he: string; city: string } | null;
   replyCount: number;
   comingCount: number;
+  onTheWayCount: number;
+  /** The current user's own quick reactions on this report. */
+  myComing: boolean;
+  myOnTheWay: boolean;
 };
 
 /** Keyset cursor: the (created_at, id) of the last report already shown. */
@@ -32,19 +36,29 @@ export function parseFeedCursor(c: unknown): FeedCursor | null {
   return { created_at, id };
 }
 
-type Row = Omit<FeedReport, "author" | "beach" | "replyCount" | "comingCount"> & {
+type Row = Omit<
+  FeedReport,
+  "author" | "beach" | "replyCount" | "comingCount" | "onTheWayCount" | "myComing" | "myOnTheWay"
+> & {
   profiles: FeedReport["author"];
   beaches: FeedReport["beach"];
   replies: { count: number }[] | null;
   coming: { count: number }[] | null;
+  onway: { count: number }[] | null;
+  mine: { quick_reaction: string | null }[] | null;
 };
+
+/** Never matches a real user: used when the viewer is unknown so "mine" stays empty. */
+const NO_USER = "00000000-0000-0000-0000-000000000000";
 
 /** The one select shape for feed reports (server list, load-more, realtime single fetch). */
 export const FEED_SELECT = `id, user_id, text, image_url, wave_rating, wave_height_estimate, created_at,
        profiles(display_name, avatar_url),
        beaches(id, name_he, city),
        replies(count),
-       coming:replies(count)`;
+       coming:replies(count),
+       onway:replies(count),
+       mine:replies(quick_reaction)`;
 
 /** Maps a raw PostgREST row (FEED_SELECT) to FeedReport. */
 export function mapFeedRow(r: Row): FeedReport {
@@ -60,6 +74,9 @@ export function mapFeedRow(r: Row): FeedReport {
     beach: r.beaches,
     replyCount: r.replies?.[0]?.count ?? 0,
     comingCount: r.coming?.[0]?.count ?? 0,
+    onTheWayCount: r.onway?.[0]?.count ?? 0,
+    myComing: r.mine?.some((m) => m.quick_reaction === "coming") ?? false,
+    myOnTheWay: r.mine?.some((m) => m.quick_reaction === "on_the_way") ?? false,
   };
 }
 
@@ -72,12 +89,16 @@ export async function fetchReports(
   supabase: SupabaseClient<Database>,
   /** TTL cutoff from reportCutoffIso(): only reports newer than this are returned. */
   cutoff: string,
-  cursor?: FeedCursor | null
+  cursor?: FeedCursor | null,
+  /** Viewer id: fills myComing / myOnTheWay (embedded replies filtered to this user). */
+  userId?: string | null
 ): Promise<FeedReport[]> {
   let query = supabase
     .from("reports")
     .select(FEED_SELECT)
     .eq("coming.quick_reaction", "coming")
+    .eq("onway.quick_reaction", "on_the_way")
+    .eq("mine.user_id", userId && UUID.test(userId) ? userId : NO_USER)
     .gt("created_at", cutoff)
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
@@ -99,13 +120,16 @@ export async function fetchReports(
 export async function fetchReportById(
   supabase: SupabaseClient<Database>,
   id: string,
-  cutoff: string
+  cutoff: string,
+  userId?: string | null
 ): Promise<FeedReport | null> {
   if (!UUID.test(id)) return null;
   const { data, error } = await supabase
     .from("reports")
     .select(FEED_SELECT)
     .eq("coming.quick_reaction", "coming")
+    .eq("onway.quick_reaction", "on_the_way")
+    .eq("mine.user_id", userId && UUID.test(userId) ? userId : NO_USER)
     .eq("id", id)
     .gt("created_at", cutoff)
     .maybeSingle();

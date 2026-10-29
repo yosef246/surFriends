@@ -5,7 +5,13 @@ import { createClient } from "@/lib/supabase/client";
 
 export type RealtimeStatus = "live" | "connecting";
 
-export type ReplyRow = { id?: string; report_id?: string; quick_reaction?: string | null };
+export type ReplyRow = {
+  id?: string;
+  report_id?: string;
+  user_id?: string;
+  quick_reaction?: string | null;
+  created_at?: string;
+};
 
 export type FeedRealtimeHandlers = {
   onReportInsert: (id: string) => void;

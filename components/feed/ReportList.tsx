@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, useTransition, type ReactNode } from "react";
+import { toggleReaction } from "@/app/actions/replies";
 import { loadMoreReports } from "@/app/(app)/feed-actions";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { buttonVariants } from "@/components/ui/button";
@@ -10,14 +11,19 @@ import { fetchReportById, fetchReports, FEED_PAGE_SIZE, type FeedReport } from "
 import {
   addIncoming,
   appendPage,
-  applyReplyDelta,
+  applyReplyEvent,
   dropExpired,
   flushQueue,
   healWithFirstPage,
   removeReport,
+  restoreReactions,
+  snapshotReactions,
+  toggleMyReaction,
   type FeedState,
 } from "@/lib/feed-state";
+import { emitReplyEvent, emitReplyResync } from "@/lib/realtime/reply-events";
 import { useFeedRealtime, type ReplyRow } from "@/lib/realtime/useFeedRealtime";
+import type { ReactionKind } from "@/lib/replies";
 import { reportCutoffIso } from "@/lib/reports";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
@@ -34,10 +40,14 @@ const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)"
 export function ReportList({
   initialReports,
   currentUserId,
+  currentUserName,
+  currentUserAvatar,
   heading,
 }: {
   initialReports: FeedReport[];
   currentUserId: string;
+  currentUserName: string;
+  currentUserAvatar: string | null;
   heading?: ReactNode;
 }) {
   const router = useRouter();
@@ -91,7 +101,7 @@ export function ReportList({
   const onReportInsert = useCallback(
     async (id: string) => {
       if (stateRef.current.items.some((r) => r.id === id)) return; // own optimistic / server render
-      const report = await fetchReportById(getClient(), id, reportCutoffIso());
+      const report = await fetchReportById(getClient(), id, reportCutoffIso(), currentUserId);
       if (!report) return;
       const direct = report.user_id === currentUserId && window.scrollY <= NEAR_TOP_PX;
       setState((s) => addIncoming(s, report, { direct }));
@@ -100,9 +110,12 @@ export function ReportList({
     [currentUserId, refreshHero]
   );
 
+  const leavingRef = useRef<Set<string>>(new Set());
   const onReportDelete = useCallback(
     (id: string) => {
       refreshHero();
+      if (leavingRef.current.has(id)) return; // own delete + realtime DELETE: animate once
+      leavingRef.current.add(id);
       if (!stateRef.current.items.some((r) => r.id === id)) {
         setState((s) => removeReport(s, id));
         return;
@@ -110,6 +123,7 @@ export function ReportList({
       const ms = reducedMotion() ? 0 : LEAVE_MS;
       setLeaving((l) => new Set(l).add(id));
       setTimeout(() => {
+        leavingRef.current.delete(id);
         setState((s) => removeReport(s, id));
         setLeaving((l) => {
           const n = new Set(l);
@@ -123,20 +137,23 @@ export function ReportList({
 
   const resync = useCallback(async () => {
     try {
-      const page = await fetchReports(getClient(), reportCutoffIso());
+      const page = await fetchReports(getClient(), reportCutoffIso(), null, currentUserId);
       setState((s) => healWithFirstPage(dropExpired(s, reportCutoffIso()), page));
       refreshHero();
+      emitReplyResync(); // open threads refetch too
     } catch {
       /* next visibility/online event retries */
     }
-  }, [refreshHero]);
+  }, [refreshHero, currentUserId]);
 
-  const onReplyInsert = useCallback((row: ReplyRow) => {
-    if (!row.report_id) return;
-    setState((s) =>
-      applyReplyDelta(s, row.report_id!, { replies: 1, coming: row.quick_reaction === "coming" ? 1 : 0 })
-    );
-  }, []);
+  const onReplyInsert = useCallback(
+    (row: ReplyRow) => {
+      if (!row.report_id) return;
+      setState((s) => applyReplyEvent(s, "insert", row, currentUserId));
+      if (row.id) emitReplyEvent({ type: "insert", reportId: row.report_id, row: { id: row.id, ...row } });
+    },
+    [currentUserId]
+  );
 
   const onReplyDelete = useCallback(
     (row: ReplyRow) => {
@@ -145,12 +162,30 @@ export function ReportList({
         void resync();
         return;
       }
-      setState((s) =>
-        applyReplyDelta(s, row.report_id!, { replies: -1, coming: row.quick_reaction === "coming" ? -1 : 0 })
-      );
+      setState((s) => applyReplyEvent(s, "delete", row, currentUserId));
+      if (row.id) emitReplyEvent({ type: "delete", reportId: row.report_id, id: row.id });
     },
-    [resync]
+    [resync, currentUserId]
   );
+
+  /** Optimistic "אני בא" / "בדרך": flip now, call the server, roll back on failure. */
+  const onToggleReaction = useCallback(async (reportId: string, kind: ReactionKind): Promise<string | null> => {
+    const before = stateRef.current.items.find((r) => r.id === reportId);
+    if (!before) return null;
+    const snap = snapshotReactions(before);
+    setState((s) => toggleMyReaction(s, reportId, kind));
+    let err: string | null = null;
+    try {
+      const res = await toggleReaction(reportId, kind);
+      if ("error" in res) err = res.error;
+    } catch {
+      err = "לא הצלחנו לשלוח. נסו שוב";
+    }
+    if (err) setState((s) => restoreReactions(s, reportId, snap));
+    return err;
+  }, []);
+
+  const me = { id: currentUserId, name: currentUserName, avatarUrl: currentUserAvatar };
 
   const status = useFeedRealtime({ onReportInsert, onReportDelete, onReplyInsert, onReplyDelete, onResync: resync });
 
@@ -215,7 +250,7 @@ export function ReportList({
             className={leaving.has(r.id) ? "animate-card-out" : "motion-fade-up"}
             style={{ "--i": Math.min(i, 8) } as React.CSSProperties}
           >
-            <ReportCard report={r} />
+            <ReportCard report={r} me={me} onToggleReaction={onToggleReaction} onDeleted={onReportDelete} />
           </li>
         ))}
       </ul>

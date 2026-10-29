@@ -1,8 +1,15 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useId, useState } from "react";
 import { UserAvatar } from "@/components/layout/UserAvatar";
 import { RelativeTime } from "@/components/shared/RelativeTime";
 import type { FeedReport } from "@/lib/feed";
+import type { ReactionKind } from "@/lib/replies";
+import { QuickReactionBar } from "./QuickReactionBar";
+import { ReplyThread, type ThreadViewer } from "./ReplyThread";
+import { ReportMenu } from "./ReportMenu";
 import { WaveRating } from "./WaveRating";
 
 // next/image throws for hosts not in next.config; never let one bad row take the feed down.
@@ -21,21 +28,25 @@ function isTrustedImage(url: string) {
   }
 }
 
-export function ReportCard({ report }: { report: FeedReport }) {
+const commentsLabel = (n: number) => (n === 0 ? "הגיבו" : n === 1 ? "תגובה אחת" : `${n} תגובות`);
+
+export function ReportCard({
+  report,
+  me,
+  onToggleReaction,
+  onDeleted,
+}: {
+  report: FeedReport;
+  me: ThreadViewer;
+  /** Optimistic reaction toggle owned by the feed; resolves to an error message or null. */
+  onToggleReaction: (reportId: string, kind: ReactionKind) => Promise<string | null>;
+  onDeleted: (reportId: string) => void;
+}) {
   const name = report.author?.display_name ?? "גולש/ת";
   const { beach } = report;
-  const counts = [
-    report.replyCount > 0
-      ? report.replyCount === 1
-        ? "תגובה אחת"
-        : `${report.replyCount} תגובות`
-      : null,
-    report.comingCount > 0
-      ? report.comingCount === 1
-        ? "בא אחד"
-        : `${report.comingCount} באים`
-      : null,
-  ].filter(Boolean);
+  const [open, setOpen] = useState(false);
+  const panelId = `thread-${useId()}`;
+  const isOwn = report.user_id === me.id;
 
   return (
     <article className="glass-card bubble-post motion-bubble-hover flex flex-col gap-3 p-5">
@@ -51,6 +62,7 @@ export function ReportCard({ report }: { report: FeedReport }) {
           iso={report.created_at}
           className="ms-auto shrink-0 text-body-sm text-muted-text"
         />
+        {isOwn ? <ReportMenu reportId={report.id} onDeleted={onDeleted} /> : null}
       </header>
 
       {beach ? (
@@ -91,9 +103,27 @@ export function ReportCard({ report }: { report: FeedReport }) {
         </div>
       ) : null}
 
-      {counts.length > 0 ? (
-        <p className="text-body-sm text-muted-text">{counts.join(" · ")}</p>
-      ) : null}
+      <QuickReactionBar
+        comingCount={report.comingCount}
+        onTheWayCount={report.onTheWayCount}
+        myComing={report.myComing}
+        myOnTheWay={report.myOnTheWay}
+        isOwn={isOwn}
+        onToggle={(kind) => onToggleReaction(report.id, kind)}
+      >
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-controls={panelId}
+          onClick={() => setOpen((o) => !o)}
+          className="bubble-chip inline-flex min-h-touch items-center gap-1.5 rounded-pill px-4 text-body-sm font-medium whitespace-nowrap"
+        >
+          <span aria-hidden>💬</span>
+          <span>{commentsLabel(report.replyCount)}</span>
+        </button>
+      </QuickReactionBar>
+
+      {open ? <ReplyThread reportId={report.id} panelId={panelId} me={me} /> : null}
     </article>
   );
 }

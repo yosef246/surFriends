@@ -70,3 +70,56 @@ test("healWithFirstPage refreshes counts, drops deleted-in-range, queues unknown
   const h2 = fs.healWithFirstPage({ items: [A, B], queue: [] }, [mk("a", A.created_at), mk("x", "2026-10-29T08:00:00.000Z")]);
   assert.ok(!h2.items.some((r: { id: string }) => r.id === "b")); // b inside range, missing -> deleted
 });
+
+// ---------- my reactions ----------
+const R0 = mk("r", "2026-10-29T10:00:00.000Z", { onTheWayCount: 0, myComing: false, myOnTheWay: false });
+const st = (x: object = {}) => ({ items: [{ ...R0, ...x }], queue: [] as R[] });
+const one = (s: { items: R[] }) => s.items[0] as R & Record<string, unknown>;
+
+test("toggleMyReaction: on bumps flag + counts, off reverses, unknown id is a no-op", () => {
+  let s = fs.toggleMyReaction(st(), "r", "coming");
+  assert.deepEqual([one(s).myComing, one(s).comingCount, one(s).replyCount], [true, 1, 1]);
+  s = fs.toggleMyReaction(s, "r", "coming");
+  assert.deepEqual([one(s).myComing, one(s).comingCount, one(s).replyCount], [false, 0, 0]);
+  assert.equal(fs.toggleMyReaction(st(), "missing", "coming").items[0].comingCount, 0);
+});
+
+test("toggleMyReaction is mutually exclusive: switching moves the count, replyCount unchanged", () => {
+  const s0 = st({ myComing: true, comingCount: 3, replyCount: 5 });
+  const r = one(fs.toggleMyReaction(s0, "r", "on_the_way"));
+  assert.deepEqual([r.myComing, r.myOnTheWay, r.comingCount, r.onTheWayCount, r.replyCount], [false, true, 2, 1, 5]);
+});
+
+test("restoreReactions rolls back to the snapshot", () => {
+  const s0 = st({ myComing: true, comingCount: 3, replyCount: 5 });
+  const snap = fs.snapshotReactions(one(s0));
+  const s = fs.restoreReactions(fs.toggleMyReaction(s0, "r", "on_the_way"), "r", snap);
+  assert.deepEqual(one(s), one(s0));
+});
+
+test("applyReplyEvent: others change counts only; my own echo is idempotent after the optimistic tap", () => {
+  const me = "me";
+  let s = fs.applyReplyEvent(st(), "insert", { report_id: "r", user_id: "x", quick_reaction: "on_the_way" }, me);
+  assert.deepEqual([one(s).onTheWayCount, one(s).replyCount, one(s).myOnTheWay], [1, 1, false]);
+  s = fs.applyReplyEvent(s, "delete", { report_id: "r", user_id: "x", quick_reaction: "on_the_way" }, me);
+  assert.deepEqual([one(s).onTheWayCount, one(s).replyCount], [0, 0]);
+
+  // optimistic tap, then my own INSERT echo: no double count
+  let m = fs.toggleMyReaction(st(), "r", "coming");
+  m = fs.applyReplyEvent(m, "insert", { report_id: "r", user_id: me, quick_reaction: "coming" }, me);
+  assert.deepEqual([one(m).comingCount, one(m).replyCount, one(m).myComing], [1, 1, true]);
+  // my reaction from another tab (flag still off here): counts and flag follow
+  const o = fs.applyReplyEvent(st(), "insert", { report_id: "r", user_id: me, quick_reaction: "coming" }, me);
+  assert.deepEqual([one(o).comingCount, one(o).myComing], [1, true]);
+  const d = fs.applyReplyEvent(o, "delete", { report_id: "r", user_id: me, quick_reaction: "coming" }, me);
+  assert.deepEqual([one(d).comingCount, one(d).myComing], [0, false]);
+  // text replies: replyCount only
+  const t = fs.applyReplyEvent(st(), "insert", { report_id: "r", user_id: me, quick_reaction: null }, me);
+  assert.deepEqual([one(t).replyCount, one(t).comingCount], [1, 0]);
+  assert.equal(fs.applyReplyEvent(st(), "insert", { quick_reaction: null }, me).items[0].replyCount, 0);
+});
+
+test("applyReplyDelta supports onTheWay", () => {
+  const s = fs.applyReplyDelta(st(), "r", { replies: 1, coming: 0, onTheWay: 1 });
+  assert.equal(one(s).onTheWayCount, 1);
+});

@@ -95,3 +95,19 @@ test("hero summary filters the latest report by the cutoff too", async () => {
   await fetchHeroSummary(client, CUTOFF);
   assert.ok(calls.filter((c) => c[0] === "gt").some((c) => c[2] === CUTOFF));
 });
+
+test("my reactions: embedded replies filtered to the viewer; mapper sets flags + on_the_way count", async () => {
+  const UID = "11111111-1111-4111-8111-111111111111";
+  const row = { id: "a", user_id: "u", text: "x", image_url: null, wave_rating: null, wave_height_estimate: null,
+    created_at: "2026-10-29T07:00:00+00:00", profiles: null, beaches: null, replies: [{ count: 4 }],
+    coming: [{ count: 1 }], onway: [{ count: 2 }], mine: [{ quick_reaction: "on_the_way" }] };
+  const { client, calls } = fakeClient([row]);
+  const [a] = await fetchReports(client, CUTOFF, null, UID);
+  assert.deepEqual(calls.find((c) => c[0] === "eq" && c[1] === "mine.user_id"), ["eq", "mine.user_id", UID]);
+  assert.ok(calls.some((c) => c[0] === "eq" && c[1] === "onway.quick_reaction" && c[2] === "on_the_way"));
+  assert.deepEqual([a.onTheWayCount, a.myComing, a.myOnTheWay], [2, false, true]);
+  // unknown viewer never matches a real user
+  const anon = fakeClient([]);
+  await fetchReports(anon.client, CUTOFF);
+  assert.equal(anon.calls.find((c) => c[1] === "mine.user_id")?.[2], "00000000-0000-0000-0000-000000000000");
+});

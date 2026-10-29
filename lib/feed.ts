@@ -39,6 +39,30 @@ type Row = Omit<FeedReport, "author" | "beach" | "replyCount" | "comingCount"> &
   coming: { count: number }[] | null;
 };
 
+/** The one select shape for feed reports (server list, load-more, realtime single fetch). */
+export const FEED_SELECT = `id, user_id, text, image_url, wave_rating, wave_height_estimate, created_at,
+       profiles(display_name, avatar_url),
+       beaches(id, name_he, city),
+       replies(count),
+       coming:replies(count)`;
+
+/** Maps a raw PostgREST row (FEED_SELECT) to FeedReport. */
+export function mapFeedRow(r: Row): FeedReport {
+  return {
+    id: r.id,
+    user_id: r.user_id,
+    text: r.text,
+    image_url: r.image_url,
+    wave_rating: r.wave_rating,
+    wave_height_estimate: r.wave_height_estimate,
+    created_at: r.created_at,
+    author: r.profiles,
+    beach: r.beaches,
+    replyCount: r.replies?.[0]?.count ?? 0,
+    comingCount: r.coming?.[0]?.count ?? 0,
+  };
+}
+
 /**
  * Latest reports (newest first, ties broken by id). `cursor` is the (created_at, id) of the last
  * report already shown; only reports strictly after it in that order are returned.
@@ -52,13 +76,7 @@ export async function fetchReports(
 ): Promise<FeedReport[]> {
   let query = supabase
     .from("reports")
-    .select(
-      `id, user_id, text, image_url, wave_rating, wave_height_estimate, created_at,
-       profiles(display_name, avatar_url),
-       beaches(id, name_he, city),
-       replies(count),
-       coming:replies(count)`
-    )
+    .select(FEED_SELECT)
     .eq("coming.quick_reaction", "coming")
     .gt("created_at", cutoff)
     .order("created_at", { ascending: false })
@@ -74,19 +92,25 @@ export async function fetchReports(
   const { data, error } = await query;
   if (error) throw new Error(error.message);
 
-  return ((data ?? []) as unknown as Row[]).map((r) => ({
-    id: r.id,
-    user_id: r.user_id,
-    text: r.text,
-    image_url: r.image_url,
-    wave_rating: r.wave_rating,
-    wave_height_estimate: r.wave_height_estimate,
-    created_at: r.created_at,
-    author: r.profiles,
-    beach: r.beaches,
-    replyCount: r.replies?.[0]?.count ?? 0,
-    comingCount: r.coming?.[0]?.count ?? 0,
-  }));
+  return ((data ?? []) as unknown as Row[]).map(mapFeedRow);
+}
+
+/** One report by id (realtime INSERT payloads lack the joins). null if gone/expired/invalid. */
+export async function fetchReportById(
+  supabase: SupabaseClient<Database>,
+  id: string,
+  cutoff: string
+): Promise<FeedReport | null> {
+  if (!UUID.test(id)) return null;
+  const { data, error } = await supabase
+    .from("reports")
+    .select(FEED_SELECT)
+    .eq("coming.quick_reaction", "coming")
+    .eq("id", id)
+    .gt("created_at", cutoff)
+    .maybeSingle();
+  if (error || !data) return null;
+  return mapFeedRow(data as unknown as Row);
 }
 
 // Both windows are shorter than the 12h TTL, so expired reports can never count as "recent".

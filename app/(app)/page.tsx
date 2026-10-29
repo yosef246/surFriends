@@ -43,12 +43,17 @@ export default async function FeedPage() {
       </Suspense>
       <HeroSummary summary={summary} />
       <BeachCircleRow beaches={beaches} />
-      <div>
-        <p className="eyebrow eyebrow-coral">חופי ישראל · עכשיו</p>
-        <h2 className="text-title heading-tight font-display font-normal text-ink">דיווחים אחרונים</h2>
-        <p className="mt-1 text-caption text-muted-text">דיווחים נעלמים אחרי {REPORT_TTL_HOURS} שעות ⏳</p>
-      </div>
-      <ReportList initialReports={reports} />
+      <ReportList
+        initialReports={reports}
+        currentUserId={userId}
+        heading={
+          <>
+            <p className="eyebrow eyebrow-coral">חופי ישראל · עכשיו</p>
+            <h2 className="text-title heading-tight font-display font-normal text-ink">דיווחים אחרונים</h2>
+            <p className="mt-1 text-caption text-muted-text">דיווחים נעלמים אחרי {REPORT_TTL_HOURS} שעות ⏳</p>
+          </>
+        }
+      />
     </div>
   );
 }

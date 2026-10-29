@@ -44,6 +44,7 @@ export function ReportList({
   currentUserAvatar,
   heading,
   beachId,
+  authorId,
   emptyState,
 }: {
   initialReports: FeedReport[];
@@ -53,6 +54,8 @@ export function ReportList({
   heading?: ReactNode;
   /** Beach page: list only this beach (load-more, resync and realtime inserts are filtered). */
   beachId?: number;
+  /** Profile pages: list only this author (load-more, resync and realtime inserts are filtered). */
+  authorId?: string;
   /** Replaces the default empty state. */
   emptyState?: ReactNode;
 }) {
@@ -105,8 +108,9 @@ export function ReportList({
   }, []);
 
   const onReportInsert = useCallback(
-    async (id: string, insertBeachId?: number) => {
+    async (id: string, insertBeachId?: number, insertUserId?: string) => {
       if (beachId != null && insertBeachId !== beachId) return; // another beach
+      if (authorId != null && insertUserId !== authorId) return; // another author
       if (stateRef.current.items.some((r) => r.id === id)) return; // own optimistic / server render
       const report = await fetchReportById(getClient(), id, reportCutoffIso(), currentUserId);
       if (!report) return;
@@ -114,7 +118,7 @@ export function ReportList({
       setState((s) => addIncoming(s, report, { direct }));
       refreshHero();
     },
-    [currentUserId, refreshHero, beachId]
+    [currentUserId, refreshHero, beachId, authorId]
   );
 
   const leavingRef = useRef<Set<string>>(new Set());
@@ -144,14 +148,14 @@ export function ReportList({
 
   const resync = useCallback(async () => {
     try {
-      const page = await fetchReports(getClient(), reportCutoffIso(), null, currentUserId, beachId);
+      const page = await fetchReports(getClient(), reportCutoffIso(), null, currentUserId, beachId, authorId);
       setState((s) => healWithFirstPage(dropExpired(s, reportCutoffIso()), page));
       refreshHero();
       emitReplyResync(); // open threads refetch too
     } catch {
       /* next visibility/online event retries */
     }
-  }, [refreshHero, currentUserId, beachId]);
+  }, [refreshHero, currentUserId, beachId, authorId]);
 
   const onReplyInsert = useCallback(
     (row: ReplyRow) => {
@@ -207,7 +211,7 @@ export function ReportList({
     if (!last) return;
     setFailed(false);
     startTransition(async () => {
-      const res = await loadMoreReports({ created_at: last.created_at, id: last.id }, beachId);
+      const res = await loadMoreReports({ created_at: last.created_at, id: last.id }, beachId, authorId);
       if (!res.ok) {
         setFailed(true);
         return;
@@ -251,7 +255,7 @@ export function ReportList({
   return (
     <div className="flex flex-col gap-4">
       {top}
-      {beachId == null ? <h1 className="sr-only">פיד דיווחים</h1> : null}
+      {beachId == null && authorId == null ? <h1 className="sr-only">פיד דיווחים</h1> : null}
       <ul className="flex flex-col gap-5 px-1 py-1" aria-busy={pending}>
         {reports.map((r, i) => (
           <li

@@ -93,7 +93,9 @@ export async function fetchReports(
   /** Viewer id: fills myComing / myOnTheWay (embedded replies filtered to this user). */
   userId?: string | null,
   /** Only this beach's reports (beach page). Omit for the global feed. */
-  beachId?: number | null
+  beachId?: number | null,
+  /** Only this author's reports (profile pages). Omit for everyone. */
+  authorId?: string | null
 ): Promise<FeedReport[]> {
   let query = supabase
     .from("reports")
@@ -109,6 +111,11 @@ export async function fetchReports(
   if (beachId != null) {
     if (!Number.isInteger(beachId) || beachId <= 0) throw new Error("invalid beach id");
     query = query.eq("beach_id", beachId);
+  }
+
+  if (authorId != null) {
+    if (!UUID.test(authorId)) throw new Error("invalid author id");
+    query = query.eq("user_id", authorId);
   }
 
   if (cursor) {
@@ -180,7 +187,7 @@ export async function fetchHeroSummary(
   };
 }
 
-export type BeachCircleItem = { id: number; name: string; live: boolean };
+export type BeachCircleItem = { id: number; name: string; live: boolean; favorite: boolean };
 
 type BeachRow = {
   id: number;
@@ -213,5 +220,6 @@ export async function fetchBeachCircles(
     id: r.id,
     name: r.name_he,
     live: (r.reports?.[0]?.count ?? 0) > 0,
+    favorite: (r.user_favorites?.length ?? 0) > 0,
   }));
 }

@@ -6,13 +6,17 @@ import { fetchReports, parseFeedCursor, type FeedCursor, type FeedReport } from 
 
 export type LoadMoreResult = { ok: true; reports: FeedReport[] } | { ok: false };
 
-export async function loadMoreReports(cursor: FeedCursor, beachId?: number | null): Promise<LoadMoreResult> {
+export async function loadMoreReports(
+  cursor: FeedCursor,
+  beachId?: number | null,
+  authorId?: string | null
+): Promise<LoadMoreResult> {
   const parsed = parseFeedCursor(cursor);
   if (!parsed) return { ok: false };
   try {
     const user = await getCurrentUser();
     if (!user) return { ok: false };
-    return { ok: true, reports: await fetchReports(await getSupabase(), reportCutoffIso(), parsed, user.id, beachId ?? null) };
+    return { ok: true, reports: await fetchReports(await getSupabase(), reportCutoffIso(), parsed, user.id, beachId ?? null, authorId ?? null) };
   } catch {
     return { ok: false };
   }

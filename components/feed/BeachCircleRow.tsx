@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Waves } from "lucide-react";
+import { Star, Waves } from "lucide-react";
 import type { BeachCircleItem } from "@/lib/feed";
 
 export function BeachCircleRow({ beaches }: { beaches: BeachCircleItem[] }) {
@@ -15,11 +15,18 @@ export function BeachCircleRow({ beaches }: { beaches: BeachCircleItem[] }) {
           >
             <Link
               href={`/beach/${b.id}`}
-              aria-label={b.live ? `${b.name}, חי` : b.name}
+              aria-label={[b.name, b.favorite ? "מועדף" : null, b.live ? "חי" : null].filter(Boolean).join(", ")}
               className="motion-press motion-lift flex min-h-touch flex-col items-center gap-2"
             >
               <span className="glass-card relative flex size-16 items-center justify-center rounded-full text-ink ring-2 ring-signature">
                 <Waves className="size-6" aria-hidden />
+                {b.favorite ? (
+                  <Star
+                    aria-hidden
+                    className="absolute -bottom-1 -end-1 size-5 fill-signature stroke-ink"
+                    strokeWidth={1.75}
+                  />
+                ) : null}
                 {b.live ? (
                   <span
                     aria-hidden

@@ -7,11 +7,13 @@ import { ForecastSummary } from "@/components/forecast/ForecastSummary";
 import { WaveChart } from "@/components/forecast/WaveChart";
 import { ReportList } from "@/components/feed/ReportList";
 import { Mascot } from "@/components/mascot";
+import { FavoriteToggle } from "@/components/shared/FavoriteToggle";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { buttonVariants } from "@/components/ui/button";
 import { getCurrentProfile, getCurrentUser, getSupabase } from "@/lib/auth";
 import { fetchReports } from "@/lib/feed";
 import { getBeachForecast, parseBeachId } from "@/lib/forecast";
+import { isFavoriteBeach } from "@/lib/profile-data";
 import { REPORT_TTL_HOURS, reportCutoffIso } from "@/lib/reports";
 import { cn } from "@/lib/utils";
 
@@ -46,10 +48,11 @@ export default async function BeachPage({ params }: { params: Promise<{ id: stri
   const userId = user?.id ?? "";
   const supabase = await getSupabase();
 
-  const [forecastRes, reports, profile] = await Promise.all([
+  const [forecastRes, reports, profile, isFavorite] = await Promise.all([
     getBeachForecast(beachId),
     fetchReports(supabase, reportCutoffIso(), null, userId, beachId),
     getCurrentProfile(),
+    userId ? isFavoriteBeach(userId, beachId) : false,
   ]);
 
   const displayName =
@@ -67,12 +70,15 @@ export default async function BeachPage({ params }: { params: Promise<{ id: stri
           >
             <ArrowRight aria-hidden />
           </Link>
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <p className="eyebrow">
               {beach.city} · {beach.region}
             </p>
             <h1 className="text-display heading-tight font-display font-normal text-gradient-sea">{beach.name_he}</h1>
           </div>
+          {userId ? (
+            <FavoriteToggle beachId={beach.id} beachName={beach.name_he} initialFavorite={isFavorite} />
+          ) : null}
         </div>
         {beach.difficulty ? (
           <p>

@@ -15,7 +15,7 @@ export type ReplyRow = {
 
 export type FeedRealtimeHandlers = {
   /** `beachId` comes from the INSERT payload (lets a beach page ignore other beaches). */
-  onReportInsert: (id: string, beachId?: number) => void;
+  onReportInsert: (id: string, beachId?: number, userId?: string) => void;
   onReportDelete: (id: string) => void;
   onReplyInsert: (row: ReplyRow) => void;
   /** `row` has report_id only with REPLICA IDENTITY FULL on replies (see migration). */
@@ -46,8 +46,8 @@ export function useFeedRealtime(handlers: FeedRealtimeHandlers): RealtimeStatus 
       channel = supabase
         .channel("feed-live")
         .on("postgres_changes", { event: "INSERT", schema: "public", table: "reports" }, (p) => {
-          const row = p.new as { id?: string; beach_id?: number };
-          if (row.id) ref.current.onReportInsert(row.id, row.beach_id);
+          const row = p.new as { id?: string; beach_id?: number; user_id?: string };
+          if (row.id) ref.current.onReportInsert(row.id, row.beach_id, row.user_id);
         })
         .on("postgres_changes", { event: "DELETE", schema: "public", table: "reports" }, (p) => {
           const id = (p.old as { id?: string }).id;

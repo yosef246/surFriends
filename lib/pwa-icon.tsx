@@ -3,7 +3,9 @@
 
 const WAVE_PATH = "M4 38 C 14 20, 26 20, 36 38 S 58 56, 68 38 S 90 20, 96 32";
 
-export function PwaIconArt({ size, badge = false }: { size: number; badge?: boolean }) {
+// `round` = circular icon on a transparent canvas (favicon, manifest "any"). Keep square for maskable/apple
+// icons: the OS applies its own mask there, and iOS fills transparent corners with black.
+export function PwaIconArt({ size, badge = false, round = false }: { size: number; badge?: boolean; round?: boolean }) {
   const stroke = "#ffffff";
   return (
     <div
@@ -13,6 +15,7 @@ export function PwaIconArt({ size, badge = false }: { size: number; badge?: bool
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        borderRadius: round ? size / 2 : 0,
         background: badge ? "transparent" : "linear-gradient(160deg, #1cc8da 0%, #0b6c9e 55%, #06335c 100%)",
       }}
     >

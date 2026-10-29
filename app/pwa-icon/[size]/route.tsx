@@ -10,7 +10,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const size = Number(raw);
   if (!SIZES.has(size)) return new Response("Not found", { status: 404 });
   const badge = request.nextUrl.searchParams.get("badge") === "1";
-  const res = new ImageResponse(<PwaIconArt size={size} badge={badge} />, { width: size, height: size });
+  const round = request.nextUrl.searchParams.get("round") === "1";
+  const res = new ImageResponse(<PwaIconArt size={size} badge={badge} round={round} />, { width: size, height: size });
   res.headers.set("Cache-Control", "public, max-age=86400, stale-while-revalidate=604800");
   return res;
 }

@@ -1,268 +1,240 @@
-# surFriends — Design System (יום 3, חצי Visual)
+# surFriends — Design System v2 ("Sunset")
 
-> גרסה 1.0. מקור הטוקנים בקוד: `app/globals.css`. מסמך זה מגדיר מראה בלבד; מבנה, מצבים וזרימות ב-`docs/UX_SPEC.md`. שמות טוקנים באנגלית, והם שמות ה-utility של Tailwind v4 (`bg-sea-deep`, `text-mist-text`, `shadow-card`...).
+> מחליף את v1 (הזמני). מקור הטוקנים בקוד: `app/globals.css`. מסמך זה מגדיר מראה בלבד; מבנה, מצבים וזרימות ב-`docs/UX_SPEC.md`. שמות טוקנים באנגלית והם שמות ה-utility של Tailwind v4 (`bg-signature`, `text-ink`, `shadow-card`...). Light only; dark mode מחוץ ל-scope.
 
 ## 1. כיוון עיצובי
 
-"ים ועירוני, לא קלישאתי": מקום ישראלי-ים-תיכוני, לא חוף טרופי. בסיס חם של חול (`sand`) עם כרטיסים לבנים (`foam`), נייבי עמוק (`sea-deep`) כעוגן (TopBar, כפתור ראשי, כותרות), וצבע גל (`sea-wave`) רק כמילוי מבטא. כתום (`sunset`) שמור לדבר אחד: "חי עכשיו". אין דקלים, גלים מצוירים או גרדיאנטים דקורטיביים. קרוב ברוחו ל-Linear/Monzo בגרסה חמה: משטחים שטוחים, טיפוגרפיה חדה, הצללה עדינה בגוון נייבי, ניגודיות גבוהה לשמש.
+משטחים לבנים נקיים, **צבע חתימה אחד** (כתום שקיעה) שמופיע רק בשלושה מקומות: כרטיס ה-hero, הפעולה הראשית (כפתור ראשי + כפתור "דיווח" בניווט) ופסי התקדמות. כל השאר רגוע: טקסט כהה חם, אפור לטקסט משני, צל רך מאוד. כותרות ב-Medium (לא Bold), מספרים גדולים עם יחידה קטנה, רדיוסים גדולים (19px), צ'יפים ולחצנים בצורת גלולה. מסקוט מאויר ("ימי") נותן הומור במסך הבית, במצבים ריקים ובהתחברות. השראה: מבנה ותחושה של אפליקציית Yellow, ללא הצבע הצהוב וללא העז; הזהות כאן כתומה-ימית.
 
-- **Light only ל-v1.** מצב כהה לא נבנה: הפלטה מבוססת חול/קצף, ו-dark אמיתי דורש הגדרה מחדש של כל זוגות הניגודיות והאיורים. ה-`.dark` של ברירת המחדל של shadcn הוסר; `@custom-variant dark` נשאר מבוסס class כדי ש-`dark:` לא יופעל מהעדפת מערכת. `color-scheme: light` מוגדר.
+כלל ברזל: **טקסט לבן על כתום נכשל AA (2.61:1)**. על כתום תמיד `text-ink`.
 
-## 2. צבעים
+## 2. פלטת צבעים
 
-### 2.1 פלטת בסיס (8 ערכים מ-spec §9, ללא שינוי)
+### 2.1 תפקידים
 
-| Token | Hex | תפקיד |
+| Token (Tailwind) | Hex | תפקיד |
 |---|---|---|
-| `sea-deep` | `#0A2540` | primary, TopBar, כותרות |
-| `sea-wave` | `#0EA5E9` | accent: **מילוי בלבד** (FAB, מילוי דירוג, פס פעיל) |
-| `sand` | `#F5EFE4` | רקע עמוד |
-| `foam` | `#FFFFFF` | כרטיסים, sheets, BottomNav |
-| `sunset` | `#F97316` | live / התראה: **מילוי בלבד** |
-| `kelp` | `#166534` | הצלחה, תנאים טובים |
-| `shadow` | `#1F2937` | טקסט ראשי |
-| `mist` | `#94A3B8` | דקורטיבי בלבד (שלדים, מפרידים, disabled) |
+| `signature` | `#FF7A1A` | hero, כפתור ראשי, FAB בניווט, פסי התקדמות, נקודת "חי". **רק fill.** |
+| `signature-hover` | `#F56E0C` | hover |
+| `signature-pressed` | `#EA630A` | active |
+| `signature-soft` | `#FFF1E6` | רקע צ'יפ נבחר / שורה מודגשת |
+| `orange-text` | `#C2410C` | כתום **כטקסט** על לבן/אפור (למשל "חי", ספירה) |
+| `ink` | `#0A2540` | כותרות, מספרים גדולים, טקסט על כתום, אייקונים פעילים |
+| `copy` | `#3A3A35` | טקסט גוף חם (ברירת מחדל של `body`) |
+| `muted-text` | `#6B6B66` | טקסט משני, תוויות, זמנים |
+| `surface` | `#F4F4F4` | רקע דף מאחורי כרטיסים, צ'יפים לא-פעילים |
+| `foam` / `card` | `#FFFFFF` | כרטיסים, ניווט, מסכי login |
+| `line` | `#E6E6E1` | קווי הפרדה דקורטיביים בלבד |
+| `mist-border` / `input` | `#8A8A84` | מסגרת שדות וכפתורי outline (3:1 לרכיבי UI) |
+| `link-blue` / `link` | `#007196` | קישורים, תג "חדש", focus ring |
+| `link-soft` | `#E3F2F8` | רקע עדין סביב תוכן כחול / hover של ghost |
+| `kelp` / `success` | `#0F7B5F` | הצלחה (ירוק-ים) |
+| `danger` / `destructive` | `#C62828` | שגיאה |
+| `sea-wave` | `#0EA5E9` | **דקורטיבי בלבד** (איורים, גרפים). לא פעולה ולא טקסט |
+| `mist` | `#9A9A94` | דקורטיבי בלבד, לעולם לא טקסט |
 
-### 2.2 וריאנטים נגישים (נוספו 4)
+אין יותר רקע בז'. `sand` נשאר כ-alias ל-`surface`.
 
-| Token | Hex | מחליף את | לשימוש |
+### 2.2 טבלת ניגודיות (WCAG, מחושב)
+
+| חזית על רקע | יחס | תוצאה | שימוש |
 |---|---|---|---|
-| `sea-wave-text` | `#0369A1` | `sea-wave` | קישורים, טבעת פוקוס, טקסט/אייקון מודגש |
-| `sunset-text` | `#C2410C` | `sunset` | טקסט "חי"/אזהרה על foam/sand |
-| `mist-text` | `#475569` | `mist` | טקסט משני, placeholder, זמנים, תוויות |
-| `mist-border` | `#64748B` | `mist` | גבול של שדות קלט ואייקונים לא פעילים |
-
-בנוסף: `danger` = `#B91C1C` (טוקן סמנטי חדש, אין אדום ב-§9).
-
-### 2.3 טוקנים סמנטיים (shadcn + surFriends)
-
-| Token | ערך | הערה |
-|---|---|---|
-| `background` | `sand` | |
-| `foreground` | `shadow` | |
-| `card` / `popover` | `foam` | `*-foreground` = `shadow` |
-| `primary` / `primary-foreground` | `sea-deep` / `foam` | hover: +12% לבן, pressed: +20% שחור |
-| `secondary` | sea-deep 8% על sand | foreground `sea-deep` |
-| `muted` | sea-deep 5% על sand | foreground = `mist-text` |
-| `accent` | sea-wave 16% על foam | foreground `sea-deep`. מצב hover בלבד |
-| `border` | sea-deep 14% על sand | מפרידים דקורטיביים בלבד |
-| `input` | `mist-border` | גבול שדות (דורש 3:1) |
-| `ring` | `sea-wave-text` | טבעת פוקוס |
-| `live` / `live-foreground` | `sunset` / `sea-deep` | pill, נקודת "חי" |
-| `live-text` | `sunset-text` | טקסט "חי" |
-| `success` / `success-foreground` | `kelp` / `foam` | |
-| `danger` = `destructive` | `#B91C1C` | `destructive-foreground` = `foam` |
-| `link` | `#0369A1` | |
-
-### 2.4 בדיקות ניגודיות WCAG (חושב לפי נוסחת הluminance היחסית של WCAG 2.x)
-
-יעד: טקסט רגיל ≥ 4.5:1, טקסט גדול/אייקון/גבול UI ≥ 3:1.
-
-| זוג (טקסט / רקע) | יחס | תוצאה |
-|---|---|---|
-| `shadow` / `foam` | 14.67 | AAA |
-| `shadow` / `sand` | 12.82 | AAA |
-| `sea-deep` / `foam` | 15.54 | AAA |
-| `sea-deep` / `sand` | 13.57 | AAA |
-| `foam` / `sea-deep` (כפתור ראשי, TopBar) | 15.54 | AAA |
-| `sea-deep` / `muted` | 12.35 | AAA |
-| `mist-text` / `foam` | 7.58 | AAA |
-| `mist-text` / `sand` | 6.62 | AA |
-| `mist-text` / `muted` | 6.03 | AA |
-| **`mist` / `foam`** | **2.56** | **נכשל. לא לטקסט** |
-| **`mist` / `sand`** | **2.24** | **נכשל. לא לטקסט** |
-| `mist` / `sea-deep` (טקסט משני בתוך TopBar) | 6.06 | AA |
-| **`sea-wave` / `foam`** | **2.77** | **נכשל. מילוי בלבד** |
-| **`sea-wave` / `sand`** | **2.42** | **נכשל. מילוי בלבד** |
-| `sea-wave-text` / `foam` | 5.93 | AA |
-| `sea-wave-text` / `sand` | 5.18 | AA |
-| `sea-deep` על מילוי `sea-wave` (FAB, כפתור accent) | 5.61 | AA |
-| `sea-wave` / `sea-deep` (פעולה ב-toast) | 5.61 | AA |
-| **`foam` על מילוי `sea-wave`** | **2.77** | **נכשל. אסור** |
-| **`sunset` / `foam`** | **2.80** | **נכשל. מילוי בלבד** |
-| **`sunset` / `sand`** | **2.45** | **נכשל. מילוי בלבד** |
-| `sea-deep` על מילוי `sunset` (NewReportsPill) | 5.54 | AA |
-| `sunset` / `sea-deep` (נקודת live ב-TopBar, לא טקסט) | 5.54 | עובר גם כטקסט |
-| `sunset-text` / `foam` | 5.18 | AA |
-| `sunset-text` / `sand` | 4.53 | AA (על הגבול. לא לגדלים מתחת ל-14px) |
-| `kelp` / `foam` | 7.13 | AAA |
-| `kelp` / `sand` | 6.23 | AA |
-| `foam` על מילוי `kelp` | 7.13 | AAA |
-| `danger` / `foam` | 6.47 | AA |
-| `danger` / `sand` | 5.66 | AA |
-| `foam` על מילוי `danger` | 6.47 | AA |
-| טבעת פוקוס `sea-wave-text` מול foam / sand (non-text, 3:1) | 5.93 / 5.18 | עובר |
-| גבול קלט `mist-border` מול foam / sand (non-text, 3:1) | 4.76 / 4.16 | עובר |
-
-**כללי ברזל שנגזרים:** (1) `sea-wave` ו-`sunset` הם מילויים. טקסט עליהם הוא `sea-deep`, לעולם לא לבן. (2) טקסט בצבע גל/כתום משתמש ב-`*-text`. (3) `mist` המקורי לא מופיע כטקסט (תוקן ב-login וב-home: `text-mist` הפך ל-`text-mist-text`).
-
-### 2.5 סקאלת WaveRating (1–5)
-
-תמיד **מספר + צורה (5 נקודות) + תווית + צבע**. הצבע מחזק ולא נושא את המידע לבד. הצבעים הם גם צבעי הנקודות המלאות (non-text ≥ 3:1) וגם צבע הטקסט (≥ 4.5:1 על foam):
-
-| דירוג | תווית | נקודות | צבע (טקסט + נקודה מלאה) | יחס על foam |
-|---|---|---|---|---|
-| 1 | שטוח | ●○○○○ | `mist-text` | 7.58 |
-| 2 | חלש | ●●○○○ | `mist-text` | 7.58 |
-| 3 | סביר | ●●●○○ | `sea-wave-text` | 5.93 |
-| 4 | טוב | ●●●●○ | `kelp` | 7.13 |
-| 5 | מעולה | ●●●●● | `kelp`, והתווית ב-pill מלא: bg `kelp`, טקסט `foam` | 7.13 |
-
-נקודה ריקה: טבעת 1.5px ב-`mist-border`. 4 לעומת 5 נבדלים גם בספירת נקודות, במספר ובעובי/מילוי ה-pill, לא רק בגוון.
+| `ink` על `signature` | 5.96:1 | AA | טקסט/אייקון על hero, כפתור ראשי, FAB |
+| `ink` על `signature-hover` | 5.27:1 | AA | |
+| `ink` על `signature-pressed` | 4.66:1 | AA | |
+| **לבן** על `signature` | **2.61:1** | **נכשל** | אסור |
+| `orange-text` על לבן | 5.17:1 | AA | טקסט כתום |
+| `orange-text` על `surface` | 4.70:1 | AA | |
+| `orange-text` על `signature-soft` | 4.67:1 | AA | |
+| `ink` על לבן / `surface` | 15.5 / 14.1 | AAA | |
+| `copy` על לבן / `surface` | 11.4 / 10.4 | AAA | |
+| `muted-text` על לבן / `surface` | 5.36 / 4.87 | AA | |
+| `link-blue` על לבן / `surface` | 5.53 / 5.03 | AA | |
+| לבן על `link-blue` | 5.53:1 | AA | תג "חדש" |
+| `kelp` על לבן / `surface` | 5.23 / 4.75 | AA | |
+| לבן על `kelp` | 5.23:1 | AA | |
+| `danger` על לבן / `surface` | 5.62 / 5.12 | AA | |
+| לבן על `danger` | 5.62:1 | AA | |
+| `mist-border` על לבן / `surface` | 3.47 / 3.16 | 3:1 UI | מסגרת שדה |
+| `signature` על לבן (לא טקסט) | 2.61:1 | | מותר רק כשיש טקסט/מספר לצד (פס התקדמות עם מספר, כפתור עם תווית). לא לתקשר מידע בכתום בלבד |
 
 ## 3. טיפוגרפיה
 
-- **Rubik** (גופן ראשי, `font-sans`, subsets latin+hebrew, כבר נטען ב-`layout.tsx`). משקלים בשימוש: 400, 500, 600, 700 בלבד.
-- **JetBrains Mono** (`font-mono`) רק לזמנים, מונים ונתונים (גובה גל, מחזור, N/5). תמיד `dir="ltr"` על מחרוזות נתונים מעורבות.
-- בסיס 16px (קריאות בשמש). אין טקסט גוף מתחת ל-14px; `caption` (12) לתוויות/תגיות בלבד.
+Rubik (כבר נטען ב-`app/layout.tsx` כ-variable font, כל המשקלים זמינים). **משקלים במערכת: Light 300, Regular 400, Medium 500 בלבד.** המחלקות הקיימות `font-bold` ו-`font-semibold` מוגדרות ב-theme כ-500, כך שכותרות קיימות כבר Medium. בקוד חדש כתבו `font-medium`. JetBrains Mono נשאר רק ל-`text-data` (קואורדינטות/מספרים טכניים).
 
-| Utility | גודל / שורה | משקל | שימוש |
+| Token | גודל / שורה | משקל | שימוש |
 |---|---|---|---|
-| `text-display` | 28 / 34 | 700 | לוגו וכותרת login |
-| `text-title` | 22 / 28 | 600 | כותרת מסך, כותרת EmptyState |
-| `text-heading` | 18 / 24 | 600 | שם חוף בכרטיס, כותרת בלוק |
-| `text-body` | 16 / 24 | 400 (500 לשם משתמש) | טקסט דיווח, שדות |
-| `text-body-sm` | 14 / 20 | 400/500/600 | משני, כפתורים קטנים, צ'יפים |
-| `text-caption` | 12 / 16 | 500 | תגיות, תוויות |
-| `text-data` + `font-mono` | 13 / 18 | 500 | זמנים, נתוני תחזית |
+| `text-numeral-xl` | 64 / 1 | 300 | גובה גל ב-hero |
+| `text-numeral-lg` | 44 / 1 | 300 | גובה גל בכרטיס דיווח / BeachCircle מורחב |
+| `text-numeral-md` | 28 / 1 | 500 | דירוג inline |
+| `text-unit` | 16 / 1 | 400 | היחידה/העשרוני הקטן ליד מספר |
+| `text-display` | 28 / 34 | 500 | "ערב טוב יונתן," בהקשר hero |
+| `text-title` | 22 / 28 | 500 | כותרות מסך |
+| `text-heading` | 18 / 24 | 500 | כותרות כרטיס |
+| `text-body` | 16 / 24 | 400 | גוף |
+| `text-body-sm` | 14 / 20 | 400 (500 לכפתורים/תוויות) | משני |
+| `text-caption` | 12 / 16 | 500 | תוויות ניווט, תגים |
+| `text-data` | 13 / 18 | 500 mono | נתונים |
 
-כותרות: `text-sea-deep`. גוף: `text-foreground`. משני: `text-muted-foreground`. מספרים בעברית: `tabular-nums` במונים כדי שלא יקפצו.
+צבעי טקסט: כותרות ומספרים `text-ink`; גוף `text-copy` (ברירת מחדל מ-`body`); משני `text-muted-text` (שם קיים `text-mist-text`).
+
+### BigNumber (סגנון המספר הגדול)
+מספר שלם גדול ב-Light, היחידה/העשרוני קטנים ב-Regular, מיושרים ל-baseline. דוגמה: `1` `.2` `מ'`. משתמשים ב-utility `numeral` (ink, tabular-nums, `direction:ltr`, baseline, gap) כדי שהספרות והנקודה העשרונית לא יתהפכו ב-RTL.
+
+```
+<span class="numeral">
+  <span class="text-numeral-lg font-light">1</span>
+  <span class="text-unit">.2 מ'</span>
+</span>
+```
+על hero כתום הצבע נשאר `ink`. אם אין ערך: "—" באותו גודל ב-`text-muted-text` (על hero: ink בשקיפות 60% אסורה; השתמשו ב-ink מלא).
 
 ## 4. ריווח ופריסה
+סקאלת 4px: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64. רוחב טור פיד `max-w-feed` (576px). Gutter 16px במובייל, 24px מעל `sm`. ריפוד כרטיס 16px (מובייל) / 20px; hero 20px. מרווח בין כרטיסים 12px; בין סקציות 24px. יעדי מגע מינימום `min-h-touch` (44px). תוכן אחרון בדף מקבל padding תחתון של `bottomnav + 24px + safe-area` (הכפתור המורם בולט מעל הסרגל).
 
-- סקאלה: בסיס 4px של Tailwind (`1`=4 ... ). בשימוש: 4, 8, 12, 16, 20, 24, 32, 48.
-- גוטר עמוד: `px-4` (16) בנייד, `px-6` מ-`md`. עמודת פיד: `max-w-feed` (576px) ממורכזת.
-- ריווח בין כרטיסים: `gap-3` (12). padding כרטיס: `p-4`. בין בלוקים במסך: `gap-6`. בין שדות בטופס: `gap-4`.
-- **יעד מגע:** `min-h-touch min-w-touch` (44px) לכל אלמנט אינטראקטיבי. רווח ≥ 8px בין יעדים סמוכים. אלמנט ויזואלי קטן מ-44 (כמו ✕ ב-chip) מקבל hit-area מורחב (padding או `after:-inset-2`).
-- גבהים: `h-topbar` (56), `h-bottomnav` (64, + `pb-[env(safe-area-inset-bottom)]`). תוכן גולל עם `pb` שמכסה BottomNav + FAB.
-- רדיוסים: `--radius` = 12px. `rounded-md` ≈ 9.6, `rounded-lg` = 12, `rounded-xl` ≈ 17, `rounded-full` לצ'יפים/FAB/אווטאר. כרטיס = `rounded-xl`, כפתור = `rounded-lg`, sheet = `rounded-t-2xl`.
+## 5. רדיוסים, צללים, מסגרות
 
-### הצללות (גוון נייבי, לא שחור)
+| Token | ערך | שימוש |
+|---|---|---|
+| `rounded-card` / `rounded-xl` | 19px | כרטיסים, hero, sheets (הקיים `rounded-xl` ב-ReportCard כבר 19px) |
+| `rounded-pill` / `rounded-full` | 9999px | צ'יפים, כפתורים, תגים, אריחים עגולים, FAB |
+| `rounded-lg` | 12px | שדות קלט, תמונות בתוך כרטיס |
+| `rounded-md` / `rounded-sm` | 9.6 / 7.2px | אלמנטים קטנים |
 
-| Utility | שימוש |
-|---|---|
-| `shadow-card` | ReportCard במנוחה |
-| `shadow-raised` | popover, תפריט, pill |
-| `shadow-fab` | FAB |
-| `shadow-sheet` | bottom sheet / dialog |
-
-BottomNav ו-TopBar בלי צל: קו `border-border` בלבד.
-
-## 5. אייקונים
-
-`lucide-react` (כבר ב-shadcn, `iconLibrary: lucide`). קו 2px (ברירת מחדל), גדלים: **16** (`size-4`: בתוך צ'יפים/מטא), **20** (`size-5`: כפתורים, שורות, BottomNav), **24** (`size-6`: TopBar, FAB, EmptyState קטן). פער אייקון-טקסט: 4px (16) / 8px (20). אייקון בלי טקסט חייב `aria-label`; אייקון לצד טקסט `aria-hidden`. אייקונים שמסמלים מצב (שגיאה, "שולח", הצלחה) מופיעים תמיד עם טקסט.
-
-אייקונים מומלצים: `Waves` (לוגו/ריק), `Plus` (FAB), `SlidersHorizontal` (סינון), `Star` (מועדף, מלא כשפעיל), `ArrowUp` (pill), `Clock` (שולח), `WifiOff`, `Check`, `CircleAlert`, `Ellipsis`, `Navigation` (כיוון גל).
+צללים (שחור ניטרלי, רכים מאוד): `shadow-card` = `0 5px 10px rgba(0,0,0,.08)`; `shadow-raised` = `0 0 15px rgba(0,0,0,.25)` (כפתור הניווט המורם; `shadow-fab` הוא alias); `shadow-hero` = glow כתום עדין; `shadow-nav` = קצה עליון של הסרגל; `shadow-sheet`. כרטיס לבן על `surface`: **בלי border**, רק `shadow-card`. מסגרת `border-line` רק לקווי הפרדה. שדות: `border-input`. Focus: outline 2px `link-blue` עם offset 2px (גלובלי) ו-`ring-offset-background`.
 
 ## 6. RTL
+- `<html dir="rtl">`. להשתמש ב-logical properties בלבד: `ms-/me-/ps-/pe-`, `start-/end-`, `text-start`, `border-s`. אסור `ml/mr/left/right`.
+- סדר DOM = סדר חזותי מימין לשמאל. הפריט הראשון ב-DOM מופיע **בימין**.
+- מספרים: עטפו ב-`numeral` או `<bdi>`. שמות חופים/משתמשים בלטינית ב-`<bdi>`.
+- אייקוני חץ/chevron מתהפכים (`rtl:-scale-x-100`); אייקונים לא-כיווניים (בית, משתמש) לא.
+- המסקוט לא מתהפך. אל תשתמשו ב-`scale-x-[-1]` עליו.
+- ה-shimmer כבר מתהפך דרך `--shimmer-dir`.
 
-- `dir="rtl"` כבר ב-root. **רק מאפיינים לוגיים:** `ms-/me-/ps-/pe-/start-/end-/border-s/border-e/rounded-s/rounded-e/text-start/text-end`. אסור `left/right/ml/mr/pl/pr/text-left/text-right`. כפתור ה-shadcn עודכן בהתאם (`ps/pe`).
-- אייקונים כיווניים (חץ חזרה, chevron, `ArrowRight`...) מקבלים `rtl:-scale-x-100` (או `rtl:rotate-180`). **לא** הופכים: `Plus`, `Check`, `Star`, שעון, `ArrowUp`, מדיה/לוגו, ואייקון כיוון גל (הכיוון מחושב מנתוני מעלות).
-- FAB: `end-4` ב-RTL נוחת בשמאל, כנדרש ב-UX_SPEC. מספרים, זמנים ונתוני תחזית: `dir="ltr"` או `<bdi>`. שמות חופים באנגלית: `<bdi>`.
-- Shimmer מתהפך אוטומטית (`--shimmer-dir`). אנימציות הכנסה אנכיות בלבד, כך שלא תלויות בכיוון.
+## 7. תנועה
+`--dur-instant` 80ms, `--dur-fast` 120ms, `--dur-base` 200ms, `--dur-slow` 320ms; easing `--ease-standard`, `--ease-out-soft`, `--ease-press`. לחיצה על כפתורים: `active:scale-[0.97]` 120ms. כפתור הניווט המורם: scale 0.94 בלחיצה. כרטיס חדש: `animate-card-in`. המסקוט ב-hero/login: `animate-mascot-bob` (ריחוף 4px, 3.2s); במצב ריק: סטטי.
+**Reduced motion**: כל האנימציות/המעברים מקוצרים ל-0.01ms, והלולאות (`skeleton`, `animate-shimmer`, `animate-live-pulse`, `animate-sending`, `animate-mascot-bob`) כבות לחלוטין. אין parallax. אין מידע שעובר באנימציה בלבד.
 
-## 7. מפרטי רכיבים
+## 8. איקונוגרפיה
+lucide-react, `strokeWidth` 2, גדלים 16 / 20 (`size-5`, ניווט) / 24 (בתוך אריחים עגולים), 28 בכפתור הניווט המורם. ליד טקסט: רווח 4-8px. אייקון בלבד חייב `aria-label` או `aria-hidden` עם תווית סמוכה. אייקונים בניווט: לא פעיל `muted-text` קו בלבד; פעיל `ink` עם מילוי `ink/10`.
 
-כל הרכיבים: טקסט ≥ 4.5:1, פוקוס = `outline 2px var(--ring)` + offset 2px (גלובלי), יעד מגע ≥ 44px.
+## 9. המסקוט: "ימי" (Yami)
 
-### Button (עודכן ב-`components/ui/button.tsx`)
-גובה: default 44, lg 48, sm 40, xs 32 (xs רק עם hit-area מורחב), icon 44. טקסט `font-semibold`. וריאנטים: `default` (bg `primary`, fg `foam`), `accent` (חדש: bg `sea-wave`, fg `sea-deep`), `outline` (bg `card`, גבול `input`), `secondary`, `ghost`, `destructive` (מלא `danger`, fg `foam`), `link` (`link`). Hover: בהיר/כהה ב-12%. Press: `scale-[0.97]`, 120ms. Disabled: opacity .5. פוקוס: ring 2px + offset.
+**כלב ים קטן ועגלגל**, גולש מושבע שלא מאבד אופטימיות. גוף בצבע ים-תכלת (`#38B6DC`), בטן לבנה, לחיים כתומות, מסגרת ink בעובי 4. מחזיק תמיד לוח גלישה כתום. **אישיות**: נלהב, קצת תלותי בגלים, דרמטי כשאין גלים ("הים שטוח, אני מת"), אף פעם לא מתנשא. הטון בטקסטים: חם, עם חיוך, בלי ציניות. הוא לא דומה לעז של Yellow בשום צורה (חיה ימית, צבעים אחרים, סילואטה עגולה).
 
-### TopBar
-גובה `h-topbar`, bg `sea-deep`, טקסט/אייקונים `foam`, כותרת `text-heading` 600. לוגו "surFriends" `font-bold`. כפתורי אייקון: ghost על כהה (hover bg `foam/10`), 44x44. נקודת "מתחברים מחדש" `sunset`. בלי צל; פס תחתון לא נדרש.
+קבצים: `components/mascot/` (`MascotWave.tsx`, `MascotWaiting.tsx`, `MascotOops.tsx`, `parts.tsx` משותף, `index.ts`). שימוש: `import { Mascot } from "@/components/mascot"` ואז `<Mascot.Wave size={140} />`. Props: `size` (px, ברירת מחדל 160, תוכנן ל-96-200), `className`. כל קומפוננטה `role="img"` עם `aria-label` בעברית, ללא JS לקוח (בטוחה ל-Server Components).
 
-### Chips (סינון פעיל, QuickTextChips, WaveHeightChips)
-`h-touch` (44, ויזואלית 36 עם padding מורחב), `rounded-full`, `px-4`, `text-body-sm font-medium`. לא נבחר: bg `card`, גבול `input`, טקסט `foreground`. נבחר: bg `sea-deep`, טקסט `foam`, אייקון `Check` (לא צבע בלבד). chip סינון פעיל: bg `accent`, טקסט `sea-deep`, ✕ 44x44 hit-area, `aria-label`.
+| פוזה | מתי | הבעה |
+|---|---|---|
+| `Mascot.Wave` | login, hero, onboarding | מנופף, עיניים שמחות, פה פתוח |
+| `Mascot.Waiting` | מצבים ריקים ("אין דיווחים עדיין") | יושב על הלוח, מביט בים שטוח, שלוש נקודות המתנה |
+| `Mascot.Oops` | שגיאה, offline | ידיים למעלה, טיפת זיעה, הלוח שבור |
 
-### WaveRating
-**תצוגה:** שורה אחת `inline-flex items-center gap-2`: 5 נקודות 10px (`gap-1`), מספר `font-mono text-data font-semibold` ("4/5", `dir="ltr"`), תווית `text-body-sm font-medium`. צבעים לפי §2.5. דירוג 5: כל הקבוצה ב-pill `bg-kelp text-foam px-2.5 py-0.5 rounded-full`.
-**קלט:** `radiogroup` של 5 כפתורי 52x52 (`min-w-touch`), `rounded-xl`, מספר 1-5 במרכז `text-heading font-semibold`, תווית קטנה מתחת. לא נבחר: bg `card`, גבול 1.5px `input`. נבחר: bg לפי הסקאלה (1-2 `mist-text`, 3 `sea-wave-text`, 4-5 `kelp`) + טקסט `foam` + `Check` קטן בפינה (`end-1 top-1`). כל הצבעים עם `foam` ≥ 5.9:1. מעבר בחירה: 120ms + `scale-95`→1.
+כללי שימוש: על hero כתום הלוח (כתום) נבלע ברקע ונשאר קריא בזכות מסגרת ה-ink; ללא עטיפה מיוחדת. אל תצבעו אותו מחדש. אל תקטינו מתחת ל-96px (פרטי הפנים נעלמים). אל תשימו שני מסקוטים באותו מסך. מסקוט הוא דקורטיבי: ה-`aria-label` שלו לא מחליף את הטקסט של ההודעה; הכותרת וההסבר חייבים להופיע בטקסט.
+
+## 10. רכיבים
+
+### Greeting header (מחליף TopBar)
+- רקע `surface` (בלי border, לא sticky כבד); גובה מינ' `topbar`; ריפוד 16px.
+- שורה 1: "ערב טוב יונתן," ב-`text-title font-medium text-ink` (ברכה לפי שעה: בוקר טוב / צהריים טובים / ערב טוב / לילה טוב; שם פרטי). שורה 2 אופציונלית: `text-body-sm text-muted-text` ("הנה מה שקורה בחופים שלך").
+- צד ה-end (שמאל): `UserAvatar` 40px עגול (`bg-secondary text-ink`, `font-medium`), הקשה פותחת פרופיל.
+- אין שם אפליקציה בכותרת; לוגו רק ב-login.
+
+### BottomNav + כפתור "דיווח" מורם
+- סרגל: `bg-card`, `shadow-nav`, גובה `bottomnav` + safe-area, בלי `border-t`. פינות עליונות `rounded-t-card` (19px).
+- 3 פריטים רגילים (פיד, פרופיל, הגדרות): אייקון 20 + תווית `text-caption font-medium` מתחתיו. פעיל: `text-ink` + אייקון מלא `ink/10` + נקודה כתומה 4px מתחת לתווית (לא רק צבע). לא פעיל: `text-muted-text`.
+- **כפתור "דיווח"**: פריט נוסף **אחרון ב-DOM** כך שב-RTL הוא בצד ה-end (שמאל). עיגול 56px, `bg-signature text-ink`, אייקון `Plus` 28, `shadow-raised`, מורם כך שמרכזו על הקצה העליון של הסרגל (`-translate-y-1/2` יחסית לסרגל, או `-mt-7`). טבעת לבנה 4px סביבו (`ring-4 ring-card`) להפרדה. hover `signature-hover`, active `signature-pressed` + scale .94. תווית "דיווח" `text-caption font-medium text-ink` מתחת לעיגול, בתוך הסרגל. `aria-label="דיווח חדש"`, קישור ל-`/new`.
+- ה-FAB הנפרד (`FAB.tsx`) מוסר. הסרגל נעלם ב-`/new` כמו היום.
+
+### Hero summary card
+- `bg-signature`, `rounded-card`, `shadow-hero`, ריפוד 20px, `overflow-hidden`, מינ' גובה 168px.
+- צד ה-start (ימין): כותרת קטנה `text-body-sm font-medium text-ink` ("סיכום חי"), משפט ראשי `text-heading font-medium text-ink` ("3 דיווחים בשעתיים האחרונות"), ומתחת BigNumber (`text-numeral-xl`, ink) של גובה הגל הגבוה ביותר + `text-unit` "מ'", ושורת משנה `text-body-sm text-ink` (שם החוף).
+- צד ה-end (שמאל): `<Mascot.Wave size={120}>` חותך קלות את הקצה התחתון (מותר לגלוש 8px).
+- כפתור משני בתוך ה-hero: pill לבן `bg-card text-ink` ("לכל הדיווחים"), לא כפתור כתום על כתום.
+- פס התקדמות (אם קיים): track `ink/15`, מילוי `ink` (על כתום לא נשתמש בכתום).
+- בלי דיווחים: ה-hero הופך ל-EmptyState (ראו להלן), לא כרטיס כתום ריק.
+
+### BeachCircle row
+- שורה אופקית גוללת (`flex gap-4 overflow-x-auto`, `snap-x`, בלי scrollbar), ריפוד start/end 16px.
+- אריח: עיגול 64px `bg-card shadow-card` עם אייקון 24 `ink` (או ראשי תיבות של החוף ב-`font-medium`), תווית מתחת `text-caption font-medium text-copy` שורה אחת עם `truncate`, רוחב 72px, ממורכז.
+- תג **"חי"** כשיש דיווח טרי: pill 18px גובה, `bg-signature text-ink text-caption font-medium`, ממוקם בפינת ה-end העליונה של העיגול (חופף), עם נקודה `animate-live-pulse` מימינו. לא נסמך על צבע בלבד: המילה "חי". תג "חדש" (לתכונות חדשות): `bg-link-blue text-white`.
+- אריח אחרון: "הוסף חוף" עיגול מקווקו `border-dashed border-input` עם `Plus`.
+- Focus: outline גלובלי; מצב נבחר: טבעת 2px `ink` offset 2.
 
 ### ReportCard
-bg `card`, `rounded-xl`, `shadow-card`, `p-4`, `gap-3` אנכי, בלי גבול (על sand הצל מספיק). כותרת: אווטאר 40px (`rounded-full`, ראשי תיבות על `secondary` + `sea-deep` אם אין תמונה), שם `text-body font-medium text-sea-deep`, שורה שנייה: שם חוף (`text-body-sm font-medium text-link`, קו תחתון בפוקוס/hover) · זמן (`font-mono text-data text-muted-foreground`). אחר כך WaveRating, גובה משוער (`text-body-sm`, תווית "גובה:" ב-`muted-foreground`), טקסט `text-body` עד 4 שורות + "עוד" (`text-link`). תמונה: `aspect-[4/3] rounded-lg object-cover`, `bg-muted` בזמן טעינה. מצבי sending/failed: ראו §8.3. תפריט ⋯: icon-sm ghost.
+- `bg-card rounded-card shadow-card`, בלי border, ריפוד 16px, על רקע `surface`.
+- שורה עליונה: אווטר 36 + שם `text-body font-medium text-ink` + זמן יחסי `text-body-sm text-muted-text`; תג חוף כקישור `text-body-sm font-medium text-link`.
+- גובה גל: `BigNumber` (`text-numeral-lg font-light`, יחידה "מ'") בצד ה-end, לצד `WaveRating`.
+- גוף: `text-body text-copy`. תמונה: `rounded-lg`, יחס 4:3, מתחת לטקסט.
+- דיווח חדש (≤15 דק'): תג "חי" קטן ליד השם (`signature` + ink). Skeleton: `skeleton` ברדיוס 19px.
 
-### QuickReactionBar
-שלושה כפתורי `h-touch rounded-full`: לא נבחר = outline; נבחר (`aria-pressed`) = bg `sea-deep`, `foam`, אייקון מלא (`Check`/אייקון מלא) ו-`font-semibold`. מונה `font-mono tabular-nums` בתוך הכפתור. "תגובה" = ghost עם `MessageCircle`.
+### WaveRating
+- תצוגה: 5 נקודות/גלים; מלאה = `signature`, ריקה = `surface` עם מסגרת `line`; ליד: מספר `text-data`/`numeral-md` (ink) וטקסט תיאור (`text-body-sm text-muted-text`) כדי שהמידע לא יהיה בצבע בלבד. (שימו לב: הצבע הקיים `text-sea-wave-text` כעת כחול `link-blue`; מומלץ להחליף ל-`text-ink` ולמלא ב-`signature`.)
+- קלט (`WaveRatingInput`): כפתורי pill 44px; נבחר: `bg-signature text-ink border-signature` (אפשר להשאיר `bg-primary`); לא נבחר `bg-card border-input text-copy`. פוקוס גלובלי.
 
-### ReplyThread
-שורת סיכום `text-body-sm text-muted-foreground` + chevron (מתהפך ב-RTL). פתוח: מפריד `border-border`, תגובות עם אווטאר 28px, שם `text-body-sm font-medium`, תג reaction: `rounded-full bg-accent text-sea-deep text-caption px-2`. composer: TextInput + כפתור "שלחו" `sm`.
+### BigNumber
+קומפוננטה שמרנדרת `numeral` + שני spans (שלם, יחידה/עשרוני). Props: `value`, `unit`, `size` (`xl|lg|md`), `tone` (`ink`|`on-signature`; שניהם ink בפועל). `aria-label` מלא ("גובה גל 1.2 מטר") על העטיפה והחלקים `aria-hidden`.
 
-### FAB
-`size-14` (56), `rounded-full`, bg `sea-wave`, אייקון `Plus` 24px `sea-deep` (5.61), `shadow-fab`. מיקום: `fixed end-4 bottom-[calc(var(--spacing-bottomnav)+env(safe-area-inset-bottom)+16px)]`. Hover: +12% לבן. Press: `scale-90`, 120ms. `aria-label="דיווח חדש"`. מוסתר ב-`/new`.
+### Chips
+- Pill (`rounded-pill`), גובה 36 (יעד מגע 44 דרך ריפוד/margin), ריפוד 0 14px, `text-body-sm font-medium`.
+- לא נבחר: `bg-card` על `surface` או `bg-surface` על לבן, `text-copy`, בלי מסגרת. נבחר: `bg-signature text-ink`. נבחר-שקט: `bg-signature-soft text-orange-text`.
+- תג מידע: `text-caption font-medium`, גובה 20, `rounded-pill`, ריפוד 0 8px. "חדש": `bg-link-blue text-white`. "חי": `bg-signature text-ink`. הצלחה: `bg-success text-success-foreground`.
 
-### BottomNav
-`h-bottomnav`, bg `card`, `border-t border-border`, `pb-[env(safe-area-inset-bottom)]`. 3 פריטים שווים (flex-1), כל אחד עמודה: אייקון 24 + תווית `text-caption font-medium`, מינימום 44 רוחב/גובה. לא פעיל: `mist-text`. פעיל: `sea-deep`, אייקון מלא (fill), תווית `font-semibold`, פס עליון `h-[3px] w-8 rounded-full bg-sea-wave` (צורה + צבע, לא צבע לבד), `aria-current="page"`.
+### Buttons (`components/ui/button.tsx`)
+- כולם `rounded-pill`, `text-body-sm font-medium`, גובה 44 (default) / 36 (sm) / 52 (lg, CTA מלא רוחב).
+- **default/primary**: `bg-signature text-ink`; hover `signature-hover`; active `signature-pressed`; disabled opacity .5.
+- **secondary**: `bg-surface text-ink` (על כרטיס לבן) ; hover `bg-secondary`.
+- **outline**: `bg-card border border-input text-ink`; hover `bg-accent`.
+- **ghost**: שקוף `text-ink`; hover `bg-accent`.
+- **link**: `text-link underline-offset-4 hover:underline`.
+- **destructive**: `bg-danger text-white`.
+- **action** (הווריאנט הישן `bg-sea-wave text-sea-deep`): להחליף ב-`bg-signature text-ink` או למחוק.
+- מצב טעינה: ספינר `animate-spin` ב-ink, הטקסט נשאר.
 
-### NewReportsPill
-`fixed top-[calc(var(--spacing-topbar)+8px)] start-1/2 -translate-x-1/2` (ב-RTL השתמשו ב-`inset-x-0 mx-auto w-fit`), `h-10 rounded-full px-4`, bg `live` (sunset), טקסט `sea-deep` `text-body-sm font-semibold` (5.54), `ArrowUp` 16px, `shadow-raised`. טקסט "3 דיווחים חדשים". כניסה: `animate-pill-in`; יציאה: `animate-pill-out`. מספר מתעדכן: `animate-count-pop`. `aria-live="polite"`.
+### Inputs (קלט, BeachPicker, textarea)
+- `bg-card`, `border border-input` (3.47:1), `rounded-lg` (12px), גובה 48, ריפוד 12px 14px, `text-body text-copy`, placeholder `text-muted-text`.
+- Focus: `border-link-blue` + ring 3px `link-blue/30`. שגיאה: `border-danger`, טקסט עזר `text-body-sm text-danger` עם אייקון `AlertCircle` 16. Disabled: `bg-surface text-muted-text`.
+- תווית מעל: `text-body-sm font-medium text-ink`, מרווח 6px. מרווח בין שדות 16px.
 
-### Skeletons
-`class="skeleton"` על כל בלוק (הצורה של התוכן: עיגול 40px, שורות `h-4` ברוחבים 60%/90%, בלוק תמונה `aspect-[4/3]`). הכרטיס עצמו `bg-card shadow-card rounded-xl p-4`. Shimmer 1.4s linear; `prefers-reduced-motion`: סטטי. `aria-busy` על הרשימה.
+### PhotoField
+אזור העלאה: `rounded-card border-2 border-dashed border-input bg-card`, אייקון `Camera` 24 + "הוסף תמונה" `text-body-sm font-medium text-ink`. תצוגה מקדימה `rounded-lg`. הצלחה `text-success`, שגיאה `text-danger`.
 
-### EmptyState
-ממורכז, `gap-3`, `py-12 px-6`. איור קווי: SVG של 1-2 קווי גל, stroke 2px `sea-wave-text`, `fill: none`, ~96x64, עם קו רצפה `border`. בלי תמונות stock, בלי צבע מילוי. כותרת `text-title text-sea-deep`, הסבר `text-body text-muted-foreground`, CTA אחד `Button default lg`. שגיאה: אותו מבנה, איור קו ללא גל מלא (גל שבור), אייקון `CircleAlert` 24px ב-`danger` ליד הכותרת.
+### OfflineBanner / PostedNotice / InAppBrowserNotice
+- OfflineBanner: `bg-secondary text-ink`, מרכוז, אייקון `WifiOff` 16, בלי border; ניתן לצרף `Mascot.Oops size=96` רק בדף שגיאה מלא, לא בבאנר.
+- PostedNotice (toast): `bg-success text-success-foreground rounded-pill`, ריפוד 10px 16px, `shadow-raised`, `animate-toast-in`.
+- InAppBrowserNotice: כרטיס `bg-card rounded-card shadow-card`, כותרת ink Medium, טקסט `muted-text`.
 
-### InlineBanner / OfflineBanner
-InlineBanner: bg `card`, `border-s-4` בצבע הסוג (`danger` / `kelp` / `sea-wave-text`), `rounded-lg p-3`, אייקון 20 + טקסט `text-body-sm text-foreground`, `role` לפי UX. OfflineBanner: מתחת ל-TopBar, bg `shadow` (#1F2937), טקסט `foam` (14.67), `WifiOff` 16px, `text-body-sm`, גובה 36.
+### EmptyState (עם מסקוט)
+ממורכז אנכית ואופקית: `Mascot.Waiting size={160}` (סטטי), כותרת `text-heading font-medium text-ink` ("הים שטוח כרגע"), הסבר `text-body-sm text-muted-text` עד 2 שורות, ו-CTA ראשי אופציונלי (pill כתום, "היה הראשון לדווח"). מרווחים: מסקוט→כותרת 16, כותרת→טקסט 4, טקסט→כפתור 20. גם ב-`ComingSoon`. מצב שגיאת רשת/טעינה: אותו מבנה עם `Mascot.Oops` וכפתור "נסה שוב" (outline).
 
-### Toast (Sonner)
-תחתית, מעל ה-BottomNav (`bottom: calc(var(--spacing-bottomnav)+env(safe-area-inset-bottom)+12px)`), `rounded-xl shadow-raised`, bg `sea-deep`, טקסט `foam text-body-sm`, אייקון משמאל לטקסט ב-RTL = בתחילת השורה (`Check`/`CircleAlert`). כפתור פעולה ("בטל") `text-sea-wave font-semibold` (5.61), hit 44. כניסה `animate-toast-in`, 4 שניות.
+### Login screen (עם מסקוט)
+רקע `bg-foam` מלא. מרכז: `Mascot.Wave size={180}` עם `animate-mascot-bob`; מתחתיו "surFriends" ב-`text-display font-medium text-ink`, שורת תיאור "קהילת הגולשים של ישראל" `text-body text-muted-text`; כפתור Google `lg` מלא רוחב: `bg-signature text-ink` (או outline לבן עם לוגו Google אם נדרש לפי הנחיות מותג; בכל מקרה מסגרת `border-input`). הערת משפטית `text-caption text-muted-text`. שגיאה: כרטיס `border-danger` כמו היום + `text-danger`. אייקון העיגול הכתום הקיים בראש הדף מוחלף במסקוט.
 
-### Inputs (TextInput, Textarea, BeachPicker trigger, Switch)
-שדה: `h-11` (Textarea `min-h-24`), bg `card`, גבול 1.5px `input`, `rounded-lg`, `px-3`, `text-body`, placeholder `muted-foreground`. פוקוס: גבול `ring` + outline גלובלי. שגיאה: גבול `danger`, מתחת `CircleAlert` 16 + טקסט `text-body-sm text-danger`. Disabled: bg `muted`, opacity .6. Switch: track כבוי `mist-border`, דולק `sea-deep`, thumb `foam`; גודל 44 גובה hit.
+## 11. מיפוי טוקנים קיימים (התאימות לאחור)
 
-### Badge / SkillBadge / difficulty
-`rounded-full px-2.5 py-0.5 text-caption font-medium`, bg `secondary`, טקסט `sea-deep`. תמיד טקסט.
+| קיים בקוד | ערך חדש | הערה |
+|---|---|---|
+| `text-sea-deep` | `#0A2540` (= `ink`) | אותו ערך; עדיף `text-ink` בקוד חדש |
+| `text-mist-text` | `#6B6B66` | = `muted-text` |
+| `text-shadow` | `#3A3A35` | טקסט גוף חם (= `copy`) |
+| `text-link`, `text-sea-wave-text` | `#007196` | כחול קישור |
+| `text-sunset-text`, `text-live-text` | `#C2410C` | = `orange-text` |
+| `bg-sunset`, `bg-live` | `#FF7A1A` | = `signature` |
+| `bg-sand` | `#F4F4F4` | alias deprecated |
+| `bg-primary` / `text-primary-foreground` | כתום / ink | **השתנה מניווי לכתום**: כל מקום עם `bg-primary` נהיה כתום עם טקסט ink (login icon, צ'יפ/דירוג נבחר) |
+| `bg-sea-wave` | `#0EA5E9` | **לא ערך פעולה יותר**: ב-`button.tsx` (action), `FAB.tsx`, `BottomNav.tsx` להחליף ל-`bg-signature` |
+| `bg-success`/`text-success`, `text-danger`, `border-destructive` | `#0F7B5F` / `#C62828` | |
+| `bg-background` | `#F4F4F4` | דפים עם כרטיסים; login: `bg-foam` |
+| `shadow-card` / `shadow-fab` | חדש / alias ל-`shadow-raised` | |
+| `font-bold`, `font-semibold` | 500 | alias ל-Medium |
+| `rounded-xl` | 19px | כרטיסים |
+| `text-meta` (ב-`NewReportForm`) | **לא מוגדר** | קיים בקוד אך אין לו טוקן (לא משפיע כיום); למחוק או להגדיר |
 
-### FavoriteToggle
-icon button 44. כבוי: `Star` קו `foam` על TopBar. פעיל: `Star` **מלא** ב-`sea-wave`-fill עם קו `foam`. מעבר: scale 1→1.2→1 (`animate-count-pop`).
-
-### Avatar
-40 / 28 / 80px (פרופיל), `rounded-full`, בלי גבול; fallback ראשי תיבות `bg-secondary text-sea-deep font-semibold`.
-
-### Sheet / Dialog (FilterSheet, BeachPicker, PushOptInSheet, מודאלי אישור)
-bg `card`, `rounded-t-2xl` (sheet) / `rounded-2xl` (dialog), `shadow-sheet`, handle `h-1 w-10 rounded-full bg-mist` למעלה, overlay `sea-deep/50`. כפתורים בתחתית ברוחב מלא: ראשי + משני. מחיקה: כפתור `destructive`.
-
-### ForecastSummary / WaveChart
-ערכים ב-`font-mono text-data`, כותרות `text-body-sm text-muted-foreground`. גרף: קו `sea-wave-text` 2px, שטח `sea-wave` ב-15% opacity, "עכשיו" קו אנכי `sunset-text` מקווקו + תווית. כיוון: `Navigation` מסתובב + טקסט. צירים `mist-text`.
-
-### RelativeTime
-`<time>` ב-`font-mono text-data text-muted-foreground`. נקודת "חי" (דיווח מ-10 הדקות האחרונות): עיגול 8px `bg-live` עם `animate-live-pulse` + התווית "עכשיו"/"לפני X" (הטקסט נושא את המשמעות).
-
-## 8. תנועה ומיקרו-אינטראקציות
-
-### 8.1 טוקנים
-| Token | ערך |
-|---|---|
-| `--dur-instant` | 80ms (הבהוב מצב) |
-| `--dur-fast` | 120ms (hover, press, toggle) |
-| `--dur-base` | 200ms (כניסת toast, שינוי צבע בולט) |
-| `--dur-slow` | 320ms (כניסת כרטיס/sheet) |
-| `ease-standard` | `cubic-bezier(.2,0,0,1)` |
-| `ease-out-soft` | `cubic-bezier(.22,1,.36,1)` |
-| `ease-press` | `cubic-bezier(.3,0,.2,1)` |
-
-Utilities: `animate-card-in`, `animate-card-out`, `animate-pill-in`, `animate-pill-out`, `animate-count-pop`, `animate-live-pulse`, `animate-sending`, `animate-toast-in`, `animate-shimmer` (דרך `.skeleton`). שימוש ב-transition: `duration-(--dur-fast) ease-(--ease-press)`.
-
-### 8.2 כללים
-- אנימציות רק על `opacity` ו-`transform` (בלי layout shift).
-- Hover רק על אלמנטים אינטראקטיביים. בלי parallax, בלי bounce דקורטיבי.
-- **Button press:** `scale-[0.97]`, 120ms, + החשכת רקע 20%. FAB: `scale-90`.
-
-### 8.3 Optimistic update
-- **"אני בא"/"בדרך":** מצב נבחר מיידי (0ms): רקע הופך ל-`sea-deep`, `Check` נכנס, המונה מקבל `animate-count-pop` (220ms). בכשל: חזרה למצב קודם ב-120ms + toast "לא הצלחנו לשלוח. נסו שוב" (`CircleAlert`).
-- **דיווח שנשלח:** הכרטיס נכנס בראש עם `animate-card-in` ו-`opacity-70` + `animate-sending`; בשורת המטא `Clock` 16 + "שולח..." (`text-muted-foreground`). הצלחה: opacity מתחלף ל-1 ב-`--dur-base` בלי הבהוב. כשל: opacity 1, `border-s-4 border-danger`, `CircleAlert` + "לא נשלח", כפתורי "נסו שוב" / "מחקו".
-- **מועדף:** כוכב מתמלא + `animate-count-pop`; בכשל חוזר.
-- **מחיקה (wait-for-server):** כרטיס `opacity-50`, בהצלחה `animate-card-out` ואז הסרה.
-
-### 8.4 NewReportsPill
-כניסה `animate-pill-in` (240ms, החלקה 8px מלמעלה + scale מ-.96). עדכון מספר: `animate-count-pop`. לחיצה: גלילה חלקה לראש והסתלקות `animate-pill-out` (160ms). כרטיס חדש כשהמשתמש בראש: `animate-card-in` (280ms).
-
-### 8.5 prefers-reduced-motion
-מוגדר גלובלית ב-`globals.css`: כל האנימציות/המעברים 0.01ms, shimmer ו-pulse ו-sending מבוטלים לגמרי (סטטי), `scroll-behavior: auto`. הפידבק נשאר דרך שינוי מצב מיידי (צבע/אייקון/טקסט), לא דרך תנועה.
-
-## 9. מה השתנה בקוד
-- `app/globals.css`: פלטה (8 + 4 וריאנטים נגישים + `danger`), מיפוי shadcn ל-sand/foam/sea-deep, טוקני טיפוגרפיה, `spacing-touch/topbar/bottomnav`, `container-feed`, הצללות, easing, keyframes ו-animations, `.skeleton`, פוקוס גלובלי, reduced-motion. הוסר `.dark`.
-- `components/ui/button.tsx`: יעדי מגע 44px, padding לוגי (RTL), ring פוקוס, press, וריאנט `accent`, צבעי hover מהטוקנים.
-- `lib/utils.ts`: `cn()` מורחב ב-`extendTailwindMerge` כך ש-`text-body`, `text-title` וכו' מזוהים כגודל גופן ולא כצבע (אחרת `tailwind-merge` מוחק `text-primary-foreground`).
-- `login/page.tsx`, `(app)/page.tsx`: `text-mist` הוחלף ב-`text-mist-text` (תיקון AA).
+## 12. צ'קליסט לפיתוח
+1. אין `text-white` על `bg-signature`/`bg-primary`. תמיד `text-ink`/`text-primary-foreground`.
+2. טקסט כתום על לבן = `text-orange-text` בלבד, לא `text-signature`.
+3. כרטיס = `bg-card rounded-card shadow-card`, בלי border.
+4. כותרות Medium. אין `font-bold` חדש.
+5. כתום מופיע לכל היותר ב-3 מקומות במסך (hero / פעולה ראשית / התקדמות).
+6. המסקוט ≥96px, `role="img"` כבר מובנה, ובצד ה-end של ה-hero.
+7. בדיקת RTL: כפתור "דיווח" משמאל, מספרים ב-`numeral`, אין `ml/mr`.

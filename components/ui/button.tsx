@@ -2,11 +2,11 @@ import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
-// surFriends v3 "Sea": bubbly pill buttons. Look (gloss, ocean-tinted shadow, hover lift,
-// press squish) lives in globals.css `bubble-*` utilities. Focus uses the global
-// :focus-visible outline (box-shadow is reserved for the bubble look).
+// surFriends v4 "Coast": flat 12px-radius buttons, 48px tall, semibold. Colors live in the globals.css
+// `bubble-*` utilities (names kept; now flat brand-blue styles). Focus uses the global :focus-visible outline.
+// Use className="btn-gradient" with variant="default" for the full-width key action.
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-pill border border-transparent bg-clip-padding text-body-sm font-medium whitespace-nowrap transition-[color,background-color,border-color,box-shadow,transform,filter,opacity] duration-(--dur-base) ease-(--ease-spring) select-none disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:outline-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-body-sm font-semibold whitespace-nowrap transition-[color,background-color,border-color,transform,filter,opacity] duration-(--dur-fast) ease-out select-none disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:outline-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
   {
     variants: {
       variant: {

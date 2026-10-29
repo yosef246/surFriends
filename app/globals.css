@@ -3,7 +3,9 @@
 @import "shadcn/tailwind.css";
 
 /* Light only. The dark variant stays class-based so that `dark:` utilities
-   inside shadcn components never fire from the OS preference. See docs/DESIGN_SYSTEM.md (v3 "Sea"). */
+   inside shadcn components never fire from the OS preference. See docs/DESIGN_SYSTEM.md (v4 "Coast").
+   v4: flat, photo-led, white cards on a pale cool-blue page, one strong brand blue. Every v3 token /
+   utility NAME is kept as an alias (turquoise/aqua/signature now map to the brand blue family). */
 @custom-variant dark (&:is(.dark *));
 
 /* ------------------------------------------------------------------ */
@@ -64,7 +66,7 @@
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
-  --radius-xl: 1.5rem; /* 24px = card (v3: bubblier than v2's 19px) */
+  --radius-xl: 1rem; /* 16px = card (v4) */
   --radius-2xl: 1.75rem;
   --radius-3xl: 2rem;
   --radius-4xl: 2.5rem;
@@ -75,48 +77,74 @@
 /* ------------------------------------------------------------------ */
 @theme static {
   /* ===== Sea scale: abyss -> deep -> ocean -> turquoise -> aqua -> sky -> foam ===== */
-  --color-abyss: #04213d; /* deepest; gradient start, overlays */
-  --color-ocean-deep: #06335c; /* hero gradient start. white on it 12.8:1 */
-  --color-ocean: #0b6c9e; /* hero mid. white on it 5.75:1 */
-  --color-turquoise: #1cc8da; /* = signature. FILL only */
-  --color-aqua: #7fe3ee; /* decorative fills, glows, wave SVGs. NEVER text on light bg */
-  --color-sky: #c9eeF4; /* bottom of the page gradient / deepest light tint */
-  --color-foam-blue: #eafbfe; /* top of the page gradient */
+  /* ===== v4 Coast: brand blue family. Old turquoise/aqua names are ALIASES of these. ===== */
+  --color-brand: #0f5fa8; /* primary. WHITE on it 6.52:1 */
+  --color-brand-hover: #0b4f8f; /* white 8.4:1 */
+  --color-brand-pressed: #093f75; /* white 10.6:1 */
+  --color-brand-bright: #1b6fcf; /* gradient start / decorative fills. white 4.98:1 */
+  --color-brand-soft: #e1eefa; /* selected / soft fill. ink 15:1 */
+  --color-page: #eef5fb; /* page background */
+  --color-card-line: #dbe7f2; /* card hairline (decorative) */
 
-  /* ===== signature = primary ACTION (vivid turquoise). TEXT ON IT = ink (7.11:1). WHITE = 2.03:1 FAIL ===== */
-  --color-signature: #1cc8da;
-  --color-signature-hover: #12b5c9; /* ink 5.84:1 */
-  --color-signature-pressed: #0aa2b8; /* ink 4.73:1 */
-  --color-signature-soft: #ddf8fb; /* selected rows / soft chips. ink 13.2:1 */
-  --color-orange-text: #07707f; /* ALIAS NAME KEPT. Now AA-safe teal text: 5.78 white / 5.18 surface / 4.68 sky */
+  --color-abyss: #08131f; /* deepest; dark theme bg, overlays */
+  --color-ocean-deep: #0a3d73; /* hero fallback / gradient end. white 10.5:1 */
+  --color-ocean: #0f5fa8; /* = brand */
+  --color-turquoise: #1b6fcf; /* ALIAS -> brand-bright */
+  --color-aqua: #8fc2ee; /* decorative fills only. NEVER text on light bg. pale text on dark/photo only */
+  --color-sky: #dbe9f6; /* deepest light tint */
+  --color-foam-blue: #eef5fb; /* = page */
 
-  /* ===== ink + neutrals (cool, navy-tinted) ===== */
-  --color-ink: #062b4a; /* headings, numerals, text on turquoise. 14.5:1 on white */
-  --color-copy: #1f3f57; /* body text. 11.0:1 on white, 8.9:1 on sky */
-  --color-muted-text: #456479; /* secondary text. 6.2 white / 5.6 surface / 5.1 sky */
-  --color-surface: #e3f6f9; /* chips, inputs-off, soft panels */
-  --color-line: #cde9ef; /* decorative hairlines only */
-  --color-link-blue: #0b6a8f; /* links, "חדש" badge. 6.05 white / 5.4 surface / 4.9 sky */
-  --color-link-soft: #ddf3f9;
+  /* ===== signature = primary ACTION = brand blue. TEXT ON IT = WHITE (6.52:1). INK ON IT FAILS (2.7:1) ===== */
+  --color-signature: #0f5fa8;
+  --color-signature-hover: #0b4f8f;
+  --color-signature-pressed: #093f75;
+  --color-signature-soft: #e1eefa; /* selected rows / soft chips. ink 15:1 */
+  --color-orange-text: #0f5fa8; /* ALIAS NAME KEPT: now brand-blue text. 6.52 white / 5.9 page */
 
-  /* ===== Existing names, kept as aliases with sea values ===== */
-  --color-sea-deep: #062b4a; /* = ink */
-  --color-sea-wave: #1aa7d8; /* decorative sea blue (illustrations, charts). Not text. */
-  --color-sand: #e3f6f9; /* DEPRECATED alias of surface */
-  --color-foam: #f4fdff; /* near-white with a hint of sea (login etc.) */
-  --color-sunset: #1cc8da; /* DEPRECATED alias of signature (turquoise now) */
-  --color-kelp: #0f7b5f; /* success green-teal. 5.23 white */
-  --color-shadow: #1f3f57; /* = copy */
-  --color-mist: #7fb4c6; /* decorative only, never text */
+  /* ===== ink + neutrals (cool) ===== */
+  --color-ink: #0b1b2b; /* headings, numerals. 17.4:1 on white */
+  --color-copy: #22384d; /* body text. 12.1 white / 11.0 page */
+  --color-muted-text: #55687b; /* secondary. 5.75 white / 5.23 page / 5.0 brand-soft */
+  --color-surface: #e8f0f8; /* soft panels, input-off, toggle-off */
+  --color-line: #dbe7f2; /* decorative hairlines only */
+  --color-link-blue: #0f5fa8; /* links. 6.52 white */
+  --color-link-soft: #e1eefa;
 
-  --color-sea-wave-text: #0b6a8f; /* = link-blue */
-  --color-sunset-text: #07707f; /* = orange-text (AA teal) */
-  --color-mist-text: #456479; /* = muted-text */
-  --color-mist-border: #4f8196; /* control borders. 4.28 white / 3.46 sky */
+  /* ===== Existing names, kept as aliases ===== */
+  --color-sea-deep: #0b1b2b; /* = ink */
+  --color-sea-wave: #1b6fcf; /* decorative blue (illustrations, charts). Not text. */
+  --color-sand: #e8f0f8; /* DEPRECATED alias of surface */
+  --color-foam: #f7fbff; /* near-white (login etc.) */
+  --color-sunset: #0f5fa8; /* DEPRECATED alias of signature */
+  --color-kelp: #0f7b5f; /* success green. 5.23 white / 4.7 page */
+  --color-shadow: #22384d; /* = copy */
+  --color-mist: #9db5cb; /* decorative only, never text */
 
-  /* ===== The ONE warm accent: coral. ONLY for the "live/חי" dot + badge and notification badges. ===== */
-  --color-coral: #ff6b57; /* fill. ink on it 5.16:1 */
-  --color-coral-text: #b83a0a; /* coral AS TEXT: 5.76 white / 4.67 sky */
+  --color-sea-wave-text: #0f5fa8; /* = link-blue */
+  --color-sunset-text: #0f5fa8; /* = brand */
+  --color-mist-text: #55687b; /* = muted-text */
+  --color-mist-border: #6b819a; /* control borders. 3.9 white (3:1 non-text OK) */
+
+  /* ===== Warm accent: coral. Meta/eyebrow lines, live dot, notification badges ===== */
+  --color-coral: #ff6b57; /* fill. ink on it 7.0:1 */
+  --color-coral-text: #c2410c; /* coral AS TEXT on light: 5.18 white / 4.7 page */
+  --color-coral-on-photo: #ffa594; /* coral eyebrow over photo gradient (>= 7:1 on the dark overlay) */
+
+  /* ===== Status (text on white AA) ===== */
+  --color-good-text: #0f7b5f; /* 5.23 white */
+  --color-warn-text: #b45309; /* 5.02 white / 4.57 page */
+  --color-warn-bg: #fff4e0;
+  --color-warn-line: #f0b35c;
+  --color-warn-ink: #6b3304; /* text on warn-bg, 9.5:1 */
+  --color-bad-text: #c62828; /* 5.6 white */
+
+  /* ===== Chat sender name colors (AA on white bubble) ===== */
+  --color-sender-1: #0f5fa8; /* 6.52 */
+  --color-sender-2: #b45309; /* 5.02 */
+  --color-sender-3: #0f7b5f; /* 5.23 */
+  --color-sender-4: #7c3aaf; /* 6.8 */
+  --color-sender-5: #b3265a; /* 6.3 */
+  --color-sender-6: #0e7490; /* 5.35 */
 
   /* ===== Font weights (IBM Plex Sans Hebrew 400-700). Display font Suez One is 400 only. ===== */
   --font-weight-light: 300;
@@ -126,12 +154,18 @@
   --font-weight-bold: 700;
 
   /* ===== Typography scale ===== */
+  --text-hero: 2.5rem; /* photo hero headline, Suez One, white */
+  --text-hero--line-height: 2.5rem;
   --text-display: 2rem;
   --text-display--line-height: 2.125rem;
-  --text-title: 1.75rem;
-  --text-title--line-height: 1.875rem;
-  --text-heading: 1.25rem;
-  --text-heading--line-height: 1.625rem;
+  --text-title: 1.625rem; /* page title (sans 700) */
+  --text-title--line-height: 2rem;
+  --text-section: 1.375rem; /* section title (sans 700) */
+  --text-section--line-height: 1.75rem;
+  --text-heading: 1.125rem;
+  --text-heading--line-height: 1.5rem;
+  --text-label: 0.8125rem; /* 13px labels, buttons-sm, chips */
+  --text-label--line-height: 1.125rem;
   --text-body: 1rem;
   --text-body--line-height: 1.5rem;
   --text-body-sm: 0.875rem;
@@ -156,18 +190,20 @@
   --container-feed: 36rem;
 
   /* ===== Radii ===== */
-  --radius-card: 1.5rem; /* 24px */
-  --radius-pill: 9999px;
-  --radius-bubble: 1.75rem; /* 28px = post bubble */
+  --radius-card: 1rem; /* 16px */
+  --radius-tile: 0.875rem; /* 14px photo tile */
+  --radius-button: 0.75rem; /* 12px */
+  --radius-pill: 9999px; /* chips, badges */
+  --radius-bubble: 1rem; /* 16px chat bubble (tail corner is 4px) */
 
-  /* ===== Elevation: ocean-tinted (rgb 6 74 122), never neutral grey ===== */
-  --shadow-card: 0 8px 24px -8px rgb(6 74 122 / 0.2), 0 2px 6px rgb(6 74 122 / 0.06);
-  --shadow-raised: 0 12px 26px -6px rgb(14 160 190 / 0.55), 0 3px 8px rgb(6 74 122 / 0.18);
-  --shadow-fab: 0 12px 26px -6px rgb(14 160 190 / 0.55), 0 3px 8px rgb(6 74 122 / 0.18); /* alias of raised */
-  --shadow-hero: 0 18px 40px -12px rgb(6 51 92 / 0.55);
-  --shadow-nav: 0 -6px 24px -4px rgb(6 74 122 / 0.14);
-  --shadow-sheet: 0 -10px 36px rgb(4 33 61 / 0.28);
-  --shadow-bubble: 0 8px 18px -6px rgb(14 160 190 / 0.6), 0 2px 5px rgb(6 74 122 / 0.12);
+  /* ===== Elevation: nearly flat. Hairline borders do the work. ===== */
+  --shadow-card: 0 1px 2px rgb(11 27 43 / 0.04);
+  --shadow-raised: 0 4px 12px -2px rgb(11 27 43 / 0.12);
+  --shadow-fab: 0 4px 12px -2px rgb(11 27 43 / 0.12); /* alias of raised */
+  --shadow-hero: none;
+  --shadow-nav: 0 -1px 0 #dbe7f2;
+  --shadow-sheet: 0 -8px 28px rgb(11 27 43 / 0.2);
+  --shadow-bubble: 0 1px 1px rgb(11 27 43 / 0.08);
 
   /* ===== Easing ===== */
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
@@ -347,83 +383,89 @@
 /* ------------------------------------------------------------------ */
 :root {
   /* raw palette as CSS variables (names kept) */
-  --sea-deep: #062b4a;
-  --sea-wave: #1aa7d8;
-  --sand: #e3f6f9;
-  --foam: #f4fdff;
-  --sunset: #1cc8da;
+  --sea-deep: #0b1b2b;
+  --sea-wave: #1b6fcf;
+  --sand: #e8f0f8;
+  --foam: #f7fbff;
+  --sunset: #0f5fa8;
   --kelp: #0f7b5f;
-  --shadow: #1f3f57;
-  --mist: #7fb4c6;
+  --shadow: #22384d;
+  --mist: #9db5cb;
 
-  --signature: #1cc8da;
-  --ink: #062b4a;
-  --surface: #e3f6f9;
+  --signature: #0f5fa8;
+  --ink: #0b1b2b;
+  --surface: #e8f0f8;
+  --brand: #0f5fa8;
+  --brand-soft: #e1eefa;
+  --page: #eef5fb;
 
   /* Gradients */
-  --gradient-page: linear-gradient(180deg, #eafbfe 0%, #d9f4f8 45%, #c9eef4 100%); /* sky -> shallow water */
-  --gradient-hero: linear-gradient(160deg, #06335c 0%, #0b6c9e 55%, #0c7fa6 100%); /* WHITE text only: 12.8 / 5.75 / 4.56 */
-  --gradient-hero-glow: radial-gradient(70% 80% at 0% 100%, rgb(28 200 218 / 0.28), transparent 65%);
-  --gradient-action: linear-gradient(180deg, #4adbe8 0%, #1cc8da 60%, #14bcd0 100%); /* ink on all stops >= 6.3:1 */
-  --gradient-fab: linear-gradient(160deg, #5be3ee 0%, #1cc8da 50%, #0b9fc4 100%); /* ink on all stops >= 4.66:1 */
-  --gradient-text: linear-gradient(100deg, #083d6e 0%, #07707f 100%); /* both ends AA on white AND sky */
-  --gradient-text-light: linear-gradient(100deg, #ffffff 0%, #a5f3fa 100%); /* on hero upper area only */
+  --gradient-page: none; /* v4: flat page color (body uses --background). Name kept. */
+  --gradient-hero: linear-gradient(160deg, #0a3d73 0%, #0f5fa8 70%, #1b6fcf 100%); /* brand cover. WHITE text: 10.5 / 6.5 / 4.98 */
+  --gradient-hero-glow: none;
+  --gradient-action: linear-gradient(180deg, #1b6fcf 0%, #0f5fa8 100%); /* WHITE text >= 4.98:1 */
+  --gradient-fab: linear-gradient(180deg, #1b6fcf 0%, #0f5fa8 100%);
+  --gradient-text: linear-gradient(100deg, #0a3d73 0%, #0f5fa8 100%); /* AA on white and page */
+  --gradient-text-light: linear-gradient(100deg, #ffffff 0%, #ffffff 100%);
+  /* Photo overlays: text-safe white-on-photo (bottom heavy) */
+  --gradient-photo-hero: linear-gradient(180deg, rgb(8 19 31 / 0.35) 0%, rgb(8 19 31 / 0.15) 35%, rgb(8 19 31 / 0.78) 100%);
+  --gradient-photo-tile: linear-gradient(180deg, rgb(8 19 31 / 0) 35%, rgb(8 19 31 / 0.78) 100%);
 
   /* shadcn semantic roles */
-  --background: #e3f6f9; /* solid fallback; body paints --gradient-page over it */
-  --foreground: #1f3f57;
+  --background: #eef5fb;
+  --foreground: #22384d;
   --card: #ffffff;
-  --card-foreground: #1f3f57;
+  --card-foreground: #22384d;
   --popover: #ffffff;
-  --popover-foreground: #1f3f57;
-  --primary: #1cc8da;
-  --primary-foreground: #062b4a; /* INK on turquoise. Never white. */
-  --secondary: #d4f4f8;
-  --secondary-foreground: #062b4a;
-  --muted: #e3f6f9;
-  --muted-foreground: #456479;
-  --accent: #ddf3f9;
-  --accent-foreground: #062b4a;
+  --popover-foreground: #22384d;
+  --primary: #0f5fa8;
+  --primary-foreground: #ffffff; /* WHITE on brand blue, 6.52:1 */
+  --secondary: #e1eefa;
+  --secondary-foreground: #0b1b2b;
+  --muted: #e8f0f8;
+  --muted-foreground: #55687b;
+  --accent: #e1eefa;
+  --accent-foreground: #0b1b2b;
   --destructive: #c62828;
   --destructive-foreground: #ffffff;
-  --border: #cde9ef;
-  --input: #4f8196;
-  --ring: #0b6a8f;
+  --border: #dbe7f2;
+  --input: #6b819a;
+  --ring: #0f5fa8;
 
   /* surFriends additions */
-  --live: #ff6b57; /* coral: the only warm color. dots + badges */
-  --live-foreground: #062b4a; /* 5.16:1 */
-  --live-text: #b83a0a;
+  --live: #ff6b57; /* coral dots + badges */
+  --live-foreground: #0b1b2b; /* 7.0:1 */
+  --live-text: #c2410c;
   --success: #0f7b5f;
   --success-foreground: #ffffff;
   --danger: #c62828;
-  --link: #0b6a8f;
+  --link: #0f5fa8;
 
-  --chart-1: #1cc8da;
-  --chart-2: #0b6c9e;
-  --chart-3: #062b4a;
-  --chart-4: #7fe3ee;
+  --chart-1: #1b6fcf;
+  --chart-2: #0f5fa8;
+  --chart-3: #0b1b2b;
+  --chart-4: #8fc2ee;
   --chart-5: #ff6b57;
-  /* Wave chart (components/forecast/WaveChart.tsx). Lines pass 3:1 on white/sky. */
-  --chart-wave: #0b6c9e; /* total wave height line */
-  --chart-swell: #083d6e; /* swell line (dashed) */
-  --chart-fill-top: #1cc8da; /* area gradient, top (ocean -> turquoise) */
-  --chart-fill-bottom: #7fe3ee; /* area gradient, bottom */
-  --chart-grid: #cde9ef; /* gridlines + day separators (decorative) */
-  --chart-now: #062b4a; /* "now" marker */
-  --chart-wind-offshore: #0f7b5f; /* offshore wind arrow + number (= success) */
-  --chart-wind-other: #456479; /* onshore / cross / calm (= muted-text) */
+  /* Wave chart (components/forecast/WaveChart.tsx). Lines pass 3:1 on white/page. */
+  --chart-wave: #0f5fa8; /* total wave height line */
+  --chart-swell: #0a3d73; /* swell line (dashed) */
+  --chart-fill-top: #1b6fcf; /* area gradient, top */
+  --chart-fill-bottom: #bcd9f3; /* area gradient, bottom */
+  --chart-grid: #dbe7f2; /* gridlines + day separators (decorative) */
+  --chart-now: #0b1b2b; /* "now" marker */
+  --chart-wind-offshore: #0f7b5f; /* offshore wind (= success) */
+  --chart-wind-other: #55687b; /* onshore / cross / calm (= muted-text) */
 
-  --radius: 0.875rem; /* 14px inputs */
+  --radius: 0.75rem; /* 12px inputs + buttons */
 
   --sidebar: #ffffff;
-  --sidebar-foreground: #1f3f57;
-  --sidebar-primary: #1cc8da;
-  --sidebar-primary-foreground: #062b4a;
-  --sidebar-accent: #ddf3f9;
-  --sidebar-accent-foreground: #062b4a;
-  --sidebar-border: #cde9ef;
-  --sidebar-ring: #0b6a8f;
+  --sidebar-foreground: #22384d;
+  --sidebar-primary: #0f5fa8;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e1eefa;
+  --sidebar-accent-foreground: #0b1b2b;
+  --sidebar-border: #dbe7f2;
+  --sidebar-ring: #0f5fa8;
 
   /* motion durations (duration-(--dur-fast) etc.) */
   --dur-instant: 80ms;
@@ -461,15 +503,21 @@
     @apply font-sans;
     -webkit-text-size-adjust: 100%;
   }
-  /* Headings: ink, Suez One display, tight */
-  h1,
-  h2,
-  h3 {
+  /* v4: h1 = Suez One display; h2/h3 = IBM Plex Sans Hebrew 700 (section titles). Use font-display for hero text. */
+  h1 {
     color: var(--ink);
     font-family: var(--font-display);
     font-weight: 400;
     letter-spacing: -0.02em;
     line-height: 1.1;
+  }
+  h2,
+  h3 {
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
   }
   :focus-visible {
     outline: 2px solid var(--ring);
@@ -491,34 +539,341 @@
 
 /* Hero: deep ocean -> turquoise. TEXT INSIDE = white (or ink NEVER). Keep text out of the lower-left (mascot) corner. */
 @utility bg-hero-sea {
-  background-color: #0b6c9e;
-  background-image: var(--gradient-hero-glow), var(--gradient-hero);
+  background-color: #0f5fa8;
+  background-image: var(--gradient-hero);
   color: #ffffff;
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.25),
-    var(--shadow-hero);
 }
 
-/* Frosted card over the sea. >= 78% white keeps ink/copy/muted text AA (computed on sky). */
+/* v4: glass-card is now the plain Coast card (alias of card-coast). */
 @utility glass-card {
-  background-color: rgb(255 255 255 / 0.78);
-  -webkit-backdrop-filter: blur(14px) saturate(1.3);
-  backdrop-filter: blur(14px) saturate(1.3);
-  border: 1px solid rgb(255 255 255 / 0.7);
+  background-color: #ffffff;
+  border: 1px solid var(--color-card-line);
   box-shadow: var(--shadow-card);
 }
 
-/* Frosted bottom bar / top header */
+/* v4: top header / bottom bar: solid white + hairline (alias; see bar-coast). */
 @utility glass-bar {
-  background-color: rgb(255 255 255 / 0.85);
-  -webkit-backdrop-filter: blur(16px) saturate(1.3);
-  backdrop-filter: blur(16px) saturate(1.3);
+  background-color: #ffffff;
+  border-color: var(--color-card-line);
   box-shadow: var(--shadow-nav);
 }
 
-/* Skeleton block: aqua base, white shimmer */
+/* ---------- v4 Coast surfaces ---------- */
+/* White card, 16px radius, hairline, near-zero shadow */
+@utility card-coast {
+  background-color: #ffffff;
+  border: 1px solid var(--color-card-line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 1rem;
+}
+
+/* Photo overlay. Put on an absolutely-positioned inset-0 div OVER the <Image>. */
+@utility photo-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: var(--gradient-photo-hero);
+  pointer-events: none;
+}
+@utility photo-overlay-tile {
+  position: absolute;
+  inset: 0;
+  background-image: var(--gradient-photo-tile);
+  pointer-events: none;
+}
+
+/* PhotoHero container: relative, overflow hidden, min-height 220px, white text, content at bottom-start */
+@utility hero-photo {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  min-height: 13.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1rem;
+  color: #ffffff;
+  background-color: #0a3d73; /* shows while the photo loads */
+  background-image: var(--gradient-hero);
+}
+
+/* BeachPhotoTile: 14px radius, 3:4 photo, fixed width in sliders (w-40 / w-44) */
+@utility tile {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  display: block;
+  flex-shrink: 0;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-tile);
+  color: #ffffff;
+  background-color: #0a3d73;
+  background-image: var(--gradient-hero);
+  border: 1px solid var(--color-card-line);
+}
+@utility tile-title {
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.25rem;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgb(8 19 31 / 0.55);
+}
+/* Pill badge over a photo (top-start): white pill, ink text 17:1 */
+@utility tile-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  height: 1.5rem;
+  padding-inline: 0.5rem;
+  border-radius: 9999px;
+  background-color: #ffffff;
+  color: var(--ink);
+  font-size: var(--text-caption);
+  line-height: 1;
+  font-weight: 700;
+}
+
+/* Photo credit: tiny white text, dark shadow, bottom-end of the photo (parent must be relative) */
+@utility credit {
+  position: absolute;
+  inset-inline-end: 0.5rem;
+  bottom: 0.375rem;
+  font-size: 0.625rem;
+  line-height: 0.875rem;
+  color: #ffffff;
+  opacity: 0.9;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.8);
+  pointer-events: none;
+}
+
+/* Section header title (sans 700, ~22px) */
+@utility section-title {
+  font-family: var(--font-sans);
+  font-size: var(--text-section);
+  line-height: var(--text-section--line-height);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+/* Chips: white pill, 1px border, 40px tall; selected = brand-soft fill + brand border */
+@utility chip-coast {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  height: 2.5rem;
+  padding-inline: 0.875rem;
+  border-radius: 9999px;
+  background-color: #ffffff;
+  border: 1px solid var(--color-mist-border);
+  color: var(--ink);
+  font-size: var(--text-label);
+  line-height: 1;
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-fast) ease-out,
+    border-color var(--dur-fast) ease-out;
+  &:hover {
+    background-color: var(--color-brand-soft);
+  }
+  &:is([aria-pressed="true"], [aria-checked="true"], [data-selected="true"], [data-state="on"]) {
+    background-color: var(--color-brand-soft);
+    border-color: var(--color-brand);
+    color: var(--color-brand);
+  }
+}
+/* Small link chip (e.g. beach name inside a bubble): 28px */
+@utility chip-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  height: 1.75rem;
+  padding-inline: 0.625rem;
+  border-radius: 9999px;
+  background-color: var(--color-brand-soft);
+  color: var(--color-brand);
+  font-size: var(--text-label);
+  line-height: 1;
+  font-weight: 700;
+}
+
+/* Data grid cell ("מצב הים עכשיו"). Children: .data-label (icon + muted), .data-value (big), .data-unit, status word */
+@utility data-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.875rem;
+  background-color: #ffffff;
+  border: 1px solid var(--color-card-line);
+  border-radius: var(--radius-card);
+  min-width: 0;
+}
+@utility data-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--color-muted-text);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: 600;
+}
+@utility data-value {
+  color: var(--ink);
+  font-size: 1.75rem;
+  line-height: 1;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  unicode-bidi: isolate;
+}
+@utility data-unit {
+  color: var(--color-muted-text);
+  font-size: var(--text-label);
+  font-weight: 600;
+  margin-inline-start: 0.2em;
+}
+
+/* Level bar: compact segmented indicator. Markup: <span class="level-bar" data-level="3" role="img" aria-label="גובה גל: בינוני"><i/><i/><i/><i/><i/></span>
+   Segments fill by data-level 1..5. Always pair with a text label (never color-only). */
+@utility level-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 0.5rem;
+  & > i {
+    display: block;
+    width: 0.875rem;
+    height: 0.25rem;
+    border-radius: 9999px;
+    background-color: #c9d9ea;
+  }
+  &[data-level="1"] > i:nth-child(-n + 1),
+  &[data-level="2"] > i:nth-child(-n + 2),
+  &[data-level="3"] > i:nth-child(-n + 3),
+  &[data-level="4"] > i:nth-child(-n + 4),
+  &[data-level="5"] > i:nth-child(-n + 5) {
+    background-color: var(--color-brand);
+  }
+}
+/* Compact wave rating row = level-bar + label word (+ number). 20px tall max */
+@utility wave-level {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  height: 1.25rem;
+  color: var(--ink);
+  font-size: var(--text-label);
+  line-height: 1;
+  font-weight: 700;
+}
+
+/* ---------- WhatsApp-style status bubble ----------
+   Layout (RTL): row = [avatar RIGHT][bubble]. Apply .bubble-msg to the bubble; add data-own="true" for MY messages
+   (aligned to the opposite side/LEFT, no avatar, brand-soft bg, tail mirrored). */
+@utility bubble-msg {
+  position: relative;
+  max-width: min(100%, 30rem);
+  padding: 0.5rem 0.75rem 0.5rem;
+  background-color: #ffffff;
+  color: var(--color-copy);
+  border: 1px solid var(--color-card-line);
+  border-radius: var(--radius-bubble);
+  border-start-start-radius: 0.25rem; /* corner next to the avatar (inline-start = RIGHT in RTL) */
+  box-shadow: var(--shadow-bubble);
+  /* Tail: 10x12 triangle on the inline-start edge, pointing at the avatar. Default clip = LTR (left side). */
+  &::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    inset-inline-start: -9px;
+    inset-inline-end: auto;
+    width: 10px;
+    height: 12px;
+    background-color: #ffffff;
+    clip-path: polygon(100% 0, 0 0, 100% 100%);
+  }
+  [dir="rtl"] &::before {
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+  }
+  /* MY message: opposite side, no avatar, brand-soft, tail on inline-end, flat corner mirrored */
+  &[data-own="true"] {
+    background-color: var(--color-brand-soft);
+    border-color: #c5dcf2;
+    border-start-start-radius: var(--radius-bubble);
+    border-start-end-radius: 0.25rem;
+    &::before {
+      inset-inline-start: auto;
+      inset-inline-end: -9px;
+      background-color: var(--color-brand-soft);
+      clip-path: polygon(0 0, 100% 0, 0 100%);
+    }
+  }
+  [dir="rtl"] &[data-own="true"]::before {
+    clip-path: polygon(100% 0, 0 0, 100% 100%);
+  }
+}
+/* Sender name inside a bubble: bold 13px; add data-c="1".."6" */
+@utility bubble-sender {
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: 700;
+  color: var(--color-sender-1);
+  &[data-c="2"] { color: var(--color-sender-2); }
+  &[data-c="3"] { color: var(--color-sender-3); }
+  &[data-c="4"] { color: var(--color-sender-4); }
+  &[data-c="5"] { color: var(--color-sender-5); }
+  &[data-c="6"] { color: var(--color-sender-6); }
+}
+/* Footer time "14:32" */
+@utility bubble-time {
+  font-size: 0.6875rem;
+  line-height: 1rem;
+  color: var(--color-muted-text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Warning / alert card: beige bg, orange border, warn-ink text */
+@utility alert-coast {
+  background-color: var(--color-warn-bg);
+  border: 1px solid var(--color-warn-line);
+  border-radius: var(--radius-card);
+  color: var(--color-warn-ink);
+  padding: 0.875rem 1rem;
+}
+
+/* Header + bottom nav bars: white, hairline */
+@utility bar-coast {
+  background-color: #ffffff;
+  border-color: var(--color-card-line);
+}
+@utility nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.125rem;
+  min-height: 3.5rem;
+  color: var(--color-muted-text);
+  font-size: 0.6875rem;
+  line-height: 1rem;
+  font-weight: 600;
+  &[aria-current="page"],
+  &[data-active="true"] {
+    color: var(--color-brand);
+    font-weight: 700;
+  }
+}
+
+/* ProfileHero: brand-gradient cover when the user has no photo (h-28) */
+@utility cover-brand {
+  background-color: #0f5fa8;
+  background-image: var(--gradient-hero);
+}
+
+/* Skeleton block: pale blue base, white shimmer */
 @utility skeleton {
-  background-color: #cfeaf0;
+  background-color: #dbe7f2;
   background-image: linear-gradient(
     100deg,
     transparent 30%,
@@ -579,31 +934,26 @@
   font-size: var(--text-caption);
   line-height: var(--text-caption--line-height);
   font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase; /* affects Latin only; Hebrew has no case */
-  color: var(--color-orange-text);
+  letter-spacing: 0.02em;
+  color: var(--color-live-text); /* v4: coral meta line, 5.18:1 on white */
   &::before {
     content: "";
-    width: 0.5rem;
-    height: 0.5rem;
+    width: 0.375rem;
+    height: 0.375rem;
     border-radius: 9999px;
-    background-image: linear-gradient(160deg, #7fe3ee, #1cc8da);
-    box-shadow: 0 0 0 3px rgb(28 200 218 / 0.2);
+    background-color: var(--color-coral);
   }
 }
 
-/* Coral eyebrow (Seanow style). live-text = AA-safe coral text. */
+/* Coral eyebrow: same as eyebrow in v4 (name kept). */
 @utility eyebrow-coral {
   color: var(--color-live-text);
-  &::before {
-    background-image: linear-gradient(160deg, #ff9a8a, #ff6b57);
-    box-shadow: 0 0 0 3px rgb(255 107 87 / 0.2);
-  }
 }
 
-/* Eyebrow on the dark hero (upper/start area only: pale aqua #A5F3FA = 4.6:1 on #0B6C9E) */
+/* Eyebrow on a photo / dark hero: light coral, 7:1+ on the overlay */
 @utility eyebrow-light {
-  color: #a5f3fa;
+  color: var(--color-coral-on-photo);
+  text-shadow: 0 1px 2px rgb(8 19 31 / 0.5);
 }
 
 /* Comfortable Hebrew paragraph */
@@ -633,7 +983,7 @@
     inset-inline: 0;
     bottom: 0;
     height: 8px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='8' viewBox='0 0 24 8'%3E%3Cpath d='M0 4 Q6 0 12 4 T24 4' fill='none' stroke='%231CC8DA' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='8' viewBox='0 0 24 8'%3E%3Cpath d='M0 4 Q6 0 12 4 T24 4' fill='none' stroke='%231B6FCF' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E");
     background-repeat: repeat-x;
     background-size: 24px 8px;
     pointer-events: none;
@@ -644,194 +994,168 @@
 /* 7. Bubbly buttons + chips (used by components/ui/button.tsx)        */
 /*    Transitions come from the component's cva base (spring ease).    */
 /* ------------------------------------------------------------------ */
+/* v4 Coast buttons. Flat, 12px radius (the cva base sets the shape). Names bubble-* kept; btn-* are aliases. */
 @utility bubble-primary {
-  color: var(--ink);
-  background-image:
-    linear-gradient(180deg, rgb(255 255 255 / 0.38) 0%, rgb(255 255 255 / 0) 52%), var(--gradient-action);
-  border-color: rgb(255 255 255 / 0.45);
-  box-shadow:
-    inset 0 2px 0 rgb(255 255 255 / 0.55),
-    inset 0 -3px 6px rgb(8 110 140 / 0.22),
-    var(--shadow-bubble);
-  text-shadow: 0 1px 0 rgb(255 255 255 / 0.35);
+  color: #ffffff; /* white on brand 6.52:1 */
+  background-color: var(--color-brand);
   &:hover:not(:disabled, [aria-disabled="true"]) {
-    transform: translateY(-2px);
-    filter: saturate(1.08) brightness(1.03);
-    box-shadow:
-      inset 0 2px 0 rgb(255 255 255 / 0.6),
-      inset 0 -3px 6px rgb(8 110 140 / 0.22),
-      0 14px 24px -8px rgb(14 160 190 / 0.7),
-      0 3px 6px rgb(6 74 122 / 0.14);
+    background-color: var(--color-brand-hover);
   }
   &:active:not(:disabled, [aria-disabled="true"]) {
-    transform: translateY(0) scale(0.96);
-    filter: brightness(0.97);
-    box-shadow:
-      inset 0 3px 6px rgb(8 110 140 / 0.3),
-      0 3px 8px -4px rgb(14 160 190 / 0.5);
+    background-color: var(--color-brand-pressed);
+    transform: scale(0.98);
+  }
+}
+@utility btn-primary {
+  color: #ffffff;
+  background-color: var(--color-brand);
+  &:hover:not(:disabled, [aria-disabled="true"]) {
+    background-color: var(--color-brand-hover);
+  }
+  &:active:not(:disabled, [aria-disabled="true"]) {
+    background-color: var(--color-brand-pressed);
+  }
+}
+/* Key action (full-width "לפי המיקום שלי"): brand gradient, white text >= 4.98:1 */
+@utility btn-gradient {
+  color: #ffffff;
+  background-image: var(--gradient-action);
+  &:hover:not(:disabled, [aria-disabled="true"]) {
+    filter: brightness(0.94);
+  }
+  &:active:not(:disabled, [aria-disabled="true"]) {
+    filter: brightness(0.88);
   }
 }
 
-/* Secondary: frosted glass + turquoise outline (#0E9FB3 = 3.17:1 on white) */
+/* Secondary: white + 1px dark border */
 @utility bubble-glass {
   color: var(--ink);
-  background-color: rgb(255 255 255 / 0.6);
-  -webkit-backdrop-filter: blur(12px) saturate(1.3);
-  backdrop-filter: blur(12px) saturate(1.3);
-  border: 1.5px solid #0e9fb3;
-  box-shadow:
-    inset 0 2px 0 rgb(255 255 255 / 0.8),
-    0 6px 14px -6px rgb(14 160 190 / 0.4);
+  background-color: #ffffff;
+  border: 1px solid var(--ink);
   &:hover:not(:disabled, [aria-disabled="true"]) {
-    transform: translateY(-2px);
-    background-color: rgb(255 255 255 / 0.85);
-    box-shadow:
-      inset 0 2px 0 rgb(255 255 255 / 0.9),
-      0 12px 20px -8px rgb(14 160 190 / 0.5);
+    background-color: var(--color-brand-soft);
   }
   &:active:not(:disabled, [aria-disabled="true"]) {
-    transform: scale(0.96);
-    background-color: rgb(221 248 251 / 0.95);
-    box-shadow: inset 0 2px 5px rgb(8 110 140 / 0.2);
+    background-color: #cfe3f6;
+    transform: scale(0.98);
   }
 }
-
-/* Light aqua filled pill, no outline */
-@utility bubble-soft {
+@utility btn-secondary {
   color: var(--ink);
-  background-image: linear-gradient(180deg, #e6fafc 0%, #c9f0f5 100%);
-  box-shadow:
-    inset 0 2px 0 rgb(255 255 255 / 0.85),
-    0 4px 10px -4px rgb(14 160 190 / 0.35);
+  background-color: #ffffff;
+  border: 1px solid var(--ink);
   &:hover:not(:disabled, [aria-disabled="true"]) {
-    transform: translateY(-2px);
-    filter: brightness(1.03);
-  }
-  &:active:not(:disabled, [aria-disabled="true"]) {
-    transform: scale(0.96);
-    box-shadow: inset 0 2px 5px rgb(8 110 140 / 0.18);
+    background-color: var(--color-brand-soft);
   }
 }
 
-/* Outline: white fill + control border (4.28:1) */
+/* Soft: brand-soft fill, brand text (6.52 on white; 5.9 on soft) */
+@utility bubble-soft {
+  color: var(--color-brand-pressed); /* 9.0:1 on brand-soft */
+  background-color: var(--color-brand-soft);
+  &:hover:not(:disabled, [aria-disabled="true"]) {
+    background-color: #cfe3f6;
+  }
+  &:active:not(:disabled, [aria-disabled="true"]) {
+    transform: scale(0.98);
+  }
+}
+
+/* Outline: white fill + control border */
 @utility bubble-outline {
   color: var(--ink);
   background-color: #ffffff;
-  border: 1.5px solid var(--input);
-  box-shadow: inset 0 2px 0 rgb(255 255 255 / 0.9);
+  border: 1px solid var(--input);
   &:hover:not(:disabled, [aria-disabled="true"]) {
-    transform: translateY(-2px);
-    background-color: var(--accent);
-    box-shadow: 0 8px 16px -8px rgb(6 74 122 / 0.3);
+    background-color: var(--color-brand-soft);
   }
   &:active:not(:disabled, [aria-disabled="true"]) {
-    transform: scale(0.96);
+    transform: scale(0.98);
   }
 }
 
 @utility bubble-ghost {
   color: var(--ink);
   &:hover:not(:disabled, [aria-disabled="true"]) {
-    background-color: rgb(28 200 218 / 0.14);
+    background-color: rgb(15 95 168 / 0.08);
   }
   &:active:not(:disabled, [aria-disabled="true"]) {
-    transform: scale(0.96);
-    background-color: rgb(28 200 218 / 0.24);
+    background-color: rgb(15 95 168 / 0.14);
+  }
+}
+@utility btn-ghost {
+  color: var(--ink);
+  &:hover:not(:disabled, [aria-disabled="true"]) {
+    background-color: rgb(15 95 168 / 0.08);
   }
 }
 
 @utility bubble-danger {
-  color: #ffffff;
-  background-image:
-    linear-gradient(180deg, rgb(255 255 255 / 0.22) 0%, rgb(255 255 255 / 0) 52%), linear-gradient(180deg, #d63a3a, #c62828);
-  box-shadow:
-    inset 0 2px 0 rgb(255 255 255 / 0.35),
-    0 8px 16px -6px rgb(198 40 40 / 0.5);
+  color: #ffffff; /* white on #c62828 5.6:1 */
+  background-color: #c62828;
   &:hover:not(:disabled, [aria-disabled="true"]) {
-    transform: translateY(-2px);
+    background-color: #a81f1f;
   }
   &:active:not(:disabled, [aria-disabled="true"]) {
+    background-color: #8f1919;
+    transform: scale(0.98);
+  }
+}
+@utility btn-danger {
+  color: #ffffff;
+  background-color: #c62828;
+  &:hover:not(:disabled, [aria-disabled="true"]) {
+    background-color: #a81f1f;
+  }
+}
+
+/* ocean = primary brand blue in v4 (kept as a name; slightly darker gradient start for hero contexts) */
+@utility bubble-ocean {
+  color: #ffffff;
+  background-color: var(--color-brand);
+  &:hover:not(:disabled, [aria-disabled="true"]) {
+    background-color: var(--color-brand-hover);
+  }
+  &:active:not(:disabled, [aria-disabled="true"]) {
+    background-color: var(--color-brand-pressed);
+    transform: scale(0.98);
+  }
+}
+
+/* Former raised FAB: now a flat brand-blue circle (no raise). Use only if a round icon button is needed. */
+@utility bubble-fab {
+  color: #ffffff;
+  background-color: var(--color-brand);
+  &:hover {
+    background-color: var(--color-brand-hover);
+  }
+  &:active {
+    background-color: var(--color-brand-pressed);
     transform: scale(0.96);
   }
 }
 
-/* Deep-ocean bubble: same gradient as the hero summary card. TEXT INSIDE = white (AA >= 4.56). */
-@utility bubble-ocean {
-  color: #ffffff;
-  background-color: #0b6c9e;
-  background-image:
-    linear-gradient(180deg, rgb(255 255 255 / 0.22) 0%, rgb(255 255 255 / 0) 50%), var(--gradient-hero-glow),
-    var(--gradient-hero);
-  border-color: rgb(255 255 255 / 0.25);
-  box-shadow:
-    inset 0 2px 0 rgb(255 255 255 / 0.3),
-    inset 0 -3px 6px rgb(4 33 61 / 0.3),
-    0 10px 20px -8px rgb(6 51 92 / 0.6),
-    0 2px 5px rgb(6 51 92 / 0.18);
-  &:hover:not(:disabled, [aria-disabled="true"]) {
-    transform: translateY(-2px);
-    filter: brightness(1.08);
-  }
-  &:active:not(:disabled, [aria-disabled="true"]) {
-    transform: translateY(0) scale(0.96);
-    filter: brightness(0.95);
-  }
-}
-
-/* The raised BottomNav action circle. Apply to the 56px circle; icon + ink. */
-@utility bubble-fab {
-  color: var(--ink);
-  background-image:
-    radial-gradient(60% 45% at 35% 22%, rgb(255 255 255 / 0.6), transparent 70%), var(--gradient-fab);
-  border: 1px solid rgb(255 255 255 / 0.5);
-  box-shadow:
-    inset 0 2px 0 rgb(255 255 255 / 0.55),
-    inset 0 -4px 8px rgb(8 110 140 / 0.25),
-    var(--shadow-raised);
-  &:hover {
-    transform: translateY(-2px) scale(1.04);
-  }
-  &:active {
-    transform: scale(0.92);
-    box-shadow:
-      inset 0 3px 8px rgb(8 110 140 / 0.35),
-      0 4px 10px -4px rgb(14 160 190 / 0.5);
-  }
-}
-
-/* Chips (pills). Unselected = the same frosted glass + turquoise rim as bubble-glass
-   ("הוסיפו תמונה"); always fully round. Selected = bubble-primary look at chip size. */
+/* Chips (bubble-chip = chip-coast look; kept name). Selected = brand-soft fill + brand border. */
 @utility bubble-chip {
   color: var(--ink);
   font-weight: 600;
   border-radius: 9999px;
-  background-color: rgb(255 255 255 / 0.6);
-  -webkit-backdrop-filter: blur(12px) saturate(1.3);
-  backdrop-filter: blur(12px) saturate(1.3);
-  border: 1.5px solid #0e9fb3;
-  box-shadow:
-    inset 0 2px 0 rgb(255 255 255 / 0.8),
-    0 6px 14px -6px rgb(14 160 190 / 0.4);
+  background-color: #ffffff;
+  border: 1px solid var(--color-mist-border);
   transition:
-    transform var(--dur-base) var(--ease-spring),
     background-color var(--dur-fast) ease-out,
-    box-shadow var(--dur-fast) ease-out;
+    border-color var(--dur-fast) ease-out;
   &:hover {
-    transform: translateY(-1px);
-    background-color: #ffffff;
+    background-color: var(--color-brand-soft);
   }
   &:active {
-    transform: scale(0.95);
+    transform: scale(0.98);
   }
   &:is([aria-pressed="true"], [aria-checked="true"], [data-selected="true"], [data-state="on"]) {
-    color: var(--ink);
-    background-image:
-      linear-gradient(180deg, rgb(255 255 255 / 0.38) 0%, rgb(255 255 255 / 0) 52%), var(--gradient-action);
-    border-color: rgb(255 255 255 / 0.5);
-    box-shadow:
-      inset 0 2px 0 rgb(255 255 255 / 0.55),
-      inset 0 -2px 5px rgb(8 110 140 / 0.2),
-      var(--shadow-bubble);
+    color: var(--color-brand);
+    background-color: var(--color-brand-soft);
+    border-color: var(--color-brand);
   }
 }
 
@@ -873,27 +1197,22 @@
 }
 /* Post bubble: soft glass bubble with top highlight; grows on hover (pointer) and on tap. */
 @utility bubble-post {
-  border-radius: var(--radius-bubble);
-  box-shadow:
-    inset 0 2px 0 rgb(255 255 255 / 0.85),
-    var(--shadow-card);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-card-line);
+  box-shadow: var(--shadow-card);
 }
+/* v4: subtle (no scale grow): border darkens on hover, tiny press */
 @utility motion-bubble-hover {
   transition:
-    transform var(--dur-base) var(--ease-spring),
-    box-shadow var(--dur-base) var(--ease-out-soft);
-  transform-origin: center;
+    border-color var(--dur-base) var(--ease-out-soft),
+    transform var(--dur-fast) var(--ease-out-soft);
   @media (hover: hover) {
     &:hover {
-      transform: scale(1.02);
-      box-shadow:
-        inset 0 2px 0 rgb(255 255 255 / 0.9),
-        0 18px 34px -10px rgb(6 74 122 / 0.32),
-        0 4px 10px rgb(6 74 122 / 0.08);
+      border-color: #b9cee3;
     }
   }
   &:active {
-    transform: scale(1.02);
+    transform: scale(0.995);
   }
 }
 /* Press feedback for any tappable non-button (cards, tiles) */
@@ -961,6 +1280,12 @@
   .bubble-fab,
   .bubble-ocean,
   .bubble-chip,
+  .btn-primary,
+  .btn-gradient,
+  .btn-secondary,
+  .btn-ghost,
+  .btn-danger,
+  .chip-coast,
   .motion-press,
   .motion-bubble-hover,
   .motion-lift {

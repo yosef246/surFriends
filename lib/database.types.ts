@@ -117,7 +117,7 @@ export type Database = {
           id: string;
           user_id: string;
           beach_id: number;
-          text: string;
+          text: string | null;
           image_url: string | null;
           wave_rating: number | null;
           wave_height_estimate: string | null;
@@ -127,7 +127,7 @@ export type Database = {
           id?: string;
           user_id: string;
           beach_id: number;
-          text: string;
+          text: string | null;
           image_url?: string | null;
           wave_rating?: number | null;
           wave_height_estimate?: string | null;
@@ -137,7 +137,7 @@ export type Database = {
           id?: string;
           user_id?: string;
           beach_id?: number;
-          text?: string;
+          text?: string | null;
           image_url?: string | null;
           wave_rating?: number | null;
           wave_height_estimate?: string | null;

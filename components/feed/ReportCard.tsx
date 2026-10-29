@@ -59,7 +59,9 @@ export function ReportCard({ report }: { report: FeedReport }) {
         </div>
       ) : null}
 
-      <p className="text-body break-words whitespace-pre-line text-copy">{report.text}</p>
+      {report.text ? (
+        <p className="text-body break-words whitespace-pre-line text-copy">{report.text}</p>
+      ) : null}
 
       {report.image_url ? (
         <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-surface">

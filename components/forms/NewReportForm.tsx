@@ -57,12 +57,14 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
 
   const len = textLength(text);
   const trimmedEmpty = text.trim().length === 0;
+  // Text is optional once a wave rating is picked.
+  const missingText = trimmedEmpty && rating === null;
   const tooLong = len > REPORT_TEXT_MAX;
   const beachError = touched.beach && beachId === null ? "בחרו חוף" : null;
   const textError = tooLong
     ? `הטקסט ארוך מדי (${len}/${REPORT_TEXT_MAX})`
-    : touched.text && trimmedEmpty
-      ? "ספרו מה קורה בחוף"
+    : touched.text && missingText
+      ? "ספרו מה קורה בחוף או דרגו את הגלים"
       : null;
   const busy = stage !== "idle" || done;
 
@@ -77,7 +79,7 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
     setBanner(null);
     setPhotoError(null);
     setTouched({ beach: true, text: true });
-    if (beachId === null || trimmedEmpty || tooLong) return;
+    if (beachId === null || missingText || tooLong) return;
     if (typeof navigator !== "undefined" && !navigator.onLine) {
       setBanner("אין קליטה. נסו שוב כשיהיה חיבור");
       return;
@@ -160,7 +162,7 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
 
       <div className="motion-fade-up flex flex-col gap-2" style={section(2)}>
         <label htmlFor="report-text" className="text-body-sm font-medium text-ink">
-          מה קורה בחוף?
+          מה קורה בחוף?{rating !== null ? " (לא חובה)" : ""}
         </label>
         <textarea
           id="report-text"

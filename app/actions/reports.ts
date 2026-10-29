@@ -27,9 +27,8 @@ export async function createReport(input: CreateReportInput): Promise<ActionResu
   if (typeof beachId !== "number" || !Number.isInteger(beachId) || beachId <= 0) {
     return { error: "בחרו חוף" };
   }
-  if (typeof raw.text !== "string") return { error: "ספרו מה קורה בחוף" };
-  const text = raw.text.trim();
-  if (text.length === 0) return { error: "ספרו מה קורה בחוף" };
+  if (raw.text != null && typeof raw.text !== "string") return { error: "ספרו מה קורה בחוף" };
+  const text = typeof raw.text === "string" ? raw.text.trim() : "";
   if (textLength(text) > REPORT_TEXT_MAX) {
     return { error: `הטקסט ארוך מדי (עד ${REPORT_TEXT_MAX} תווים)` };
   }
@@ -41,6 +40,8 @@ export async function createReport(input: CreateReportInput): Promise<ActionResu
   ) {
     return { error: "דירוג לא תקין" };
   }
+  // Text is optional only when a wave rating is given.
+  if (text.length === 0 && rating === null) return { error: "ספרו מה קורה בחוף או דרגו את הגלים" };
   const height = raw.waveHeight ?? null;
   if (
     height !== null &&
@@ -63,7 +64,7 @@ export async function createReport(input: CreateReportInput): Promise<ActionResu
   const { error } = await supabase.from("reports").insert({
     user_id: user.id, // always from the session, never from the client
     beach_id: beachId,
-    text,
+    text: text.length > 0 ? text : null,
     wave_rating: rating,
     wave_height_estimate: height,
     image_url: imageUrl,

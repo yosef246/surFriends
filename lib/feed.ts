@@ -6,7 +6,7 @@ export const FEED_PAGE_SIZE = 20;
 export type FeedReport = {
   id: string;
   user_id: string;
-  text: string;
+  text: string | null;
   image_url: string | null;
   wave_rating: number | null;
   wave_height_estimate: string | null;

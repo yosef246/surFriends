@@ -1,6 +1,5 @@
 "use client";
 
-import { useId } from "react";
 
 import { WAVE_RATING_LABELS as LABELS } from "@/lib/reports";
 import { cn } from "@/lib/utils";
@@ -12,7 +11,7 @@ type Props = { value: number | null; onChange: (v: number | null) => void };
  * Number bars + word label under each segment, so it never relies on color alone.
  */
 export function WaveRatingInput({ value, onChange }: Props) {
-  const id = useId();
+  const id = "wave-rating"; // one per page; a fixed id avoids useId hydration mismatches
   return (
     <div className="flex flex-col gap-2">
       <span id={`${id}-label`} className="section-title">

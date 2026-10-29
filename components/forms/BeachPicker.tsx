@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import Image from "next/image";
 import { Check } from "lucide-react";
 import { beachPhotoSrc } from "@/lib/beach-photo";
@@ -24,7 +24,7 @@ type Props = {
 
 /** Horizontal scroll row of small photo tiles grouped by region. Radiogroup with roving tabindex + arrow keys. */
 export function BeachPicker({ beaches, value, onChange, error, onBlur }: Props) {
-  const id = useId();
+  const id = "beach-picker"; // one per page; a fixed id avoids useId hydration mismatches
   const refs = useRef(new Map<number, HTMLButtonElement>());
   const groups = useMemo(() => {
     const m = new Map<string, BeachOption[]>();

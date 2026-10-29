@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useId, useState } from "react";
+import { useState } from "react";
 import { Ruler } from "lucide-react";
 import { UserAvatar } from "@/components/layout/UserAvatar";
 import { RelativeAgo } from "@/components/shared/RelativeTime";
@@ -55,7 +55,8 @@ export function StatusBubble({
   const name = report.author?.display_name ?? "גולש/ת";
   const { beach } = report;
   const [open, setOpen] = useState(false);
-  const panelId = `thread-${useId()}`;
+  // Derived from the report id (not useId): stable across server and client even if the tree above differs.
+  const panelId = `thread-${report.id}`;
   const isOwn = report.user_id === me.id;
   const hasImage = !!report.image_url && isTrustedImage(report.image_url);
   const showHeader = !grouped;

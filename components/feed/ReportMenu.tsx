@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { deleteReport } from "@/app/actions/reports";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 
@@ -10,7 +10,7 @@ export function ReportMenu({ reportId, onDeleted }: { reportId: string; onDelete
   const [confirm, setConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, startTransition] = useTransition();
-  const menuId = useId();
+  const menuId = `menu-${reportId}`;
   const wrapRef = useRef<HTMLDivElement>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ForecastPoint, WindHint } from "@/lib/forecast-types";
 import { directionLabel, windHint } from "@/lib/openMeteo";
 import {
@@ -78,7 +78,7 @@ export function WaveChart({
   /** Server render time, so SSR and hydration agree on the window. */
   nowMs: number;
 }) {
-  const uid = useId().replace(/:/g, "");
+  const uid = "wavechart"; // one chart per page; a fixed id avoids useId hydration mismatches
   const [range, setRange] = useState<Range>("48");
   const [sel, setSel] = useState<number | null>(null);
   const [width, setWidth] = useState(DEFAULT_W);

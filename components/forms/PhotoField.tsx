@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Camera, Check, Loader2, X } from "lucide-react";
 import { processImage, ImageProcessError, IMAGE_READ_ERROR } from "@/lib/image-process";
 
@@ -15,7 +15,7 @@ type Props = {
 };
 
 export function PhotoField({ onChange, onProcessing, uploading, uploadError, disabled }: Props) {
-  const id = useId();
+  const id = "photo-field"; // one per page; a fixed id avoids useId hydration mismatches
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);

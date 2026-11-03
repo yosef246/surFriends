@@ -4,10 +4,10 @@ import { useRef } from "react";
 import type { SkillLevel } from "@/lib/database.types";
 import { SKILL_LABELS, SKILL_LEVELS } from "@/lib/profile";
 
-type Props = { value: SkillLevel | null; onChange: (v: SkillLevel | null) => void; disabled?: boolean };
+type Props = { value: SkillLevel | null; onChange: (v: SkillLevel | null) => void; disabled?: boolean; staggerIn?: boolean };
 
 /** Bubble-chip radiogroup (arrow keys move + select). The skill level is optional, so it can be cleared. */
-export function SkillLevelSelect({ value, onChange, disabled }: Props) {
+export function SkillLevelSelect({ value, onChange, disabled, staggerIn }: Props) {
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
   const activeIndex = value ? SKILL_LEVELS.indexOf(value) : 0;
 
@@ -40,7 +40,8 @@ export function SkillLevelSelect({ value, onChange, disabled }: Props) {
             disabled={disabled}
             onClick={() => onChange(level)}
             onKeyDown={(e) => onKeyDown(e, i)}
-            className="chip-coast min-h-touch disabled:opacity-50"
+            style={staggerIn ? ({ "--i": i } as React.CSSProperties) : undefined}
+            className={`chip-coast min-h-touch disabled:opacity-50${staggerIn ? " ob-chip-pop" : ""}`}
           >
             {value === level ? "✓ " : ""}
             {SKILL_LABELS[level]}

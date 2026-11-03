@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Waves } from "lucide-react";
 import { Mascot } from "@/components/mascot";
+import { OceanBubbles, OceanWaves } from "@/components/shared/OceanScene";
 import { DEFAULT_BEACH_PHOTO } from "@/lib/beach-photo";
 import { SPLASH_FADE_MS, splashDismissDelay } from "@/lib/splash";
 
@@ -63,7 +64,9 @@ export function Splash({ ready }: { ready: boolean }) {
       }`}
     >
       <Image src={DEFAULT_BEACH_PHOTO.path} alt="" fill priority sizes="100vw" className="object-cover" />
-      <div className="photo-overlay" aria-hidden />
+      <div className="ob-veil" aria-hidden />
+      <OceanBubbles />
+      <OceanWaves />
       <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-sm flex-col items-center justify-end gap-3 px-6 pt-10 pb-24 text-center text-white">
         <Mascot.Wave size={96} />
         <p className="flex items-center gap-2 font-display text-hero font-normal text-white drop-shadow">

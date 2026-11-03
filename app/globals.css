@@ -1378,3 +1378,239 @@
 html[data-splash-seen] [data-splash] {
   display: none;
 }
+
+/* ------------------------------------------------------------------ */
+/* 10. Onboarding / splash "scene" (v4.1). transform + opacity only.    */
+/*     Reduced motion: every .ob-* animation is off, static layout.     */
+/* ------------------------------------------------------------------ */
+/* Deep-ocean veil over the photo: keeps white text >= AA. */
+.ob-veil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(70% 50% at 0% 100%, rgb(28 200 218 / 0.22), transparent 65%),
+    linear-gradient(180deg, rgb(6 51 92 / 0.62) 0%, rgb(6 51 92 / 0.38) 38%, rgb(6 51 92 / 0.82) 100%);
+}
+/* Slow cross-fade between 3 photos (24s) + Ken-Burns zoom. --d = start offset. */
+.ob-photo {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  animation:
+    ob-xfade 24s linear infinite var(--d, 0s),
+    ob-kb 24s ease-in-out infinite alternate var(--d, 0s);
+}
+.ob-photo-first {
+  opacity: 1;
+  animation-name: ob-xfade-first, ob-kb;
+}
+@keyframes ob-xfade {
+  0% { opacity: 0; }
+  6% { opacity: 1; }
+  33% { opacity: 1; }
+  40% { opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes ob-xfade-first {
+  0% { opacity: 1; }
+  33% { opacity: 1; }
+  40% { opacity: 0; }
+  94% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes ob-kb {
+  from { transform: scale(1.02) translate3d(0, 0, 0); }
+  to { transform: scale(1.14) translate3d(-1.5%, -1%, 0); }
+}
+/* Rising foam bubbles. */
+.ob-bubble {
+  position: absolute;
+  bottom: -24px;
+  inset-inline-start: var(--x, 50%);
+  width: var(--s, 10px);
+  height: var(--s, 10px);
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 0.22);
+  border: 1px solid rgb(255 255 255 / 0.4);
+  opacity: 0;
+  animation: ob-rise var(--t, 12s) ease-in infinite var(--d, 0s);
+}
+@keyframes ob-rise {
+  0% { transform: translate3d(0, 0, 0) scale(0.7); opacity: 0; }
+  15% { opacity: 0.9; }
+  50% { transform: translate3d(14px, -45vh, 0) scale(1); }
+  100% { transform: translate3d(-10px, -105vh, 0) scale(1.1); opacity: 0; }
+}
+/* Entrances. --i = stagger index. */
+.ob-word {
+  display: inline-block;
+  animation: ob-word-in 640ms var(--ease-out-soft) both calc(380ms + var(--i, 0) * 110ms);
+}
+@keyframes ob-word-in {
+  from { opacity: 0; transform: translate3d(0, 0.7em, 0) rotate(3deg); }
+  to { opacity: 1; transform: none; }
+}
+.ob-rise {
+  animation: ob-rise-in 560ms var(--ease-out-soft) both calc(var(--i, 0) * 90ms + var(--base, 0ms));
+}
+@keyframes ob-rise-in {
+  from { opacity: 0; transform: translate3d(0, 14px, 0); }
+  to { opacity: 1; transform: none; }
+}
+.ob-mascot-pop {
+  animation: ob-mascot-pop 800ms var(--ease-spring) both 150ms;
+}
+@keyframes ob-mascot-pop {
+  0% { opacity: 0; transform: translate3d(0, 30px, 0) scale(0.3) rotate(-12deg); }
+  60% { opacity: 1; }
+  100% { opacity: 1; transform: none; }
+}
+.ob-card-in {
+  animation: ob-card-in 820ms var(--ease-spring) both 650ms;
+}
+@keyframes ob-card-in {
+  from { opacity: 0; transform: translate3d(0, 110px, 0); }
+  to { opacity: 1; transform: none; }
+}
+.ob-chip-pop {
+  animation: ob-chip-pop 460ms var(--ease-spring) both calc(1100ms + var(--i, 0) * 70ms);
+}
+@keyframes ob-chip-pop {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: none; }
+}
+/* Floating-label field: the label floats when focused or filled; ring is a scaled pseudo-element. */
+.ob-field {
+  position: relative;
+}
+.ob-field::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 1rem;
+  border: 2px solid var(--color-brand);
+  opacity: 0;
+  transform: scale(0.97);
+  transition:
+    opacity var(--dur-base) var(--ease-out-soft),
+    transform 360ms var(--ease-spring);
+  pointer-events: none;
+}
+.ob-field:focus-within::after {
+  opacity: 1;
+  transform: scale(1);
+}
+.ob-label {
+  position: absolute;
+  inset-inline-start: 0.875rem;
+  top: 0.9rem;
+  transform-origin: right top;
+  color: var(--color-muted-text);
+  pointer-events: none;
+  transition:
+    transform var(--dur-base) var(--ease-out-soft),
+    color var(--dur-base) ease-out;
+}
+.ob-input:focus ~ .ob-label,
+.ob-input:not(:placeholder-shown) ~ .ob-label {
+  transform: translate3d(0, -0.5rem, 0) scale(0.8);
+  color: var(--color-brand);
+  font-weight: 600;
+}
+.ob-shake {
+  animation: ob-shake 420ms ease-in-out;
+}
+@keyframes ob-shake {
+  0%, 100% { transform: none; }
+  20% { transform: translate3d(-7px, 0, 0); }
+  40% { transform: translate3d(6px, 0, 0); }
+  60% { transform: translate3d(-4px, 0, 0); }
+  80% { transform: translate3d(3px, 0, 0); }
+}
+/* CTA: idle shimmer sweep, press squish, success check pop. */
+.ob-cta {
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--dur-fast) var(--ease-spring);
+}
+.ob-cta:active:not(:disabled) {
+  transform: scale(0.96, 0.92);
+}
+.ob-cta::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: -40%;
+  width: 40%;
+  background: linear-gradient(100deg, transparent, rgb(255 255 255 / 0.38), transparent);
+  transform: translate3d(-120%, 0, 0) skewX(-20deg);
+  animation: ob-shimmer 3.6s ease-in-out infinite 2.2s;
+  pointer-events: none;
+}
+.ob-cta[data-state="busy"]::after,
+.ob-cta[data-state="done"]::after {
+  animation: none;
+  opacity: 0;
+}
+@keyframes ob-shimmer {
+  0% { transform: translate3d(-120%, 0, 0) skewX(-20deg); }
+  45%, 100% { transform: translate3d(520%, 0, 0) skewX(-20deg); }
+}
+.ob-check {
+  animation: ob-check 520ms var(--ease-spring) both;
+}
+@keyframes ob-check {
+  from { opacity: 0; transform: scale(0.2) rotate(-40deg); }
+  to { opacity: 1; transform: none; }
+}
+/* Full-screen wave wipe: ocean sheet with a wavy top edge sweeps up; covered at ~50%. */
+.ob-wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  pointer-events: all;
+  animation: ob-wipe 1000ms cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+@keyframes ob-wipe {
+  from { transform: translate3d(0, 100%, 0); }
+  to { transform: translate3d(0, -112%, 0); }
+}
+.ob-wipe-body {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #0b6c9e 0%, #06335c 100%);
+}
+.ob-wipe-edge {
+  position: absolute;
+  inset-inline: 0;
+  top: -63px;
+  height: 64px;
+  width: 100%;
+  color: #0b6c9e;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ob-photo,
+  .ob-photo-first,
+  .ob-bubble,
+  .ob-word,
+  .ob-rise,
+  .ob-mascot-pop,
+  .ob-card-in,
+  .ob-chip-pop,
+  .ob-shake,
+  .ob-check,
+  .ob-cta::after,
+  .ob-wipe {
+    animation: none !important;
+  }
+  .ob-photo:not(.ob-photo-first),
+  .ob-bubble,
+  .ob-cta::after {
+    opacity: 0 !important;
+  }
+  .ob-field::after,
+  .ob-label {
+    transition: none;
+  }
+}

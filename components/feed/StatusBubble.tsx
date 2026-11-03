@@ -10,26 +10,12 @@ import { WaveLevel } from "@/components/shared/WaveLevel";
 import { formatClock, senderColor } from "@/lib/bubbles";
 import type { FeedReport } from "@/lib/feed";
 import type { ReactionKind } from "@/lib/replies";
+import { isTrustedMedia } from "@/lib/media-trust";
 import { cn } from "@/lib/utils";
+import { VideoBubble } from "./VideoBubble";
 import { QuickReactionBar } from "./QuickReactionBar";
 import { ReplyThread, type ThreadViewer } from "./ReplyThread";
 import { ReportMenu } from "./ReportMenu";
-
-// next/image throws for hosts not in next.config; never let one bad row take the feed down.
-const IMAGE_HOST = (() => {
-  try {
-    return new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").host;
-  } catch {
-    return null;
-  }
-})();
-function isTrustedImage(url: string) {
-  try {
-    return IMAGE_HOST !== null && new URL(url).host === IMAGE_HOST;
-  } catch {
-    return false;
-  }
-}
 
 const commentsLabel = (n: number) => (n === 0 ? "הגיבו" : n === 1 ? "תגובה אחת" : `${n} תגובות`);
 
@@ -58,7 +44,9 @@ export function StatusBubble({
   // Derived from the report id (not useId): stable across server and client even if the tree above differs.
   const panelId = `thread-${report.id}`;
   const isOwn = report.user_id === me.id;
-  const hasImage = !!report.image_url && isTrustedImage(report.image_url);
+  const hasVideo = !!report.video_url && isTrustedMedia(report.video_url);
+  const hasImage = !hasVideo && !!report.image_url && isTrustedMedia(report.image_url);
+  const hasMedia = hasVideo || hasImage;
   const showHeader = !grouped;
 
   return (
@@ -80,12 +68,12 @@ export function StatusBubble({
         )
       ) : null}
 
-      <div className={cn("min-w-0 max-w-[88%]", hasImage && "w-full")}>
+      <div className={cn("min-w-0 max-w-[88%]", hasMedia && "w-full")}>
         <div
           data-own={isOwn ? "true" : undefined}
           className={cn(
             "bubble-msg flex flex-col gap-1.5",
-            !hasImage && "w-fit min-w-52 max-w-full",
+            !hasMedia && "w-fit min-w-52 max-w-full",
             grouped && "before:hidden rounded-ss-xl! rounded-se-xl!"
           )}
         >
@@ -120,6 +108,15 @@ export function StatusBubble({
 
           {report.text ? (
             <p className="text-body break-words whitespace-pre-line text-copy prose-he">{report.text}</p>
+          ) : null}
+
+          {hasVideo ? (
+            <VideoBubble
+              src={report.video_url!}
+              poster={report.video_poster_url}
+              durationMs={report.video_duration_ms}
+              beachName={beach?.name_he}
+            />
           ) : null}
 
           {hasImage ? (

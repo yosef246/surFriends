@@ -3,6 +3,8 @@ export const REPORT_TEXT_MAX = 500;
 export const WAVE_HEIGHTS = ["קרסול", "ברך", "מותן", "כתף", "ראש"] as const;
 export const QUICK_TEXTS = ["גלים נקיים", "עמוס בחוף", "ריק ושקט", "רוח חזקה", "גלים גדולים"] as const;
 export const REPORT_BUCKET = "report-images";
+export const VIDEO_BUCKET = "report-videos";
+export const MAX_VIDEO_DURATION_MS = 10500;
 export const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 /** Reports (and their replies/images) live this long. Keep in sync with the 12 hours in
  *  supabase/migrations/20261029020000_report_ttl_cleanup.sql. */
@@ -31,6 +33,10 @@ export type CreateReportInput = {
   waveRating: number | null;
   waveHeight: string | null;
   imageUrl: string | null;
+  /** Optional (a report has a photo OR a video). A video requires the poster and the duration. */
+  videoUrl?: string | null;
+  videoPosterUrl?: string | null;
+  videoDurationMs?: number | null;
 };
 /** `rejected` = definitive validation failure (safe to discard the uploaded photo). */
 export type ActionResult = { ok: true } | { error: string; rejected?: boolean };
@@ -42,6 +48,9 @@ export type ValidReport = {
   waveRating: number | null;
   waveHeight: string | null;
   imageUrl: string | null;
+  videoUrl: string | null;
+  videoPosterUrl: string | null;
+  videoDurationMs: number | null;
 };
 
 /**
@@ -90,9 +99,42 @@ export function validateReportInput(
     imageUrl = raw.imageUrl;
   }
 
+  let videoUrl: string | null = null;
+  let videoPosterUrl: string | null = null;
+  let videoDurationMs: number | null = null;
+  const hasVideo = raw.videoUrl != null || raw.videoPosterUrl != null || raw.videoDurationMs != null;
+  if (hasVideo) {
+    if (imageUrl) return fail("אפשר לצרף תמונה או סרטון, לא את שניהם");
+    const d = raw.videoDurationMs;
+    if (typeof d !== "number" || !Number.isInteger(d) || d < 1) return fail("הסרטון לא תקין");
+    if (d > MAX_VIDEO_DURATION_MS) return fail("הסרטון ארוך מ-10 שניות");
+    if (
+      typeof raw.videoUrl !== "string" ||
+      typeof raw.videoPosterUrl !== "string" ||
+      !image?.supabaseUrl ||
+      !videoPathFromUrl(raw.videoUrl, image.userId, image.supabaseUrl) ||
+      !videoPathFromUrl(raw.videoPosterUrl, image.userId, image.supabaseUrl, "poster")
+    ) {
+      return fail("הסרטון לא תקין");
+    }
+    videoUrl = raw.videoUrl;
+    videoPosterUrl = raw.videoPosterUrl;
+    videoDurationMs = d;
+  }
+
   return {
     ok: true,
-    value: { id: raw.id, beachId, text: text.length > 0 ? text : null, waveRating: rating, waveHeight: height, imageUrl },
+    value: {
+      id: raw.id,
+      beachId,
+      text: text.length > 0 ? text : null,
+      waveRating: rating,
+      waveHeight: height,
+      imageUrl,
+      videoUrl,
+      videoPosterUrl,
+      videoDurationMs,
+    },
   };
 }
 
@@ -109,6 +151,31 @@ export function imagePathFromUrl(url: string, userId: string, supabaseUrl: strin
     if (!u.pathname.startsWith(prefix)) return null;
     const file = u.pathname.slice(prefix.length);
     return UUID_JPG.test(file) ? `${userId}/${file}` : null;
+  } catch {
+    return null;
+  }
+}
+
+const UUID_STR = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+const VIDEO_FILE = new RegExp(`^${UUID_STR}\.(mp4|webm|mov)$`, "i");
+const POSTER_FILE = new RegExp(`^${UUID_STR}-poster\.jpg$`, "i");
+
+/** Returns the storage path ("{userId}/{file}") if `url` is under this project's report-videos/{userId}/ public
+ *  path, else null. kind "video" = {uuid}.(mp4|webm|mov); kind "poster" = {uuid}-poster.jpg. */
+export function videoPathFromUrl(
+  url: string,
+  userId: string,
+  supabaseUrl: string,
+  kind: "video" | "poster" = "video",
+): string | null {
+  try {
+    const u = new URL(url);
+    const base = new URL(supabaseUrl);
+    if (u.origin !== base.origin || u.search || u.hash) return null;
+    const prefix = `/storage/v1/object/public/${VIDEO_BUCKET}/${userId}/`;
+    if (!u.pathname.startsWith(prefix)) return null;
+    const file = u.pathname.slice(prefix.length);
+    return (kind === "video" ? VIDEO_FILE : POSTER_FILE).test(file) ? `${userId}/${file}` : null;
   } catch {
     return null;
   }

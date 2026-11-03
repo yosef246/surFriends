@@ -7,7 +7,9 @@ import { getDaylightState, nightClosedMessage } from "@/lib/daylight";
 import { notifyFavoriteUsers } from "@/lib/push-send";
 import {
   REPORT_BUCKET,
+  VIDEO_BUCKET,
   imagePathFromUrl,
+  videoPathFromUrl,
   validateReportInput,
   type ActionResult,
   type CreateReportInput,
@@ -16,7 +18,34 @@ import {
 const GENERIC = "הפרסום נכשל. הטקסט נשמר, נסו שוב";
 const RATE_LIMITED = "יותר מדי דיווחים, נסו שוב בעוד כמה דקות";
 
+/** Orphan cleanup: after a definitive rejection, remove the uploaded video + poster (best effort, own folder only). */
+async function discardVideo(input: CreateReportInput, userId: string): Promise<void> {
+  const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!base) return;
+  const raw = (input ?? {}) as Partial<Record<keyof CreateReportInput, unknown>>;
+  const paths = [
+    typeof raw.videoUrl === "string" ? videoPathFromUrl(raw.videoUrl, userId, base) : null,
+    typeof raw.videoPosterUrl === "string" ? videoPathFromUrl(raw.videoPosterUrl, userId, base, "poster") : null,
+  ].filter((p): p is string => !!p);
+  if (paths.length === 0) return;
+  try {
+    const supabase = await getSupabase();
+    await supabase.storage.from(VIDEO_BUCKET).remove(paths);
+  } catch {
+    /* ignore */
+  }
+}
+
 export async function createReport(input: CreateReportInput): Promise<ActionResult> {
+  const res = await createReportInner(input);
+  if ("error" in res && res.rejected) {
+    const user = await getCurrentUser();
+    if (user) await discardVideo(input, user.id);
+  }
+  return res;
+}
+
+async function createReportInner(input: CreateReportInput): Promise<ActionResult> {
   // Night lockout (sunset to sunrise, Israel): checked first, before any validation or insert.
   if (getDaylightState(new Date()).isNight) return { error: nightClosedMessage(), rejected: true };
   const user = await getCurrentUser();
@@ -41,6 +70,9 @@ export async function createReport(input: CreateReportInput): Promise<ActionResu
     wave_rating: r.waveRating,
     wave_height_estimate: r.waveHeight,
     image_url: r.imageUrl,
+    video_url: r.videoUrl,
+    video_poster_url: r.videoPosterUrl,
+    video_duration_ms: r.videoDurationMs,
   });
   if (error) {
     if (error.code === "23505") {
@@ -62,6 +94,11 @@ export async function createReport(input: CreateReportInput): Promise<ActionResu
     if (msg.includes("rate_limit")) return { error: RATE_LIMITED };
     if (error.code === "23514") {
       if (msg.includes("reports_image_url_own_folder")) return { error: "התמונה לא תקינה", rejected: true };
+      if (msg.includes("reports_one_media")) {
+        return { error: "אפשר לצרף תמונה או סרטון, לא את שניהם", rejected: true };
+      }
+      if (msg.includes("reports_video_duration_range")) return { error: "הסרטון ארוך מ-10 שניות", rejected: true };
+      if (msg.includes("reports_video_")) return { error: "הסרטון לא תקין", rejected: true };
       if (msg.includes("reports_wave_height_allowed")) return { error: "גובה גל לא תקין", rejected: true };
       if (msg.includes("reports_text_or_rating")) {
         return { error: "ספרו מה קורה בחוף או דרגו את הגלים", rejected: true };
@@ -90,7 +127,7 @@ export async function deleteReport(id: string): Promise<ActionResult> {
 
   const { data: row } = await supabase
     .from("reports")
-    .select("image_url")
+    .select("image_url, video_url, video_poster_url")
     .eq("id", id)
     .eq("user_id", user.id)
     .maybeSingle();
@@ -106,6 +143,20 @@ export async function deleteReport(id: string): Promise<ActionResult> {
       await supabase.storage.from(REPORT_BUCKET).remove([path]); // best effort
     } catch {
       /* ignore */
+    }
+  }
+
+  if (base) {
+    const vids = [
+      row.video_url ? videoPathFromUrl(row.video_url, user.id, base) : null,
+      row.video_poster_url ? videoPathFromUrl(row.video_poster_url, user.id, base, "poster") : null,
+    ].filter((p): p is string => !!p);
+    if (vids.length > 0) {
+      try {
+        await supabase.storage.from(VIDEO_BUCKET).remove(vids); // best effort
+      } catch {
+        /* ignore */
+      }
     }
   }
 

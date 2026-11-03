@@ -137,6 +137,9 @@ export type Database = {
           beach_id: number;
           text: string | null;
           image_url: string | null;
+          video_url: string | null;
+          video_poster_url: string | null;
+          video_duration_ms: number | null;
           wave_rating: number | null;
           wave_height_estimate: string | null;
           created_at: string;
@@ -147,6 +150,9 @@ export type Database = {
           beach_id: number;
           text?: string | null;
           image_url?: string | null;
+          video_url?: string | null;
+          video_poster_url?: string | null;
+          video_duration_ms?: number | null;
           wave_rating?: number | null;
           wave_height_estimate?: string | null;
           created_at?: string;
@@ -157,6 +163,9 @@ export type Database = {
           beach_id?: number;
           text?: string | null;
           image_url?: string | null;
+          video_url?: string | null;
+          video_poster_url?: string | null;
+          video_duration_ms?: number | null;
           wave_rating?: number | null;
           wave_height_estimate?: string | null;
           created_at?: string;
@@ -273,6 +282,10 @@ export type Database = {
       purge_old_push_log: { Args: Record<PropertyKey, never>; Returns: number };
       purge_expired_reports: { Args: Record<PropertyKey, never>; Returns: number };
       expired_report_image_paths: {
+        Args: { limit_count?: number };
+        Returns: { name: string }[];
+      };
+      expired_report_video_paths: {
         Args: { limit_count?: number };
         Returns: { name: string }[];
       };

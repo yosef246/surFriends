@@ -3,7 +3,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 // @ts-expect-error -- .ts extension is required by node --test, not allowed by tsc config
-import { imagePathFromUrl, textLength, REPORT_TEXT_MAX, WAVE_HEIGHTS } from "../lib/reports.ts";
+import { videoPathFromUrl, imagePathFromUrl, textLength, REPORT_TEXT_MAX, WAVE_HEIGHTS } from "../lib/reports.ts";
 
 const SB = "https://abcd1234.supabase.co";
 const UID = "11111111-1111-4111-8111-111111111111";
@@ -106,4 +106,52 @@ test("validateReportInput checks imageUrl against the user's own folder", () => 
   assert.equal(validateReportInput({ ...base, imageUrl: url(OTHER) }, IMG).ok, false);
   assert.equal(validateReportInput({ ...base, imageUrl: url(UID) }).ok, false); // no context -> reject
   assert.equal(validateReportInput({ ...base, imageUrl: 5 }, IMG).ok, false);
+});
+
+const VID = "44444444-4444-4444-8444-444444444444";
+const vurl = (uid: string, file: string) => `${SB}/storage/v1/object/public/report-videos/${uid}/${file}`;
+const rbase = { id: VID, beachId: 1, text: "גלים", waveRating: null, waveHeight: null, imageUrl: null };
+const ctx = { userId: UID, supabaseUrl: SB };
+const vid = {
+  videoUrl: vurl(UID, `${VID}.mp4`),
+  videoPosterUrl: vurl(UID, `${VID}-poster.jpg`),
+  videoDurationMs: 9000,
+};
+
+test("videoPathFromUrl accepts own video and poster, rejects others", () => {
+  assert.equal(videoPathFromUrl(vid.videoUrl, UID, SB), `${UID}/${VID}.mp4`);
+  assert.equal(videoPathFromUrl(vid.videoPosterUrl, UID, SB, "poster"), `${UID}/${VID}-poster.jpg`);
+  assert.equal(videoPathFromUrl(vid.videoPosterUrl, UID, SB), null);
+  assert.equal(videoPathFromUrl(vurl(OTHER, `${VID}.mp4`), UID, SB), null);
+  assert.equal(videoPathFromUrl(vurl(UID, `${VID}.exe`), UID, SB), null);
+});
+
+test("validateReportInput accepts a full video report", () => {
+  const r = validateReportInput({ ...rbase, ...vid }, ctx);
+  assert.ok(r.ok);
+  if (r.ok) assert.equal(r.value.videoDurationMs, 9000);
+});
+
+test("validateReportInput without video leaves video fields null", () => {
+  const r = validateReportInput(rbase, ctx);
+  assert.ok(r.ok);
+  if (r.ok) assert.equal(r.value.videoUrl, null);
+});
+
+test("validateReportInput rejects photo + video", () => {
+  const r = validateReportInput({ ...rbase, ...vid, imageUrl: url(UID) }, ctx);
+  assert.ok(!r.ok);
+});
+
+test("validateReportInput rejects video without poster or duration, or bad duration", () => {
+  assert.ok(!validateReportInput({ ...rbase, videoUrl: vid.videoUrl, videoDurationMs: 5000 }, ctx).ok);
+  assert.ok(!validateReportInput({ ...rbase, videoUrl: vid.videoUrl, videoPosterUrl: vid.videoPosterUrl }, ctx).ok);
+  assert.ok(!validateReportInput({ ...rbase, ...vid, videoDurationMs: 0 }, ctx).ok);
+  assert.ok(!validateReportInput({ ...rbase, ...vid, videoDurationMs: 10501 }, ctx).ok);
+  assert.ok(validateReportInput({ ...rbase, ...vid, videoDurationMs: 10500 }, ctx).ok);
+});
+
+test("validateReportInput: video report still needs text or rating", () => {
+  assert.ok(!validateReportInput({ ...rbase, text: "", ...vid }, ctx).ok);
+  assert.ok(validateReportInput({ ...rbase, text: "", waveRating: 3, ...vid }, ctx).ok);
 });

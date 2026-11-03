@@ -173,3 +173,6 @@ lucide-react, stroke 2 (פעיל בניווט 2.5), גדלים 16 (בתוך צ'�
 
 ## 8. Onboarding / splash scene (v4.1)
 מסך ההרשמה הראשון משתמש בסצנה אחת משותפת עם ה-Splash (`components/shared/OceanScene.tsx`): 3 תמונות חוף ב-cross-fade איטי + Ken-Burns (`.ob-photo`), מעטה אוקיינוס כהה (`.ob-veil`, טקסט לבן AA), 10 בועות עולות (`.ob-bubble`), 3 שכבות גלים ב-parallax (`motion-drift` במהירויות/כיוונים שונים). כניסות: `.ob-mascot-pop`, `.ob-word` (חשיפת מילים, `--i`), `.ob-rise`, `.ob-card-in` (כרטיס חלבי white/85 + blur), `.ob-chip-pop`. שדה עם label צף וטבעת פוקוס (`.ob-field`, `.ob-label`), `.ob-shake` לשגיאה, כפתור `.ob-cta` (shimmer במנוחה, squish, `.ob-check`), ו-`.ob-wipe` (גל מלא-מסך ב-AppStart). רק transform/opacity. `prefers-reduced-motion`: כל אנימציות `.ob-*` כבויות, תמונה אחת סטטית, בלי בועות/shimmer/wipe.
+
+## 9. מצב לילה (Night mode)
+`NightScene` (ב-`components/shared/OceanScene.tsx`): שמיים כהים (`.night-sky`, מ-`abyss` ל-`ocean-deep`), ירח (`.night-moon`), 15 כוכבים מנצנצים (`.night-star`, opacity+scale), וגלי `OceanWaves night` איטיים (מהירות כפולה בערך) וכהים (`text-aqua/10..20`). גל ישן: `Mascot.Sleeping` (משקפיים על הראש, עיניים עצומות, אותיות Z מרחפות `.mascot-zzz`). מסך מלא: `components/night/NightScreen.tsx` (role=dialog, aria-modal). רק transform/opacity; `prefers-reduced-motion`: בלי נצנוץ, בלי Zzz מרחפות (נשארות סטטיות), בלי drift.

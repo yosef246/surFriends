@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { NewReportForm } from "@/components/forms/NewReportForm";
 import { buttonVariants } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { ClosedAtNight } from "@/components/night/NightClosedCard";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function NewReportPage({
@@ -46,7 +47,9 @@ export default async function NewReportPage({
           description="לא הצלחנו לטעון את רשימת החופים. נסו לרענן"
         />
       ) : (
-        <NewReportForm beaches={beaches} defaultBeachId={defaultBeachId} />
+        <ClosedAtNight>
+          <NewReportForm beaches={beaches} defaultBeachId={defaultBeachId} />
+        </ClosedAtNight>
       )}
     </div>
   );

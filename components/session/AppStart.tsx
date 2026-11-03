@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { NightGate } from "@/components/night/NightGate";
 import { Splash } from "@/components/shared/Splash";
 import { ProfileOnboarding, PROFILE_READY_EVENT } from "./ProfileOnboarding";
 import { SessionBootstrap } from "./SessionBootstrap";
@@ -43,6 +44,8 @@ export function AppStart() {
         }}
       />
       {needsProfile ? <ProfileOnboarding /> : null}
+      {/* Night screen: after the splash and (if needed) onboarding. */}
+      <NightGate active={ready && !needsProfile} />
       {wiping ? (
         <div aria-hidden className="ob-wipe">
           <svg viewBox="0 0 2400 100" preserveAspectRatio="none" className="ob-wipe-edge">

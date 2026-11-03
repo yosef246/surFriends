@@ -2,6 +2,7 @@
 
 import { after } from "next/server";
 import { getCurrentUser, getSupabase } from "@/lib/auth";
+import { getDaylightState, nightClosedMessage } from "@/lib/daylight";
 import { isFreshInsert } from "@/lib/push";
 import { sendReplyPush } from "@/lib/push-send";
 import {
@@ -9,7 +10,7 @@ import {
   MSG_REPLY_GONE,
   MSG_SESSION,
   isReactionKind,
-  mapReplyDbError,
+  mapReplyDbError as mapReplyDbErrorBase,
   otherKind,
   validateReactionInput,
   validateReplyInput,
@@ -18,10 +19,16 @@ import {
 } from "@/lib/replies";
 import { isUuid, type ActionResult } from "@/lib/reports";
 
+/** DB trigger 'night_closed' (inserts made while the sea is closed) -> Hebrew message with the opening time. */
+function mapReplyDbError(err: Parameters<typeof mapReplyDbErrorBase>[0]): string {
+  return err?.message?.includes("night_closed") ? nightClosedMessage() : mapReplyDbErrorBase(err);
+}
+
 // No revalidatePath: the feed/thread are updated live (realtime) and optimistically.
 
 /** Text reply. `clientId` makes a retry idempotent (PK collision on our own row = success). */
 export async function replyToReport(reportId: string, text: string, clientId?: string): Promise<ReplyResult> {
+  if (getDaylightState(new Date()).isNight) return { error: nightClosedMessage() }; // night lockout, before anything else
   const v = validateReplyInput(reportId, text, clientId);
   if (!v.ok) return { error: v.error };
   const user = await getCurrentUser();
@@ -54,6 +61,7 @@ export async function replyToReport(reportId: string, text: string, clientId?: s
  * Insert first, then remove the other, so a failed insert (rate limit) leaves the old state intact.
  */
 export async function toggleReaction(reportId: string, kind: ReactionKind): Promise<ActionResult> {
+  if (getDaylightState(new Date()).isNight) return { error: nightClosedMessage() }; // night lockout, before anything else
   const v = validateReactionInput(reportId, kind);
   if (!v.ok) return { error: v.error };
   const user = await getCurrentUser();

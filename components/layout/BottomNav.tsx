@@ -1,8 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Plus, Settings, User } from "lucide-react";
+import { useDaylight } from "@/components/night/DaylightProvider";
+import { NightReportSheet } from "@/components/night/NightReportSheet";
 
 // DOM order = RTL order: first item on the right.
 const ITEMS = [
@@ -14,6 +17,8 @@ const ITEMS = [
 /** Bottom nav (DESIGN_SYSTEM 5h): white bar + hairline, 4 equal items, brand blue when active, raised report button at the end side. */
 export function BottomNav() {
   const pathname = usePathname();
+  const { isNight } = useDaylight();
+  const [sheetOpen, setSheetOpen] = useState(false);
   if (pathname === "/new") return null;
 
   return (
@@ -40,19 +45,36 @@ export function BottomNav() {
         })}
         {/* Last DOM item = end side (left in RTL). Raised circle overlaps the bar's top edge. */}
         <li className="flex-1">
-          <Link
-            href="/new"
-            prefetch
-            aria-label="דיווח חדש"
-            className="nav-item motion-press h-full min-w-touch justify-end pb-2 text-ink!"
-          >
-            <span className="bubble-ocean-raised -mt-7 mb-auto flex size-14 items-center justify-center rounded-full ring-4 ring-white">
-              <Plus className="size-7" aria-hidden />
-            </span>
-            דיווח
-          </Link>
+          {isNight ? (
+            // Night: the button stays, but opens a friendly "closed until sunrise" sheet instead of navigating.
+            <button
+              type="button"
+              aria-label="דיווח חדש (סגור בלילה)"
+              aria-haspopup="dialog"
+              onClick={() => setSheetOpen(true)}
+              className="nav-item motion-press h-full w-full min-w-touch justify-end pb-2 text-ink!"
+            >
+              <span className="bubble-ocean-raised -mt-7 mb-auto flex size-14 items-center justify-center rounded-full opacity-70 ring-4 ring-white">
+                <Plus className="size-7" aria-hidden />
+              </span>
+              דיווח
+            </button>
+          ) : (
+            <Link
+              href="/new"
+              prefetch
+              aria-label="דיווח חדש"
+              className="nav-item motion-press h-full min-w-touch justify-end pb-2 text-ink!"
+            >
+              <span className="bubble-ocean-raised -mt-7 mb-auto flex size-14 items-center justify-center rounded-full ring-4 ring-white">
+                <Plus className="size-7" aria-hidden />
+              </span>
+              דיווח
+            </Link>
+          )}
         </li>
       </ul>
+      {sheetOpen && isNight ? <NightReportSheet onClose={() => setSheetOpen(false)} /> : null}
     </nav>
   );
 }

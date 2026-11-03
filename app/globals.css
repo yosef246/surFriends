@@ -1614,3 +1614,67 @@ html[data-splash-seen] [data-splash] {
     transition: none;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* 11. Night mode (sunset to sunrise lockout). transform + opacity only. */
+/*     Reduced motion: no twinkle / zzz / drift, static layout.          */
+/* ------------------------------------------------------------------ */
+.night-sky {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    180deg,
+    var(--color-abyss) 0%,
+    color-mix(in srgb, var(--color-ocean-deep) 55%, var(--color-abyss)) 62%,
+    var(--color-ocean-deep) 100%
+  );
+}
+.night-moon {
+  position: absolute;
+  inset-block-start: 9%;
+  inset-inline-end: 12%;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 9999px;
+  background-color: var(--color-foam);
+  background-image:
+    radial-gradient(circle at 32% 36%, color-mix(in srgb, var(--color-aqua) 45%, transparent) 0 7%, transparent 8%),
+    radial-gradient(circle at 62% 62%, color-mix(in srgb, var(--color-aqua) 40%, transparent) 0 10%, transparent 11%);
+  box-shadow: 0 0 2.5rem 0.5rem color-mix(in srgb, var(--color-foam) 30%, transparent);
+}
+.night-star {
+  position: absolute;
+  inset-inline-start: var(--x, 50%);
+  inset-block-start: var(--y, 20%);
+  width: var(--s, 2px);
+  height: var(--s, 2px);
+  border-radius: 9999px;
+  background-color: var(--color-foam);
+  opacity: 0.85;
+  animation: night-twinkle var(--t, 4s) ease-in-out infinite var(--d, 0s);
+}
+@keyframes night-twinkle {
+  0%, 100% { opacity: 0.25; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.25); }
+}
+/* Sleeping Gal: floating "Z z z" (SVG groups). --i = stagger index. */
+.mascot-zzz {
+  transform-box: fill-box;
+  transform-origin: 0% 100%;
+  animation: zzz-float 3.6s ease-in-out infinite backwards calc(var(--i, 0) * 0.9s);
+}
+@keyframes zzz-float {
+  0% { opacity: 0; transform: translate3d(-5px, 8px, 0) scale(0.7); }
+  25% { opacity: 1; }
+  75% { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(6px, -10px, 0) scale(1.1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .night-star,
+  .mascot-zzz {
+    animation: none !important;
+  }
+  .mascot-zzz {
+    opacity: 1 !important;
+  }
+}

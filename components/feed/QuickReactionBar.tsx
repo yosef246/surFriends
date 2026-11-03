@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition, type ReactNode } from "react";
+import { useId, useState, useTransition, type ReactNode } from "react";
+import { useDaylight } from "@/components/night/DaylightProvider";
 import { REACTION_KINDS, REACTION_LABEL, type ReactionKind } from "@/lib/replies";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +20,8 @@ type Props = {
 
 export function QuickReactionBar({ comingCount, onTheWayCount, myComing, myOnTheWay, isOwn, onToggle, children }: Props) {
   const [pending, startTransition] = useTransition();
+  const { isNight, opensLabel } = useDaylight();
+  const noteId = useId();
   const [error, setError] = useState<string | null>(null);
   // Bumped per tap so the emoji replays motion-pop-in (never on first render).
   const [pops, setPops] = useState<Record<ReactionKind, number>>({ coming: 0, on_the_way: 0 });
@@ -27,7 +30,7 @@ export function QuickReactionBar({ comingCount, onTheWayCount, myComing, myOnThe
   const counts: Record<ReactionKind, number> = { coming: comingCount, on_the_way: onTheWayCount };
 
   function tap(kind: ReactionKind) {
-    if (pending) return;
+    if (pending || isNight) return;
     setError(null);
     setPops((p) => ({ ...p, [kind]: p[kind] + 1 }));
     startTransition(async () => {
@@ -53,7 +56,8 @@ export function QuickReactionBar({ comingCount, onTheWayCount, myComing, myOnThe
                 key={kind}
                 type="button"
                 aria-pressed={pressed[kind]}
-                disabled={pending}
+                disabled={pending || isNight}
+                aria-describedby={isNight ? noteId : undefined}
                 onClick={() => tap(kind)}
                 className="chip-coast min-h-touch disabled:opacity-70"
               >
@@ -72,6 +76,11 @@ export function QuickReactionBar({ comingCount, onTheWayCount, myComing, myOnThe
         )}
         {children}
       </div>
+      {isNight && !isOwn ? (
+        <p id={noteId} className="text-body-sm text-muted-text">
+          התגובות ייפתחו בזריחה ({opensLabel})
+        </p>
+      ) : null}
       <p role="alert" className="text-body-sm text-danger empty:hidden">
         {error ? `⚠ ${error}` : null}
       </p>

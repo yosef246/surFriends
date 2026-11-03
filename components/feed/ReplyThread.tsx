@@ -4,6 +4,7 @@ import { Send } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { deleteReply, replyToReport } from "@/app/actions/replies";
 import { UserAvatar } from "@/components/layout/UserAvatar";
+import { useDaylight } from "@/components/night/DaylightProvider";
 import { RelativeAgo } from "@/components/shared/RelativeTime";
 import { buttonVariants } from "@/components/ui/button";
 import { formatClock, senderColor } from "@/lib/bubbles";
@@ -35,6 +36,7 @@ export function ReplyThread({ reportId, panelId, me }: { reportId: string; panel
   const [loadError, setLoadError] = useState(false);
   const [text, setText] = useState("");
   const [sendError, setSendError] = useState<string | null>(null);
+  const { isNight, opensLabel } = useDaylight();
   const taRef = useRef<HTMLTextAreaElement>(null);
   const textRef = useRef(text);
   const itemsRef = useRef(items);
@@ -98,7 +100,7 @@ export function ReplyThread({ reportId, panelId, me }: { reportId: string; panel
 
   const len = textLength(text);
   const tooLong = len > REPLY_TEXT_MAX;
-  const canSend = text.trim().length > 0 && !tooLong;
+  const canSend = text.trim().length > 0 && !tooLong && !isNight;
 
   async function send() {
     const v = validateReplyInput(reportId, text);
@@ -187,6 +189,7 @@ export function ReplyThread({ reportId, panelId, me }: { reportId: string; panel
             ref={taRef}
             value={text}
             rows={1}
+            disabled={isNight}
             placeholder="כתבו תגובה..."
             enterKeyHint="send"
             onChange={(e) => setText(e.target.value)}
@@ -210,6 +213,9 @@ export function ReplyThread({ reportId, panelId, me }: { reportId: string; panel
           <Send aria-hidden className="rtl:-scale-x-100" />
         </button>
       </form>
+      {isNight ? (
+        <p className="text-body-sm text-muted-text">התגובות ייפתחו בזריחה ({opensLabel})</p>
+      ) : null}
       <div id={`${panelId}-meta`} className="flex justify-between gap-2 text-body-sm empty:hidden">
         <span role="alert" className="text-danger">
           {metaError ? `⚠ ${metaError}` : ""}

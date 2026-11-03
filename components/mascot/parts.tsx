@@ -97,16 +97,20 @@ export function StandingLegs() {
 type Mouth = "grin" | "smile" | "oh";
 
 /** Head with messy sun-bleached hair + sunglasses.
-    shades="slipped": glasses slid down the nose, eyes visible above them. */
+    shades="slipped": glasses slid down the nose, eyes visible above them.
+    shades="up": glasses pushed up onto the hair; eyes="closed" draws sleeping arcs (use together). */
 export function SurferHead({
   shades = "on",
   mouth = "grin",
+  eyes = "open",
 }: {
-  shades?: "on" | "slipped";
+  shades?: "on" | "slipped" | "up";
   mouth?: Mouth;
+  eyes?: "open" | "closed";
 }) {
   const slipped = shades === "slipped";
-  const ly = slipped ? 74 : 61; // lens top
+  const up = shades === "up";
+  const ly = slipped ? 74 : up ? 30 : 61; // lens top
   return (
     <g>
       {/* ears + head */}
@@ -135,9 +139,18 @@ export function SurferHead({
       {/* nose */}
       {!slipped && <path d="M100 78 q-4 6 1 8" stroke={SKIN_SHADE} strokeWidth="2.8" fill="none" />}
 
+      {/* closed eyes: sleepy arcs with lashes */}
+      {eyes === "closed" && (
+        <g stroke={INK} strokeWidth="3.5" fill="none">
+          <path d="M72 63 Q83 74 94 63" />
+          <path d="M106 63 Q117 74 128 63" />
+          <path d="M75 68 l-4 3 M91 68 l4 3 M109 68 l-4 3 M125 68 l4 3" strokeWidth="2.5" />
+        </g>
+      )}
+
       {/* sunglasses */}
       <g>
-        <path d={`M70 ${ly + 5} L62 ${ly + 3} M130 ${ly + 5} L138 ${ly + 3}`} stroke={INK} strokeWidth="3.5" fill="none" />
+        {!up && <path d={`M70 ${ly + 5} L62 ${ly + 3} M130 ${ly + 5} L138 ${ly + 3}`} stroke={INK} strokeWidth="3.5" fill="none" />}
         <rect x="70" y={ly} width="26" height="17" rx="7" fill={LENS} stroke={INK} strokeWidth="3.5" />
         <rect x="104" y={ly} width="26" height="17" rx="7" fill={LENS} stroke={INK} strokeWidth="3.5" />
         <path d={`M96 ${ly + 6} H104`} stroke={INK} strokeWidth="3.5" fill="none" />

@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Suez_One, IBM_Plex_Sans_Hebrew, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AppStart } from "@/components/session/AppStart";
+import { DaylightProvider } from "@/components/night/DaylightProvider";
+import { getDaylightState, toSnapshot } from "@/lib/daylight";
 
 const suezOne = Suez_One({
   variable: "--font-suez-one",
@@ -36,6 +38,9 @@ export const viewport: Viewport = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // Night lockout state for first paint; the client provider re-evaluates on mount and every minute.
+  const now = new Date();
+  const daylight = toSnapshot(getDaylightState(now), now);
   return (
     <html lang="he" dir="rtl" suppressHydrationWarning>
       <body className={`${suezOne.variable} ${plexHebrew.variable} ${jetbrainsMono.variable} antialiased`}>
@@ -46,8 +51,10 @@ export default function RootLayout({
               "try{if(sessionStorage.getItem('sf_splash_seen')==='1')document.documentElement.setAttribute('data-splash-seen','')}catch(e){}",
           }}
         />
-        {children}
-        <AppStart />
+        <DaylightProvider initial={daylight}>
+          {children}
+          <AppStart />
+        </DaylightProvider>
       </body>
     </html>
   );

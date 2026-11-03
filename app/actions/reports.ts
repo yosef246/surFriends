@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { after } from "next/server";
 import { getCurrentUser, getSupabase } from "@/lib/auth";
+import { getDaylightState, nightClosedMessage } from "@/lib/daylight";
 import { notifyFavoriteUsers } from "@/lib/push-send";
 import {
   REPORT_BUCKET,
@@ -16,6 +17,8 @@ const GENERIC = "הפרסום נכשל. הטקסט נשמר, נסו שוב";
 const RATE_LIMITED = "יותר מדי דיווחים, נסו שוב בעוד כמה דקות";
 
 export async function createReport(input: CreateReportInput): Promise<ActionResult> {
+  // Night lockout (sunset to sunrise, Israel): checked first, before any validation or insert.
+  if (getDaylightState(new Date()).isNight) return { error: nightClosedMessage(), rejected: true };
   const user = await getCurrentUser();
   if (!user) return { error: "רעננו את הדף ונסו שוב" };
   const supabase = await getSupabase();
@@ -55,6 +58,7 @@ export async function createReport(input: CreateReportInput): Promise<ActionResu
       return { error: GENERIC };
     }
     const msg = error.message ?? "";
+    if (msg.includes("night_closed")) return { error: nightClosedMessage(), rejected: true };
     if (msg.includes("rate_limit")) return { error: RATE_LIMITED };
     if (error.code === "23514") {
       if (msg.includes("reports_image_url_own_folder")) return { error: "התמונה לא תקינה", rejected: true };

@@ -231,8 +231,11 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
         </div>
       </div>
 
-      <fieldset className="motion-fade-up card-coast flex flex-col gap-1.5" style={section(3)}>
-        <legend className="section-title mb-2">גובה גל <span className="text-body-sm font-normal text-muted-text">(לא חובה)</span></legend>
+      {/* A div group, not fieldset/legend: a legend is painted on the card's border line, outside its padding. */}
+      <div role="group" aria-labelledby="wave-height-title" className="motion-fade-up card-coast flex flex-col gap-2" style={section(3)}>
+        <p id="wave-height-title" className="section-title">
+          גובה גל <span className="text-body-sm font-normal text-muted-text">(לא חובה)</span>
+        </p>
         <div className="flex flex-wrap gap-2">
           {WAVE_HEIGHTS.map((h) => (
             <button
@@ -247,7 +250,7 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
             </button>
           ))}
         </div>
-      </fieldset>
+      </div>
 
       <div className="motion-fade-up card-coast" style={section(4)}>
         <PhotoField onChange={setPhoto} onProcessing={setProcessing} uploading={stage === "uploading"} uploadError={photoError} disabled={busy} />

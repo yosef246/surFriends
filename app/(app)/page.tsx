@@ -31,6 +31,7 @@ export default async function FeedPage() {
 
   return (
     <div className="flex flex-col gap-6">
+      <h1 className="sr-only">פיד דיווחים</h1>
       <FeedGreeting greeting={greetingFor()} firstName={firstName} />
       <Suspense fallback={null}>
         <PostedNotice />

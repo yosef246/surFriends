@@ -18,15 +18,15 @@ export function OfflineBanner() {
     () => navigator.onLine,
     () => true
   );
-  if (online) return null;
+  // The live region stays mounted so screen readers announce the text when it appears.
   return (
-    <div
-      role="status"
-      aria-live="polite"
-      className="flex items-center justify-center gap-2 bg-ocean-deep px-4 py-2 text-center text-body-sm text-white"
-    >
-      <WifiOff className="size-4" aria-hidden />
-      אין חיבור. מציגים את מה שנטען עד עכשיו
+    <div role="status" aria-live="polite">
+      {online ? null : (
+        <div className="flex items-center justify-center gap-2 bg-ocean-deep px-4 py-2 text-center text-body-sm text-white">
+          <WifiOff className="size-4" aria-hidden />
+          אין חיבור. מציגים את מה שנטען עד עכשיו
+        </div>
+      )}
     </div>
   );
 }

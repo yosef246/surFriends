@@ -261,7 +261,6 @@ export function ReportList({
   return (
     <div className="flex flex-col gap-4">
       {top}
-      {beachId == null && authorId == null ? <h1 className="sr-only">פיד דיווחים</h1> : null}
       <ul className="flex flex-col py-1" aria-busy={pending}>
         {reports.map((r, i) => (
           <li
@@ -269,7 +268,7 @@ export function ReportList({
             className={cn(leaving.has(r.id) ? "animate-card-out" : "motion-fade-up", i > 0 && (grouped[i] ? "mt-0.5" : "mt-3"))}
             style={{ "--i": Math.min(i, 8) } as React.CSSProperties}
           >
-            <StatusBubble report={r} me={me} grouped={grouped[i]} onToggleReaction={onToggleReaction} onDeleted={onReportDelete} />
+            <StatusBubble report={r} me={me} grouped={grouped[i]} priority={i === 0} onToggleReaction={onToggleReaction} onDeleted={onReportDelete} />
           </li>
         ))}
       </ul>

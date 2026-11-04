@@ -92,7 +92,15 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
     setBanner(null);
     setPhotoError(null);
     setTouched({ beach: true, text: true });
-    if (beachId === null || missingText || tooLong) return;
+    if (beachId === null || missingText || tooLong) {
+      // Move focus to the first invalid field (the beach radiogroup's tab stop, else the text box).
+      if (beachId === null) {
+        document.querySelector<HTMLElement>('[aria-labelledby="beach-picker-label"] [tabindex="0"]')?.focus();
+      } else {
+        taRef.current?.focus();
+      }
+      return;
+    }
     if (typeof navigator !== "undefined" && !navigator.onLine) {
       setBanner("אין קליטה. נסו שוב כשיהיה חיבור");
       return;
@@ -286,7 +294,7 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
             {textError ? `⚠ ${textError}` : ""}
           </span>
           {len > 400 || tooLong ? (
-            <span className={`font-mono ${tooLong ? "text-danger" : "text-muted-text"}`}>
+            <span className={`tabular-nums ${tooLong ? "text-danger" : "text-muted-text"}`}>
               {len}/{REPORT_TEXT_MAX}
             </span>
           ) : null}

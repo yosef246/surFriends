@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { Waves } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /** Same periodic path as WaveStrip: 2400 wide, repeats every 1200 (= 50%). */
@@ -129,15 +128,5 @@ export function NightScene() {
       ))}
       <OceanWaves night />
     </div>
-  );
-}
-
-/** Wordmark: Waves icon above "surFriends". */
-export function Wordmark() {
-  return (
-    <p className="flex flex-col items-center gap-1 font-display text-display font-normal text-white drop-shadow">
-      <Waves className="size-7" aria-hidden />
-      surFriends
-    </p>
   );
 }

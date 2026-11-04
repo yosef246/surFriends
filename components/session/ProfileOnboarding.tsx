@@ -2,11 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Loader2 } from "lucide-react";
+import { Check, Loader2, Waves } from "lucide-react";
 import { updateProfile } from "@/app/actions/profile";
 import { greetingFor } from "@/components/feed/FeedGreeting";
 import { Mascot } from "@/components/mascot";
-import { OceanScene, SCENE_PHOTOS, Wordmark } from "@/components/shared/OceanScene";
+import { OceanScene, SCENE_PHOTOS } from "@/components/shared/OceanScene";
 import { SkillLevelSelect } from "@/components/settings/SkillLevelSelect";
 import { Button } from "@/components/ui/button";
 import type { SkillLevel } from "@/lib/database.types";
@@ -78,32 +78,34 @@ export function ProfileOnboarding() {
     <div className="fixed inset-0 z-[90] overflow-hidden bg-ocean-deep text-white">
       <OceanScene />
       <div className="absolute inset-0 overflow-y-auto">
-        <main className="relative mx-auto flex min-h-dvh w-full max-w-sm flex-col justify-between gap-6 px-4 pt-8 pb-10">
-          <header className="flex flex-col items-center gap-3 text-center">
-            <div className="ob-rise" style={{ ["--base" as string]: "100ms" }}>
-              <Wordmark />
+        <main className="relative mx-auto flex min-h-dvh w-full max-w-sm flex-col justify-center px-4 pt-20 pb-12">
+          <div className="ob-card-in relative rounded-3xl bg-white px-6 pt-14 pb-7 text-foreground shadow-2xl">
+            <div className="ob-mascot-pop absolute inset-x-0 -top-14 flex justify-center">
+              <Mascot.Wave size={104} className="motion-float drop-shadow-lg" />
             </div>
-            <div className="ob-mascot-pop">
-              <Mascot.Wave size={112} className="motion-float" />
-            </div>
-            <h1 className="font-display text-hero font-normal text-balance text-white drop-shadow-md">
-              {HEADLINE.map((w, i) => (
-                <span key={w}>
-                  <span className="ob-word" style={{ ["--i" as string]: i }}>
-                    {w}
-                  </span>{" "}
-                </span>
-              ))}
-            </h1>
-            <p className="ob-rise text-body-sm text-white/90" style={{ ["--base" as string]: "950ms" }}>
-              השם שלך יופיע בברכה ובדיווחים
-            </p>
-          </header>
 
-          <div className="ob-card-in rounded-card border border-white/60 bg-white/85 p-5 text-foreground shadow-xl backdrop-blur-md">
-            <form onSubmit={onSubmit} noValidate className="flex w-full flex-col gap-5">
+            <header className="flex flex-col items-center gap-5 text-center">
+              <p className="ob-rise flex items-center gap-2 font-display text-display font-normal text-ink" style={{ ["--base" as string]: "100ms" }}>
+                <Waves className="size-7 text-brand" aria-hidden />
+                surFriends
+              </p>
+              <h1 className="text-title font-semibold text-balance text-ink">
+                {HEADLINE.map((w, i) => (
+                  <span key={w}>
+                    <span className="ob-word" style={{ ["--i" as string]: i }}>
+                      {w}
+                    </span>{" "}
+                  </span>
+                ))}
+                <span className="ob-rise block font-normal text-muted-text" style={{ ["--base" as string]: "950ms" }}>
+                  השם שלך יופיע בברכה ובדיווחים
+                </span>
+              </h1>
+            </header>
+
+            <form onSubmit={onSubmit} noValidate className="mt-7 flex w-full flex-col gap-5">
               <div className="flex flex-col gap-2">
-                <div key={shake} className={`ob-field pt-1 ${shake ? "ob-shake" : ""}`}>
+                <div key={shake} className={`ob-field ${shake ? "ob-shake" : ""}`}>
                   <input
                     ref={inputRef}
                     id="onboard-name"
@@ -117,13 +119,13 @@ export function ProfileOnboarding() {
                     onBlur={() => setTouched(true)}
                     aria-invalid={touched && nameError ? true : undefined}
                     aria-describedby="onboard-name-meta"
-                    className="ob-input block min-h-14 w-full rounded-lg border border-mist-border bg-white px-3.5 pt-6 pb-1.5 text-body text-copy placeholder:text-transparent focus:border-brand focus:outline-none aria-invalid:border-danger disabled:bg-surface disabled:text-muted-text"
+                    className="ob-input block min-h-14 w-full rounded-lg border-2 border-brand/60 bg-white px-3.5 pt-6 pb-1.5 text-body text-copy placeholder:text-transparent focus:border-brand focus:outline-none aria-invalid:border-danger disabled:bg-surface disabled:text-muted-text"
                   />
                   <label htmlFor="onboard-name" className="ob-label text-body">
                     איך קוראים לך?
                   </label>
                 </div>
-                <p aria-hidden className="min-h-6 truncate text-body-sm font-semibold text-ink">
+                <p aria-hidden className="min-h-6 truncate text-center text-body-sm font-semibold text-ink">
                   {preview ? (
                     <>
                       {greetingFor()}, {preview} <span>🤙</span>
@@ -158,7 +160,7 @@ export function ProfileOnboarding() {
                 disabled={pending || done}
                 aria-busy={pending}
                 data-state={state}
-                className="btn-gradient ob-cta w-full disabled:opacity-100"
+                className="btn-gradient ob-cta min-h-14 w-full rounded-pill text-body font-semibold disabled:opacity-100"
               >
                 {done ? (
                   <>
@@ -174,6 +176,8 @@ export function ProfileOnboarding() {
                   "יאללה לים 🤙"
                 )}
               </Button>
+
+              <p className="text-center text-body-sm text-muted-text">בלי סיסמה, בלי מייל. רק שם ולים.</p>
             </form>
           </div>
         </main>

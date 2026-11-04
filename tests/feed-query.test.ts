@@ -96,6 +96,13 @@ test("hero summary filters the latest report by the cutoff too", async () => {
   assert.ok(calls.filter((c) => c[0] === "gt").some((c) => c[2] === CUTOFF));
 });
 
+test("hero summary throws on a DB error instead of reporting a quiet sea (BUG-007)", async () => {
+  const { client } = fakeClient();
+  const q = client.from();
+  q.then = (res: (v: unknown) => void) => res({ data: null, count: null, error: { message: "boom" } });
+  await assert.rejects(fetchHeroSummary(client, CUTOFF), /boom/);
+});
+
 test("my reactions: embedded replies filtered to the viewer; mapper sets flags + on_the_way count", async () => {
   const UID = "11111111-1111-4111-8111-111111111111";
   const row = { id: "a", user_id: "u", text: "x", image_url: null, wave_rating: null, wave_height_estimate: null,

@@ -16,11 +16,13 @@ export type ProfileView = {
 export const getProfileById = cache(async (id: string): Promise<ProfileView | null> => {
   if (!isUuid(id)) return null;
   const supabase = await getSupabase();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("profiles")
     .select("id, display_name, avatar_url, skill_level, bio, created_at")
     .eq("id", id)
     .maybeSingle();
+  // A DB failure must not look like "no such profile" (404).
+  if (error) throw new Error(error.message);
   return data;
 });
 
@@ -39,7 +41,7 @@ export async function fetchFavoriteBeaches(userId: string): Promise<FavoriteBeac
     .from("user_favorites")
     .select("beaches(id, name_he, city, latitude, image_path, image_credit)")
     .eq("user_id", userId);
-  if (error) return [];
+  if (error) throw new Error(error.message);
   const rows = (data ?? []) as unknown as {
     beaches: {
       id: number;

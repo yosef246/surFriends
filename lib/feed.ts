@@ -188,6 +188,9 @@ export async function fetchHeroSummary(
       .limit(1)
       .maybeSingle(),
   ]);
+  // Throw (→ error boundary with retry) rather than render a misleading "quiet sea" on a DB failure.
+  if (countRes.error) throw new Error(countRes.error.message);
+  if (latestRes.error) throw new Error(latestRes.error.message);
   const row = latestRes.data as unknown as {
     created_at: string;
     beaches: { name_he: string; image_path: string | null; image_credit: string | null } | null;
@@ -239,7 +242,7 @@ export async function fetchBeachCircles(
     .eq("user_favorites.user_id", userId)
     .gt("reports.created_at", since)
     .order("latitude", { ascending: false });
-  if (error) return [];
+  if (error) throw new Error(error.message);
 
   const rows = (data ?? []) as unknown as BeachRow[];
   const favs = rows.filter((r) => (r.user_favorites?.length ?? 0) > 0);

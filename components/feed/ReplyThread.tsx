@@ -221,7 +221,7 @@ export function ReplyThread({ reportId, panelId, me }: { reportId: string; panel
           {metaError ? `⚠ ${metaError}` : ""}
         </span>
         {len > REPLY_COUNTER_FROM ? (
-          <span className={cn("font-mono", tooLong ? "text-danger" : "text-muted-text")}>
+          <span className={cn("tabular-nums", tooLong ? "text-danger" : "text-muted-text")}>
             {len}/{REPLY_TEXT_MAX}
           </span>
         ) : null}

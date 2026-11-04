@@ -179,7 +179,7 @@ export function MediaField({ onChange, onProcessing, uploading, uploadError, dis
               <span aria-hidden className="absolute inset-0 m-auto flex size-14 items-center justify-center rounded-full bg-abyss/60 text-xl text-white">
                 ▶
               </span>
-              <span className="absolute end-3 bottom-3 rounded-pill bg-abyss/70 px-2.5 py-1 font-mono text-body-sm font-semibold text-white">
+              <span className="absolute end-3 bottom-3 rounded-pill bg-abyss/70 px-2.5 py-1 tabular-nums text-body-sm font-semibold text-white">
                 {formatDuration(media.kind === "video" ? media.durationMs : 0)}
               </span>
             </>

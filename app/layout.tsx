@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Suez_One, IBM_Plex_Sans_Hebrew, JetBrains_Mono } from "next/font/google";
+import { Suez_One, IBM_Plex_Sans_Hebrew } from "next/font/google";
 import "./globals.css";
 import { AppStart } from "@/components/session/AppStart";
 import { DaylightProvider } from "@/components/night/DaylightProvider";
@@ -15,11 +15,6 @@ const plexHebrew = IBM_Plex_Sans_Hebrew({
   variable: "--font-plex-hebrew",
   subsets: ["hebrew", "latin"],
   weight: ["400", "500", "600", "700"],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -43,7 +38,7 @@ export default function RootLayout({
   const daylight = toSnapshot(getDaylightState(now), now);
   return (
     <html lang="he" dir="rtl" suppressHydrationWarning>
-      <body className={`${suezOne.variable} ${plexHebrew.variable} ${jetbrainsMono.variable} antialiased`}>
+      <body className={`${suezOne.variable} ${plexHebrew.variable} antialiased`}>
         <script
           // Before first paint: hide the launch splash when it was already shown in this browser session.
           dangerouslySetInnerHTML={{

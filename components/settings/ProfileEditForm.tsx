@@ -102,7 +102,7 @@ export function ProfileEditForm({ initial }: { initial: Initial }) {
             {touched && nameError ? `⚠ ${nameError}` : ""}
           </span>
           {nameLen > 30 ? (
-            <span className={`font-mono ${nameLen > DISPLAY_NAME_MAX ? "text-danger" : "text-muted-text"}`}>
+            <span className={`tabular-nums ${nameLen > DISPLAY_NAME_MAX ? "text-danger" : "text-muted-text"}`}>
               {nameLen}/{DISPLAY_NAME_MAX}
             </span>
           ) : null}
@@ -134,7 +134,7 @@ export function ProfileEditForm({ initial }: { initial: Initial }) {
             {bioError ? `⚠ ${bioError}` : ""}
           </span>
           {bioLen > 120 ? (
-            <span className={`font-mono ${bioLen > BIO_MAX ? "text-danger" : "text-muted-text"}`}>
+            <span className={`tabular-nums ${bioLen > BIO_MAX ? "text-danger" : "text-muted-text"}`}>
               {bioLen}/{BIO_MAX}
             </span>
           ) : null}

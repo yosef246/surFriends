@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Ruler } from "lucide-react";
@@ -12,6 +11,8 @@ import type { FeedReport } from "@/lib/feed";
 import type { ReactionKind } from "@/lib/replies";
 import { isTrustedMedia } from "@/lib/media-trust";
 import { cn } from "@/lib/utils";
+import { PhotoLightbox } from "./PhotoLightbox";
+import { ReportText } from "./ReportText";
 import { VideoBubble } from "./VideoBubble";
 import { QuickReactionBar } from "./QuickReactionBar";
 import { ReplyThread, type ThreadViewer } from "./ReplyThread";
@@ -28,12 +29,15 @@ export function StatusBubble({
   report,
   me,
   grouped = false,
+  priority = false,
   onToggleReaction,
   onDeleted,
 }: {
   report: FeedReport;
   me: ThreadViewer;
   grouped?: boolean;
+  /** First bubble in the list: its photo is likely the LCP element. */
+  priority?: boolean;
   /** Optimistic reaction toggle owned by the feed; resolves to an error message or null. */
   onToggleReaction: (reportId: string, kind: ReactionKind) => Promise<string | null>;
   onDeleted: (reportId: string) => void;
@@ -107,7 +111,7 @@ export function StatusBubble({
           ) : null}
 
           {report.text ? (
-            <p className="text-body break-words whitespace-pre-line text-copy prose-he">{report.text}</p>
+            <ReportText text={report.text} />
           ) : null}
 
           {hasVideo ? (
@@ -120,15 +124,11 @@ export function StatusBubble({
           ) : null}
 
           {hasImage ? (
-            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-surface">
-              <Image
-                src={report.image_url!}
-                alt={beach ? `תמונה מהדיווח ב${beach.name_he}` : "תמונה מהדיווח"}
-                fill
-                sizes="(max-width: 576px) 85vw, 480px"
-                className="object-cover"
-              />
-            </div>
+            <PhotoLightbox
+              src={report.image_url!}
+              alt={beach ? `תמונה מהדיווח ב${beach.name_he}` : "תמונה מהדיווח"}
+              priority={priority}
+            />
           ) : null}
 
           {report.wave_rating !== null || report.wave_height_estimate ? (

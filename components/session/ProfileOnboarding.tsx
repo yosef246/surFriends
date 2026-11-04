@@ -139,7 +139,7 @@ export function ProfileOnboarding() {
                     {touched && nameError ? `⚠ ${nameError}` : ""}
                   </span>
                   {nameLen > 30 ? (
-                    <span className={`font-mono ${nameLen > DISPLAY_NAME_MAX ? "text-danger" : "text-muted-text"}`}>
+                    <span className={`tabular-nums ${nameLen > DISPLAY_NAME_MAX ? "text-danger" : "text-muted-text"}`}>
                       {nameLen}/{DISPLAY_NAME_MAX}
                     </span>
                   ) : null}

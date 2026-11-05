@@ -18,6 +18,10 @@ import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "הפרופיל שלי | surFriends" };
 
+// Hidden while the Google OAuth consent screen is in "Testing": only listed test users can sign in,
+// everyone else gets "Access blocked". Flip to true after publishing it to Production.
+const GOOGLE_LINK_ENABLED = false;
+
 export default async function ProfilePage({ searchParams }: { searchParams: Promise<{ link_error?: string }> }) {
   const [supabase, user, { link_error }] = await Promise.all([getSupabase(), getCurrentUser(), searchParams]);
   if (!user) return <PreparingProfile />;
@@ -57,7 +61,7 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
         }
       />
 
-      <GoogleLinkCard linkError={link_error ? safeErrorCode(link_error) : null} />
+      {GOOGLE_LINK_ENABLED ? <GoogleLinkCard linkError={link_error ? safeErrorCode(link_error) : null} /> : null}
 
       <FavoriteBeaches beaches={favorites} />
 

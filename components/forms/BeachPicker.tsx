@@ -22,6 +22,9 @@ type Props = {
   onBlur?: () => void;
 };
 
+// beaches.region is stored in English.
+const REGION_LABELS: Record<string, string> = { North: "צפון", Center: "מרכז", South: "דרום" };
+
 /** Horizontal scroll row of small photo tiles grouped by region. Radiogroup with roving tabindex + arrow keys. */
 export function BeachPicker({ beaches, value, onChange, error, onBlur }: Props) {
   const id = "beach-picker"; // one per page; a fixed id avoids useId hydration mismatches
@@ -72,7 +75,7 @@ export function BeachPicker({ beaches, value, onChange, error, onBlur }: Props) 
         {groups.map(([region, list]) => (
           <div key={region} role="presentation" className="flex shrink-0 flex-col gap-1.5">
             <span aria-hidden className="eyebrow">
-              {region}
+              {REGION_LABELS[region] ?? region}
             </span>
             <div role="presentation" className="flex gap-2">
               {list.map((b) => {

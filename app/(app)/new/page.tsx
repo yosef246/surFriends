@@ -17,8 +17,7 @@ export default async function NewReportPage({
   const { data: beaches, error } = await supabase
     .from("beaches")
     .select("id, name_he, city, region, image_path, image_credit")
-    .order("region")
-    .order("name_he");
+    .order("latitude", { ascending: false }); // north to south, so the region groups come out צפון, מרכז, דרום
 
   const wanted = Number(beach);
   const defaultBeachId =

@@ -167,4 +167,4 @@ MIT. See [LICENSE](./LICENSE).
 
 ## Author
 
-**Yosef Palas**, Full-Stack Developer, Haifa, Israel.
+**Yosef Palas**, AI Engneer | Full-Stack Developer, Haifa, Israel.

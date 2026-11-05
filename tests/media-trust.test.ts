@@ -3,8 +3,6 @@ import test from "node:test";
 import assert from "node:assert/strict";
 // @ts-expect-error -- .ts extension is required by node --test, not allowed by tsc config
 import { trustedHost, isTrustedMediaFor } from "../lib/media-trust.ts";
-// @ts-expect-error -- .ts extension is required by node --test, not allowed by tsc config
-import { announcePlay, subscribePlay, shouldPause } from "../lib/video-bus.ts";
 
 test("isTrustedMedia host check", () => {
   const host = trustedHost("https://abc.supabase.co");
@@ -18,13 +16,3 @@ test("isTrustedMedia host check", () => {
   assert.equal(trustedHost(undefined), null);
 });
 
-test("video bus pauses others only", () => {
-  assert.equal(shouldPause("a", "b"), true);
-  assert.equal(shouldPause("a", "a"), false);
-  const seen: string[] = [];
-  const off = subscribePlay((id: string) => seen.push(id));
-  announcePlay("x");
-  off();
-  announcePlay("y");
-  assert.deepEqual(seen, ["x"]);
-});

@@ -12,7 +12,6 @@ import {
   LAST_BEACH_KEY,
   QUICK_TEXTS,
   REPORT_BUCKET,
-  VIDEO_BUCKET,
   REPORT_TEXT_MAX,
   WAVE_HEIGHTS,
   isBlankText,
@@ -43,8 +42,6 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
   const reportId = useRef<string | null>(null);
   // Photo already uploaded for the current blob, reused on retry (no orphan, same URL).
   const uploaded = useRef<{ blob: Blob; path: string; url: string } | null>(null);
-  // Video + poster already uploaded for the current blob (each field lets a retry skip what succeeded).
-  const uploadedVideo = useRef<{ blob: Blob; videoUrl?: string; posterUrl?: string } | null>(null);
   const taRef = useRef<HTMLTextAreaElement>(null);
 
   // Single-line pill that grows (max 3 lines) only when the text wraps.
@@ -118,11 +115,9 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
     const supabase = createClient();
     try {
       let imageUrl: string | null = null;
-      let video: { url: string; posterUrl: string; durationMs: number } | null = null;
-      const photo = media?.kind === "image" ? media.blob : null;
-      const vid = media?.kind === "video" ? media : null;
+      const photo = media?.blob ?? null;
 
-      if (photo &&uploaded.current?.blob === photo) {
+      if (photo && uploaded.current?.blob === photo) {
         imageUrl = uploaded.current.url;
       } else if (photo) {
         uploaded.current = null;
@@ -150,61 +145,10 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
         uploaded.current = { blob: photo, path, url: imageUrl };
       }
 
-      if (vid) {
-        let cache = uploadedVideo.current;
-        if (cache && cache.blob !== vid.blob) {
-          // A different clip after an earlier upload: the old objects are named after this report id, so use a new id.
-          reportId.current = crypto.randomUUID();
-          uploadedVideo.current = null;
-        }
-        const vidId = reportId.current!;
-        setStage("uploading");
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-        if (!user) {
-          setBanner("רעננו את הדף ונסו שוב");
-          return;
-        }
-        cache = uploadedVideo.current ??= { blob: vid.blob };
-        const bucket = supabase.storage.from(VIDEO_BUCKET);
-        const upFail = (msg: string) =>
-          setPhotoError(
-            /row-level security|policy/i.test(msg) ? "יותר מדי העלאות, נסו שוב בעוד כמה דקות" : "ההעלאה נכשלה. נסו שוב או הסירו את הסרטון"
-          );
-        if (!cache.videoUrl) {
-          const path = `${user.id}/${vidId}.${vid.ext}`;
-          const { error: upErr } = await bucket.upload(path, vid.blob, { contentType: vid.mime, upsert: false });
-          if (upErr) return upFail(upErr.message);
-          cache.videoUrl = bucket.getPublicUrl(path).data.publicUrl;
-        }
-        if (!cache.posterUrl) {
-          const path = `${user.id}/${vidId}-poster.jpg`;
-          const { error: upErr } = await bucket.upload(path, vid.posterBlob, { contentType: "image/jpeg", upsert: false });
-          if (upErr) return upFail(upErr.message);
-          cache.posterUrl = bucket.getPublicUrl(path).data.publicUrl;
-        }
-        video = { url: cache.videoUrl, posterUrl: cache.posterUrl, durationMs: vid.durationMs };
-      }
-
       setStage("saving");
       let res: Awaited<ReturnType<typeof createReport>>;
       try {
-        res = await createReport(
-          video
-            ? {
-                id: reportId.current!,
-                beachId,
-                text,
-                waveRating: rating,
-                waveHeight: height,
-                imageUrl: null,
-                videoUrl: video.url,
-                videoPosterUrl: video.posterUrl,
-                videoDurationMs: video.durationMs,
-              }
-            : { id, beachId, text, waveRating: rating, waveHeight: height, imageUrl }
-        );
+        res = await createReport({ id, beachId, text, waveRating: rating, waveHeight: height, imageUrl });
       } catch {
         res = { error: "הפרסום נכשל. הטקסט נשמר, נסו שוב" };
       }
@@ -215,8 +159,6 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
           await supabase.storage.from(REPORT_BUCKET).remove([uploaded.current.path]).catch(() => {});
           uploaded.current = null;
         }
-        // The server already removed the video orphans on a definitive rejection (part A); forget them here.
-        if (res.rejected) uploadedVideo.current = null;
         setBanner(res.error);
         return;
       }
@@ -237,9 +179,7 @@ export function NewReportForm({ beaches, defaultBeachId }: Props) {
   const label = processing
     ? "מעבדים..."
     : stage === "uploading"
-      ? media?.kind === "video"
-        ? "מעלים סרטון..."
-        : "מעלים תמונה..."
+      ? "מעלים תמונה..."
       : stage === "saving" || done
         ? "מפרסמים..."
         : "פרסמו 🤙";

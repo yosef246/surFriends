@@ -13,7 +13,6 @@ import { isTrustedMedia } from "@/lib/media-trust";
 import { cn } from "@/lib/utils";
 import { PhotoLightbox } from "./PhotoLightbox";
 import { ReportText } from "./ReportText";
-import { VideoBubble } from "./VideoBubble";
 import { QuickReactionBar } from "./QuickReactionBar";
 import { ReplyThread, type ThreadViewer } from "./ReplyThread";
 import { ReportMenu } from "./ReportMenu";
@@ -48,9 +47,8 @@ export function StatusBubble({
   // Derived from the report id (not useId): stable across server and client even if the tree above differs.
   const panelId = `thread-${report.id}`;
   const isOwn = report.user_id === me.id;
-  const hasVideo = !!report.video_url && isTrustedMedia(report.video_url);
-  const hasImage = !hasVideo && !!report.image_url && isTrustedMedia(report.image_url);
-  const hasMedia = hasVideo || hasImage;
+  const hasImage = !!report.image_url && isTrustedMedia(report.image_url);
+  const hasMedia = hasImage;
   const showHeader = !grouped;
 
   return (
@@ -112,15 +110,6 @@ export function StatusBubble({
 
           {report.text ? (
             <ReportText text={report.text} />
-          ) : null}
-
-          {hasVideo ? (
-            <VideoBubble
-              src={report.video_url!}
-              poster={report.video_poster_url}
-              durationMs={report.video_duration_ms}
-              beachName={beach?.name_he}
-            />
           ) : null}
 
           {hasImage ? (

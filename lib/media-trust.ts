@@ -1,4 +1,4 @@
-// Only media on the project's Supabase host may reach next/image or <video>.
+// Only media on the project's Supabase host may reach next/image.
 
 export function trustedHost(supabaseUrl: string | undefined): string | null {
   try {

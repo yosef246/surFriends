@@ -8,9 +8,6 @@ export type FeedReport = {
   user_id: string;
   text: string | null;
   image_url: string | null;
-  video_url: string | null;
-  video_poster_url: string | null;
-  video_duration_ms: number | null;
   wave_rating: number | null;
   wave_height_estimate: string | null;
   created_at: string;
@@ -55,7 +52,7 @@ type Row = Omit<
 const NO_USER = "00000000-0000-0000-0000-000000000000";
 
 /** The one select shape for feed reports (server list, load-more, realtime single fetch). */
-export const FEED_SELECT = `id, user_id, text, image_url, video_url, video_poster_url, video_duration_ms, wave_rating, wave_height_estimate, created_at,
+export const FEED_SELECT = `id, user_id, text, image_url, wave_rating, wave_height_estimate, created_at,
        profiles(display_name, avatar_url),
        beaches(id, name_he, city, image_path, image_credit),
        replies(count),
@@ -70,9 +67,6 @@ export function mapFeedRow(r: Row): FeedReport {
     user_id: r.user_id,
     text: r.text,
     image_url: r.image_url,
-    video_url: r.video_url,
-    video_poster_url: r.video_poster_url,
-    video_duration_ms: r.video_duration_ms,
     wave_rating: r.wave_rating,
     wave_height_estimate: r.wave_height_estimate,
     created_at: r.created_at,

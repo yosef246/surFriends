@@ -7,7 +7,7 @@ import { trustedHost, isTrustedMediaFor } from "../lib/media-trust.ts";
 test("isTrustedMedia host check", () => {
   const host = trustedHost("https://abc.supabase.co");
   assert.equal(host, "abc.supabase.co");
-  assert.equal(isTrustedMediaFor(host, "https://abc.supabase.co/storage/v1/object/public/report-videos/a.mp4"), true);
+  assert.equal(isTrustedMediaFor(host, "https://abc.supabase.co/storage/v1/object/public/report-images/a.jpg"), true);
   assert.equal(isTrustedMediaFor(host, "https://evil.example/a.mp4"), false);
   assert.equal(isTrustedMediaFor(host, "javascript:alert(1)"), false);
   assert.equal(isTrustedMediaFor(host, "not a url"), false);

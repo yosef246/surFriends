@@ -2,7 +2,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 // @ts-expect-error -- .ts extension is required by node --test, not allowed by tsc config
-import { fetchReports, fetchHeroSummary, parseFeedCursor, FEED_PAGE_SIZE } from "../lib/feed.ts";
+import { fetchReports, fetchHeroSummary, fetchBeachCircles, parseFeedCursor, FEED_PAGE_SIZE } from "../lib/feed.ts";
 // @ts-expect-error -- .ts extension is required by node --test, not allowed by tsc config
 import { reportCutoffIso, REPORT_TTL_HOURS } from "../lib/reports.ts";
 
@@ -101,6 +101,16 @@ test("hero summary throws on a DB error instead of reporting a quiet sea (BUG-00
   const q = client.from();
   q.then = (res: (v: unknown) => void) => res({ data: null, count: null, error: { message: "boom" } });
   await assert.rejects(fetchHeroSummary(client, CUTOFF), /boom/);
+});
+
+test("beach circles never send a malformed user id (first visit has no session yet)", async () => {
+  const { client, calls } = fakeClient();
+  await fetchBeachCircles(client, "");
+  assert.deepEqual(calls.find((c) => c[0] === "eq" && c[1] === "user_favorites.user_id"), [
+    "eq",
+    "user_favorites.user_id",
+    "00000000-0000-0000-0000-000000000000",
+  ]);
 });
 
 test("my reactions: embedded replies filtered to the viewer; mapper sets flags + on_the_way count", async () => {

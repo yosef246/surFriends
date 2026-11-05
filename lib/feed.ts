@@ -239,7 +239,8 @@ export async function fetchBeachCircles(
   const { data, error } = await supabase
     .from("beaches")
     .select("id, name_he, latitude, image_path, image_credit, user_favorites(user_id), reports(count)")
-    .eq("user_favorites.user_id", userId)
+    // An empty / malformed id is a Postgres uuid error (first visit, before the anonymous session exists).
+    .eq("user_favorites.user_id", UUID.test(userId) ? userId : NO_USER)
     .gt("reports.created_at", since)
     .order("latitude", { ascending: false });
   if (error) throw new Error(error.message);

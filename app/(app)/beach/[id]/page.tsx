@@ -2,7 +2,7 @@ import { cache } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, ChevronLeft } from "lucide-react";
+import { ArrowRight, ChevronLeft, ExternalLink } from "lucide-react";
 import { ForecastSummary } from "@/components/forecast/ForecastSummary";
 import { WaveChart } from "@/components/forecast/WaveChart";
 import { ReportList } from "@/components/feed/ReportList";
@@ -12,6 +12,7 @@ import { PhotoHero } from "@/components/shared/PhotoHero";
 import { RelativeAgo } from "@/components/shared/RelativeTime";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { buttonVariants } from "@/components/ui/button";
+import { beachCamFor } from "@/lib/beach-cams";
 import { DEFAULT_DISPLAY_NAME } from "@/lib/profile";
 import { getCurrentProfile, getCurrentUser, getSupabase } from "@/lib/auth";
 import { fetchReports } from "@/lib/feed";
@@ -26,7 +27,7 @@ const getBeach = cache(async (id: number) => {
   const supabase = await getSupabase();
   const { data } = await supabase
     .from("beaches")
-    .select("id, name_he, city, region, difficulty, description, image_path, image_credit")
+    .select("id, slug, name_he, city, region, difficulty, description, image_path, image_credit")
     .eq("id", id)
     .maybeSingle();
   return data;
@@ -59,6 +60,7 @@ export default async function BeachPage({ params }: { params: Promise<{ id: stri
   const displayName =
     profile?.display_name ?? (user?.user_metadata?.full_name as string | undefined) ?? DEFAULT_DISPLAY_NAME;
   const avatarUrl = profile?.avatar_url ?? (user?.user_metadata?.avatar_url as string | undefined) ?? null;
+  const cam = beachCamFor(beach.slug);
 
   return (
     <div className="flex flex-col gap-6">
@@ -99,6 +101,24 @@ export default async function BeachPage({ params }: { params: Promise<{ id: stri
           />
         ) : null}
       </PhotoHero>
+
+      {cam ? (
+        <a
+          href={cam.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={cn(buttonVariants({ variant: "secondary" }), "btn-secondary min-h-touch w-full justify-between gap-3")}
+        >
+          <span className="flex min-w-0 items-center gap-2">
+            <span aria-hidden>📹</span>
+            <span className="truncate">
+              מצלמה בלייב <span className="font-normal text-muted-text">· {cam.label}</span>
+            </span>
+          </span>
+          <ExternalLink className="size-4 shrink-0" aria-hidden />
+          <span className="sr-only">(נפתח בלשונית חדשה)</span>
+        </a>
+      ) : null}
 
       {beach.difficulty || beach.description ? (
         <section className="card-coast flex flex-col gap-2" aria-label="על החוף">

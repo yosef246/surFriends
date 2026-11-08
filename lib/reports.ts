@@ -3,8 +3,6 @@ export const REPORT_TEXT_MAX = 500;
 export const WAVE_HEIGHTS = ["קרסול", "ברך", "מותן", "כתף", "ראש"] as const;
 export const QUICK_TEXTS = ["גלים נקיים", "עמוס בחוף", "ריק ושקט", "רוח חזקה", "גלים גדולים"] as const;
 export const REPORT_BUCKET = "report-images";
-/** Videos were removed from the app; the bucket is only read by the TTL purge for clips posted before. */
-export const VIDEO_BUCKET = "report-videos";
 export const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 /** Reports (and their replies/images) live this long. Keep in sync with the 12 hours in
  *  supabase/migrations/20261029020000_report_ttl_cleanup.sql. */

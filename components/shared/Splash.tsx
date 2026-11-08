@@ -1,12 +1,34 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { Waves } from "lucide-react";
 import { Mascot } from "@/components/mascot";
-import { OceanBubbles, OceanWaves } from "@/components/shared/OceanScene";
-import { DEFAULT_BEACH_PHOTO } from "@/lib/beach-photo";
+import { OceanScene, SCENE_PHOTOS } from "@/components/shared/OceanScene";
 import { SPLASH_FADE_MS, splashDismissDelay } from "@/lib/splash";
+
+/** Same periodic path as OceanWaves: 2400 wide, repeats every 1200 (= 50%). */
+const WAVE = "M0 40 Q150 0 300 40 T600 40 T900 40 T1200 40 T1500 40 T1800 40 T2100 40 T2400 40 V100 H0 Z";
+const CREDITS = [...new Set(SCENE_PHOTOS.map((p) => p.credit))].join(" · ");
+
+/** The loading mark: גל rides a wave; the waves slide under him and he bobs with them. */
+function SurfLoader() {
+  return (
+    <div aria-hidden className="ld relative h-44 w-60">
+      <div className="ld-sea absolute inset-x-0 bottom-0 h-14 overflow-hidden">
+        <svg viewBox="0 0 2400 100" preserveAspectRatio="none" className="ld-wave ld-wave-back absolute bottom-2 left-0 h-12 w-[200%] text-white/35">
+          <path d={WAVE} fill="currentColor" />
+        </svg>
+        <svg viewBox="0 0 2400 100" preserveAspectRatio="none" className="ld-wave absolute bottom-0 left-0 h-10 w-[200%] text-white/80">
+          <path d={WAVE} fill="currentColor" />
+        </svg>
+      </div>
+      {/* After the sea, so the board rides on top of the wave. */}
+      <div className="ld-rider absolute inset-x-0 bottom-8 flex justify-center">
+        <Mascot.Surf size={132} />
+      </div>
+    </div>
+  );
+}
 
 export const SPLASH_FLAG = "sf_splash_seen";
 
@@ -59,23 +81,23 @@ export function Splash({ ready }: { ready: boolean }) {
       aria-label="טוען את surFriends"
       inert={phase === "fading"}
       style={{ transitionDuration: `${SPLASH_FADE_MS}ms` }}
-      className={`fixed inset-0 z-[100] overflow-hidden bg-ocean-deep transition-opacity ease-out ${
+      className={`fixed inset-0 z-[100] overflow-hidden bg-ocean-deep text-white transition-opacity ease-out ${
         phase === "fading" ? "opacity-0" : "opacity-100"
       }`}
     >
-      <Image src={DEFAULT_BEACH_PHOTO.path} alt="" fill priority sizes="100vw" className="object-cover" />
-      <div className="ob-veil" aria-hidden />
-      <OceanBubbles />
-      <OceanWaves />
-      <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-sm flex-col items-center justify-end gap-3 px-6 pt-10 pb-24 text-center text-white">
-        <Mascot.Wave size={96} />
-        <p className="flex items-center gap-2 font-display text-hero font-normal text-white drop-shadow">
-          <Waves className="size-9 shrink-0" aria-hidden />
+      {/* Same scene as the sign-up screen, so loading flows straight into it. */}
+      <OceanScene />
+      <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-sm flex-col items-center justify-center gap-5 px-6 pb-16 text-center">
+        <SurfLoader />
+        <p className="flex items-center gap-2 font-display text-display font-normal text-white drop-shadow">
+          <Waves className="size-7 shrink-0" aria-hidden />
           surFriends
         </p>
         <p className="eyebrow eyebrow-light">קהילת הגולשים של ישראל</p>
       </div>
-      <span className="credit">© {DEFAULT_BEACH_PHOTO.credit} · CC</span>
+      <span className="credit z-10" aria-hidden>
+        © {CREDITS} · CC
+      </span>
     </div>
   );
 }

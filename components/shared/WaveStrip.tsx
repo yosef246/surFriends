@@ -10,7 +10,7 @@ function Layer({ className }: { className?: string }) {
       aria-hidden
       viewBox="0 0 2400 100"
       preserveAspectRatio="none"
-      className={cn("absolute bottom-0 h-full w-[200%]", className)}
+      className={cn("absolute bottom-0 left-0 h-full w-[200%]", className)}
     >
       <path d={D} fill="currentColor" />
     </svg>

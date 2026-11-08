@@ -25,7 +25,7 @@ export function OceanWaves({ className, night = false }: { className?: string; n
           viewBox="0 0 2400 100"
           preserveAspectRatio="none"
           style={{ animationDuration: l.dur, ["--drift-dir" as string]: l.dir }}
-          className={cn("motion-drift absolute bottom-0 w-[200%]", l.h, l.tone)}
+          className={cn("motion-drift absolute bottom-0 left-0 w-[200%]", l.h, l.tone)}
         >
           <path d={D} fill="currentColor" />
         </svg>

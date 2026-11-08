@@ -345,12 +345,14 @@
       transform: translateY(-6px) rotate(-1.5deg);
     }
   }
+  /* The strip is 200% wide and pinned left (left-0, also in RTL). --drift-dir 1 slides 0 -> -50%,
+     -1 slides -50% -> 0, so the visible half is always covered. */
   @keyframes wave-drift {
     from {
-      transform: translateX(0);
+      transform: translateX(calc((var(--drift-dir, 1) - 1) * 25%));
     }
     to {
-      transform: translateX(calc(var(--drift-dir, 1) * -50%));
+      transform: translateX(calc((var(--drift-dir, 1) + 1) * -25%));
     }
   }
   @keyframes squish {
@@ -1372,6 +1374,42 @@
 }
 @utility motion-chart-fade {
   animation: chart-fade 700ms var(--ease-out-soft) both;
+}
+
+/* Splash loader: two wave layers slide under גל (one wave period per --ld-t) and he bobs with them.
+   Edges fade out so the band reads as a patch of sea, not a strip. */
+.ld {
+  --ld-t: 1.8s;
+}
+.ld-sea {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent);
+}
+.ld-wave {
+  animation: ld-drift var(--ld-t) linear infinite;
+  will-change: transform;
+}
+.ld-wave-back {
+  animation-duration: calc(var(--ld-t) * 1.6);
+  animation-direction: reverse;
+}
+@keyframes ld-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+.ld-rider {
+  transform-origin: 50% 100%;
+  animation: ld-bob var(--ld-t) ease-in-out infinite;
+}
+@keyframes ld-bob {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(-4deg); }
+  50% { transform: translate3d(0, -8px, 0) rotate(4deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ld-wave,
+  .ld-rider {
+    animation: none;
+  }
 }
 
 /* Launch splash: skipped when already shown in this browser session (see root layout script). */

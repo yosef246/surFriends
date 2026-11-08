@@ -3,6 +3,7 @@ import { Suez_One, IBM_Plex_Sans_Hebrew } from "next/font/google";
 import "./globals.css";
 import { AppStart } from "@/components/session/AppStart";
 import { DaylightProvider } from "@/components/night/DaylightProvider";
+import { startupImages } from "@/lib/apple-splash";
 import { getDaylightState, toSnapshot } from "@/lib/daylight";
 
 const suezOne = Suez_One({
@@ -20,7 +21,7 @@ const plexHebrew = IBM_Plex_Sans_Hebrew({
 export const metadata: Metadata = {
   title: "surFriends",
   description: "קהילת הגולשים של ישראל",
-  appleWebApp: { capable: true, title: "surFriends", statusBarStyle: "default" },
+  appleWebApp: { capable: true, title: "surFriends", statusBarStyle: "default", startupImage: startupImages() },
 };
 
 export const viewport: Viewport = {

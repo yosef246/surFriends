@@ -8,9 +8,9 @@ A real-time surf community for Israel's coast. Surfers post short reports from t
 
 ## Screenshots
 
-| Sign-up | Feed | Beach | New report |
+| Sign-up | Feed | Beach | Night mode |
 | :---: | :---: | :---: | :---: |
-| <img src="docs/screenshots/onboarding.png" width="200" alt="Sign-up: pick a name and surf level"> | <img src="docs/screenshots/feed.png" width="200" alt="Feed with greeting, hero card and beach slider"> | <img src="docs/screenshots/beach.png" width="200" alt="Beach page with live cam link and forecast"> | <img src="docs/screenshots/new-report.png" width="200" alt="New report form"> |
+| <img src="docs/screenshots/onboarding.png" width="200" alt="Sign-up: pick a name and surf level"> | <img src="docs/screenshots/feed.png" width="200" alt="Feed with greeting, live card and beach slider"> | <img src="docs/screenshots/beach.png" width="200" alt="Beach page with live cam link and forecast"> | <img src="docs/screenshots/night.png" width="200" alt="Night screen: closed until first light"> |
 
 ## Features
 
@@ -30,7 +30,7 @@ A real-time surf community for Israel's coast. Surfers post short reports from t
 | Layer | Technology |
 | --- | --- |
 | Framework | Next.js 15.5 (App Router, Server Actions, Route Handlers), React 19, TypeScript |
-| Styling | Tailwind CSS v4, shadcn/ui (Base UI), lucide-react |
+| Styling | Tailwind CSS v4, shadcn/ui (Base UI), lucide-react; sticker-book design (pastel paper, black outlines, pill buttons) with Karantina + Rubik |
 | Backend | Supabase: Postgres + RLS, anonymous Auth, Storage, Realtime, `pg_cron` |
 | Forecast | Open-Meteo Marine + Weather APIs (no key) |
 | Push | Web Push (VAPID) via `web-push` |

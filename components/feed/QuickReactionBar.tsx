@@ -78,7 +78,7 @@ export function QuickReactionBar({ comingCount, onTheWayCount, myComing, myOnThe
       </div>
       {isNight && !isOwn ? (
         <p id={noteId} className="text-body-sm text-muted-text">
-          התגובות ייפתחו בזריחה ({opensLabel})
+          התגובות ייפתחו עם האור הראשון ({opensLabel})
         </p>
       ) : null}
       <p role="alert" className="text-body-sm text-danger empty:hidden">

@@ -54,7 +54,7 @@ export function NightScreen({ onPeek }: { onPeek: () => void }) {
           בלילה מסוכן להיכנס למים. דיווחים, תגובות ו&apos;אני בא&apos; סגורים עד הבוקר.
         </p>
         <div className="ob-card-in w-full rounded-card border border-white/20 bg-white/10 p-5 backdrop-blur-md">
-          <p className="eyebrow eyebrow-light">נפתח שוב בזריחה</p>
+          <p className="eyebrow eyebrow-light">נפתח שוב עם האור הראשון</p>
           <p className="mt-1 font-display text-hero font-normal text-white">
             <time dateTime={new Date(opensAtMs).toISOString()} dir="ltr">
               {opensLabel}

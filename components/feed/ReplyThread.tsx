@@ -214,7 +214,7 @@ export function ReplyThread({ reportId, panelId, me }: { reportId: string; panel
         </button>
       </form>
       {isNight ? (
-        <p className="text-body-sm text-muted-text">התגובות ייפתחו בזריחה ({opensLabel})</p>
+        <p className="text-body-sm text-muted-text">התגובות ייפתחו עם האור הראשון ({opensLabel})</p>
       ) : null}
       <div id={`${panelId}-meta`} className="flex justify-between gap-2 text-body-sm empty:hidden">
         <span role="alert" className="text-danger">

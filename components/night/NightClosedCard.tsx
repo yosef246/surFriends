@@ -12,7 +12,7 @@ export function NightClosedCard() {
       <Mascot.Sleeping size={120} />
       <p className="mt-3 text-heading font-bold text-ink">הדיווחים סגורים בלילה 🌙</p>
       <p className="mt-1 max-w-xs text-body-sm text-muted-text prose-he">
-        בלילה מסוכן להיכנס למים. נפתח שוב בזריחה, ב-<time dir="ltr">{opensLabel}</time>
+        בלילה מסוכן להיכנס למים. נפתח שוב עם האור הראשון, ב-<time dir="ltr">{opensLabel}</time>
       </p>
     </div>
   );

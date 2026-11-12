@@ -20,7 +20,7 @@ A real-time surf community for Israel's coast. Surfers post short reports from t
 - **Quick reactions and replies.** One-tap "אני בא" / "בדרך" plus one level of text replies, with optimistic updates.
 - **Beach page.** 72-hour marine and wind forecast from Open-Meteo with a hand-rolled SVG chart and a 1-5 score, clearly labeled as an automatic forecast. Eight beaches link out to a free public live cam.
 - **Favorites and Web Push.** Star a beach to get a push when someone reports there; report owners get a push on reactions and replies. Per-beach and per-report cooldowns.
-- **Night mode.** Between sunset and sunrise (computed for Israel, NOAA algorithm) reporting and replies are closed, enforced in the UI, the server and the database.
+- **Night mode.** From last light to first light (civil twilight, ~25 minutes after sunset and before sunrise, computed for Israel with the NOAA algorithm) reporting and replies are closed, enforced in the UI, the server and the database.
 - **12-hour report TTL.** Reports disappear from the UI after 12 hours and are deleted by `pg_cron`; images are removed by a Vercel Cron route.
 - **PWA.** Manifest, icons, installable; the service worker (`public/sw.js`) handles push only.
 - **Hebrew RTL and accessibility.** Logical CSS properties only, `prefers-reduced-motion` honored, native `<dialog>`, focus moved to the first invalid field, Hebrew 404 and error screens.

@@ -1,8 +1,9 @@
 /**
  * Night lockout clock: sunrise/sunset for Israel's coast (no dependencies).
  *
- * Method: NOAA solar-position / sunrise equation (the NOAA "Solar Calculator" spreadsheet), zenith 90.833 degrees
- * (refraction + solar disc radius). Reference point = Tel Aviv. Israel's coastal strip spans < 1.5 degrees of
+ * Method: NOAA solar-position / sunrise equation (the NOAA "Solar Calculator" spreadsheet). Reference point = Tel Aviv.
+ * The lockout follows CIVIL twilight (sun 6 degrees below the horizon, zenith 96): the app opens at first light,
+ * ~25 minutes before sunrise (dawn patrol), and closes at last light, ~25 minutes after sunset. Israel's coastal strip spans < 1.5 degrees of
  * longitude (a few minutes), so one point serves every beach in the app.
  * The same math lives in SQL: public.is_night_israel() in supabase/migrations/20261103000000_night_lockout.sql.
  * Keep the two in sync (the constants below are mirrored there).
@@ -12,11 +13,14 @@
 
 export const REF_LAT = 32.08;
 export const REF_LON = 34.78;
+/** True sunrise/sunset: refraction + solar disc radius. */
 export const ZENITH = 90.833;
+/** Civil twilight: first/last light, still bright enough to surf without lights. Drives the lockout. */
+export const CIVIL_ZENITH = 96;
 export const TIME_ZONE = "Asia/Jerusalem";
 
 /**
- * Minutes to close BEFORE sunset (0 = close exactly at sunset). Set to 30 to close half an hour early.
+ * Minutes to close BEFORE last light (0 = close exactly at the end of civil twilight).
  * Must match the buffer in public.is_night_israel() (SQL).
  */
 export const SAFETY_BUFFER_MIN = 0;
@@ -31,8 +35,8 @@ function daysSinceJ2000(y: number, m: number, d: number): number {
   return (Date.UTC(y, m - 1, d) - Date.UTC(2000, 0, 1)) / 86_400_000;
 }
 
-/** Sunrise and sunset (UTC minutes since 00:00 UTC of that date) for a calendar date. */
-function sunMinutesUtc(y: number, m: number, d: number): { rise: number; set: number } {
+/** Sun crossing `zenith` in the morning / evening (UTC minutes since 00:00 UTC of that date) for a calendar date. */
+function sunMinutesUtc(y: number, m: number, d: number, zenith: number): { rise: number; set: number } {
   const T = daysSinceJ2000(y, m, d) / 36525; // Julian centuries from J2000.0 at 12:00 UTC of the date
   const L0 = (((280.46646 + T * (36000.76983 + T * 0.0003032)) % 360) + 360) % 360;
   const M = 357.52911 + T * (35999.05029 - 0.0001537 * T);
@@ -53,7 +57,7 @@ function sunMinutesUtc(y: number, m: number, d: number): { rise: number; set: nu
       0.5 * yv * yv * sin(4 * L0) -
       1.25 * e * e * sin(2 * M)) /
     RAD;
-  const cosHa = cos(ZENITH) / (cos(REF_LAT) * cos(decl)) - tan(REF_LAT) * tan(decl);
+  const cosHa = cos(zenith) / (cos(REF_LAT) * cos(decl)) - tan(REF_LAT) * tan(decl);
   const ha = Math.acos(Math.min(1, Math.max(-1, cosHa))) / RAD; // never polar at 32N
   const noon = 720 - 4 * REF_LON - eqTime;
   return { rise: noon - 4 * ha, set: noon + 4 * ha };
@@ -69,11 +73,22 @@ export function israelDate(at: Date): YMD {
   return { y: get("year"), m: get("month"), d: get("day") };
 }
 
-/** Sunrise/sunset instants for an Israel calendar date. */
-export function sunTimes({ y, m, d }: YMD): { sunrise: Date; sunset: Date } {
-  const { rise, set } = sunMinutesUtc(y, m, d);
+function crossings({ y, m, d }: YMD, zenith: number): { rise: Date; set: Date } {
+  const { rise, set } = sunMinutesUtc(y, m, d, zenith);
   const base = Date.UTC(y, m - 1, d);
-  return { sunrise: new Date(base + Math.round(rise * 60_000)), sunset: new Date(base + Math.round(set * 60_000)) };
+  return { rise: new Date(base + Math.round(rise * 60_000)), set: new Date(base + Math.round(set * 60_000)) };
+}
+
+/** Sunrise/sunset instants for an Israel calendar date. */
+export function sunTimes(date: YMD): { sunrise: Date; sunset: Date } {
+  const { rise, set } = crossings(date, ZENITH);
+  return { sunrise: rise, sunset: set };
+}
+
+/** First light (civil dawn) and last light (civil dusk) for an Israel calendar date. */
+export function lightTimes(date: YMD): { firstLight: Date; lastLight: Date } {
+  const { rise, set } = crossings(date, CIVIL_ZENITH);
+  return { firstLight: rise, lastLight: set };
 }
 
 /** "HH:mm" in Israel time. */
@@ -88,22 +103,22 @@ export function addDays({ y, m, d }: YMD, n: number): YMD {
 
 export type DaylightState = {
   isNight: boolean;
-  /** Today's closing instant (sunset minus SAFETY_BUFFER_MIN). */
+  /** Today's closing instant (last light minus SAFETY_BUFFER_MIN). */
   closesAt: Date;
-  /** The next sunrise (today's if before it, else tomorrow's). */
+  /** The next first light (today's if before it, else tomorrow's). */
   opensAt: Date;
   /** Whole minutes until opensAt, rounded up; 0 by day. */
   minutesUntilOpen: number;
 };
 
-/** Night = before today's sunrise, or at/after today's sunset (minus the buffer). Israel calendar day. */
+/** Night = before today's first light, or at/after today's last light (minus the buffer). Israel calendar day. */
 export function getDaylightState(now: Date = new Date()): DaylightState {
   const today = israelDate(now);
-  const { sunrise, sunset } = sunTimes(today);
-  const closesAt = new Date(sunset.getTime() - SAFETY_BUFFER_MIN * 60_000);
-  const beforeDawn = now.getTime() < sunrise.getTime();
+  const { firstLight, lastLight } = lightTimes(today);
+  const closesAt = new Date(lastLight.getTime() - SAFETY_BUFFER_MIN * 60_000);
+  const beforeDawn = now.getTime() < firstLight.getTime();
   const isNight = beforeDawn || now.getTime() >= closesAt.getTime();
-  const opensAt = beforeDawn ? sunrise : sunTimes(addDays(today, 1)).sunrise;
+  const opensAt = beforeDawn ? firstLight : lightTimes(addDays(today, 1)).firstLight;
   return {
     isNight,
     closesAt,

@@ -52,29 +52,40 @@ test("daylight: DST transitions come from Intl (no hardcoded offsets)", () => {
   assert.deepEqual(d.israelDate(new Date("2026-06-21T20:30:00Z")), { y: 2026, m: 6, d: 21 }); // 23:30 IDT
 });
 
-test("daylight: getDaylightState around sunset and sunrise", () => {
+test("daylight: first/last light (civil twilight) match the reference", () => {
+  // https://api.sunrise-sunset.org/json?lat=32.08&lng=34.78&date=<date>&tzid=Asia/Jerusalem (fetched 2026-11-12)
+  const civil: Record<string, [string, string]> = { "2026-11-12": ["05:41", "17:08"], "2026-06-21": ["05:06", "20:18"] };
+  for (const [date, [first, last]] of Object.entries(civil)) {
+    const t = d.lightTimes(ymd(date));
+    assert.equal(d.formatIsraelTime(t.firstLight), first, `${date} first light`);
+    assert.equal(d.formatIsraelTime(t.lastLight), last, `${date} last light`);
+  }
+});
+
+test("daylight: getDaylightState opens at first light and closes at last light", () => {
   const day = d.getDaylightState(new Date("2026-06-21T09:00:00Z")); // noon IDT
   assert.equal(day.isNight, false);
   assert.equal(day.minutesUntilOpen, 0);
-  assert.equal(d.formatIsraelTime(day.closesAt), "19:50");
+  assert.equal(d.formatIsraelTime(day.closesAt), "20:18");
 
-  assert.equal(d.getDaylightState(new Date("2026-06-21T16:49:00Z")).isNight, false);
-  const eve = d.getDaylightState(new Date("2026-06-21T16:51:00Z"));
+  // still open in the ~28 minutes after sunset (19:50)
+  assert.equal(d.getDaylightState(new Date("2026-06-21T17:00:00Z")).isNight, false); // 20:00 IDT
+  const eve = d.getDaylightState(new Date("2026-06-21T17:19:00Z")); // 20:19 IDT
   assert.equal(eve.isNight, true);
-  // next sunrise is tomorrow's: about 9h45 later
-  assert.equal(d.formatIsraelTime(eve.opensAt).slice(0, 4), "05:3");
-  assert.ok(eve.minutesUntilOpen > 560 && eve.minutesUntilOpen < 600, String(eve.minutesUntilOpen));
+  assert.equal(d.formatIsraelTime(eve.opensAt).slice(0, 4), "05:0");
+  assert.ok(eve.minutesUntilOpen > 500 && eve.minutesUntilOpen < 560, String(eve.minutesUntilOpen));
 
-  const dawn = d.getDaylightState(new Date("2026-06-21T01:00:00Z")); // 04:00 IDT, before sunrise
+  const dawn = d.getDaylightState(new Date("2026-06-21T01:00:00Z")); // 04:00 IDT, before first light
   assert.equal(dawn.isNight, true);
-  assert.ok(dawn.opensAt.getTime() > Date.parse("2026-06-21T02:30:00Z") && dawn.opensAt.getTime() < Date.parse("2026-06-21T02:40:00Z"));
-  assert.ok(dawn.minutesUntilOpen > 90 && dawn.minutesUntilOpen < 100);
-  assert.equal(d.getDaylightState(new Date("2026-06-21T02:40:00Z")).isNight, false);
+  assert.ok(dawn.opensAt.getTime() > Date.parse("2026-06-21T02:00:00Z") && dawn.opensAt.getTime() < Date.parse("2026-06-21T02:10:00Z"));
+  assert.ok(dawn.minutesUntilOpen > 60 && dawn.minutesUntilOpen < 70);
+  // open before sunrise (05:35): dawn patrol
+  assert.equal(d.getDaylightState(new Date("2026-06-21T02:15:00Z")).isNight, false); // 05:15 IDT
 });
 
 test("daylight: night message carries the opening time; buffer defaults to 0", () => {
   assert.equal(d.SAFETY_BUFFER_MIN, 0);
-  assert.match(d.nightClosedMessage(new Date("2026-12-21T20:00:00Z")), /^הים סגור בלילה 🌙 נפתח שוב ב-06:3\d$/);
+  assert.match(d.nightClosedMessage(new Date("2026-12-21T20:00:00Z")), /^הים סגור בלילה 🌙 נפתח שוב ב-06:1\d$/);
 });
 
 test("daylight: Hebrew remaining-time wording", () => {

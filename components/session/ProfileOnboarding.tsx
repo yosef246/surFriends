@@ -6,7 +6,7 @@ import { Check, Loader2, Waves } from "lucide-react";
 import { updateProfile } from "@/app/actions/profile";
 import { greetingFor } from "@/components/feed/FeedGreeting";
 import { Mascot } from "@/components/mascot";
-import { OceanScene, SCENE_PHOTOS } from "@/components/shared/OceanScene";
+import { OceanScene } from "@/components/shared/OceanScene";
 import { SkillLevelSelect } from "@/components/settings/SkillLevelSelect";
 import { Button } from "@/components/ui/button";
 import type { SkillLevel } from "@/lib/database.types";
@@ -18,7 +18,6 @@ export const PROFILE_READY_EVENT = "sf:profile-ready";
 const CHECK_MS = 600;
 
 const HEADLINE = ["איך", "קוראים", "לך", "בים?"];
-const CREDITS = [...new Set(SCENE_PHOTOS.map((p) => p.credit))].join(" · ");
 
 /** Full-screen immersive "create profile" step, shown after the splash until a name is saved (no skip). */
 export function ProfileOnboarding() {
@@ -75,11 +74,11 @@ export function ProfileOnboarding() {
   const state = done ? "done" : pending ? "busy" : "idle";
 
   return (
-    <div className="fixed inset-0 z-[90] overflow-hidden bg-ocean-deep text-white">
+    <div className="fixed inset-0 z-[90] overflow-hidden bg-page text-ink">
       <OceanScene />
       <div className="absolute inset-0 overflow-y-auto">
         <main className="relative mx-auto flex min-h-dvh w-full max-w-sm flex-col justify-center px-4 pt-20 pb-12">
-          <div className="ob-card-in relative rounded-3xl bg-white px-6 pt-14 pb-7 text-foreground shadow-2xl">
+          <div className="ob-card-in relative rounded-[1.875rem] border border-black bg-white px-6 pt-14 pb-7 text-foreground">
             <div className="ob-mascot-pop absolute inset-x-0 -top-14 flex justify-center">
               <Mascot.Wave size={104} className="motion-float drop-shadow-lg" />
             </div>
@@ -119,7 +118,7 @@ export function ProfileOnboarding() {
                     onBlur={() => setTouched(true)}
                     aria-invalid={touched && nameError ? true : undefined}
                     aria-describedby="onboard-name-meta"
-                    className="ob-input block min-h-14 w-full rounded-lg border-2 border-brand/60 bg-white px-3.5 pt-6 pb-1.5 text-body text-copy placeholder:text-transparent focus:border-brand focus:outline-none aria-invalid:border-danger disabled:bg-surface disabled:text-muted-text"
+                    className="ob-input block min-h-14 w-full rounded-2xl border border-black bg-white px-3.5 pt-6 pb-1.5 text-body text-copy placeholder:text-transparent focus:border-brand focus:outline-none aria-invalid:border-danger disabled:bg-surface disabled:text-muted-text"
                   />
                   <label htmlFor="onboard-name" className="ob-label text-body">
                     איך קוראים לך?
@@ -182,9 +181,6 @@ export function ProfileOnboarding() {
           </div>
         </main>
       </div>
-      <span className="credit z-10" aria-hidden>
-        © {CREDITS} · CC
-      </span>
     </div>
   );
 }

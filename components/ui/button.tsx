@@ -2,22 +2,23 @@ import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
-// surFriends v4 "Coast": flat 12px-radius buttons, 48px tall, semibold. Colors live in the globals.css
-// `bubble-*` utilities (names kept; now flat brand-blue styles). Focus uses the global :focus-visible outline.
+// surFriends v5 "Slush": pill buttons, 48px tall, bold with slightly open tracking. Colors live in the globals.css
+// `bubble-*` utilities (black primary, white outlined secondary, sticker variants). Focus uses :focus-visible.
 // Use className="btn-gradient" with variant="default" for the full-width key action.
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-body-sm font-semibold whitespace-nowrap transition-[color,background-color,border-color,transform,filter,opacity] duration-(--dur-fast) ease-out select-none disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:outline-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-full border border-transparent bg-clip-padding text-body-sm font-bold tracking-[0.02em] whitespace-nowrap transition-[color,background-color,border-color,transform,filter,opacity] duration-(--dur-fast) ease-out select-none disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:outline-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
   {
     variants: {
       variant: {
         default: "bubble-primary",
         accent: "bubble-primary",
-        ocean: "bubble-ocean",
-        secondary: "bubble-glass",
-        soft: "bubble-soft",
-        outline: "bubble-outline",
+        ocean: "bubble-ocean border-black",
+        // border-black wins over the base border-transparent (tailwind-merge), so outlined variants keep their edge.
+        secondary: "bubble-glass border-black",
+        soft: "bubble-soft border-black",
+        outline: "bubble-outline border-black",
         ghost: "bubble-ghost",
-        destructive: "bubble-danger",
+        destructive: "bubble-danger border-black",
         link: "text-link underline-offset-4 hover:underline",
       },
       size: {

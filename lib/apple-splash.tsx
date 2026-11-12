@@ -1,5 +1,5 @@
 // iOS startup images ("apple-touch-startup-image"): what an installed PWA shows while the first page loads,
-// instead of a blank black/white screen. It mirrors the first frame of the in-app splash (deep ocean, גל on a
+// instead of a blank black/white screen. It mirrors the first frame of the in-app splash (sky-wash paper, גל on a
 // wave, centred) so the hand-off to the animated splash is seamless. iOS only uses an image whose size matches
 // the device exactly, hence one entry per iPhone screen (portrait).
 
@@ -48,10 +48,10 @@ function WaveBand({ width, height, opacity, id }: { width: number; height: numbe
     <svg width={width} height={height} viewBox="0 0 1200 100" preserveAspectRatio="none">
       <defs>
         <linearGradient id={id} gradientUnits="userSpaceOnUse" x1="0" x2="1200" y1="0" y2="0">
-          <stop offset="0" stopColor="#fff" stopOpacity="0" />
-          <stop offset="0.18" stopColor="#fff" stopOpacity={opacity} />
-          <stop offset="0.82" stopColor="#fff" stopOpacity={opacity} />
-          <stop offset="1" stopColor="#fff" stopOpacity="0" />
+          <stop offset="0" stopColor="#4da2ff" stopOpacity="0" />
+          <stop offset="0.18" stopColor="#4da2ff" stopOpacity={opacity} />
+          <stop offset="0.82" stopColor="#4da2ff" stopOpacity={opacity} />
+          <stop offset="1" stopColor="#4da2ff" stopOpacity="0" />
         </linearGradient>
       </defs>
       <path d={WAVE} fill={`url(#${id})`} />
@@ -75,15 +75,15 @@ export function AppleSplashArt({ width, height, scale }: { width: number; height
         alignItems: "center",
         justifyContent: "center",
         paddingBottom: u(154),
-        background: "#0a3d73",
+        background: "#dceeff",
       }}
     >
       <div style={{ display: "flex", position: "relative", width: u(240), height: u(176) }}>
         <div style={{ display: "flex", position: "absolute", left: 0, bottom: u(8) }}>
-          <WaveBand width={u(240)} height={u(48)} opacity={0.35} id="back" />
+          <WaveBand width={u(240)} height={u(48)} opacity={0.45} id="back" />
         </div>
         <div style={{ display: "flex", position: "absolute", left: 0, bottom: 0 }}>
-          <WaveBand width={u(240)} height={u(40)} opacity={0.8} id="front" />
+          <WaveBand width={u(240)} height={u(40)} opacity={1} id="front" />
         </div>
         <div style={{ display: "flex", position: "absolute", left: u(54), bottom: u(32) }}>
           {flatten(<MascotSurf size={u(132)} />)}

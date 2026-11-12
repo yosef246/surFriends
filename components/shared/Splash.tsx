@@ -3,22 +3,21 @@
 import { useEffect, useState } from "react";
 import { Waves } from "lucide-react";
 import { Mascot } from "@/components/mascot";
-import { OceanScene, SCENE_PHOTOS } from "@/components/shared/OceanScene";
+import { OceanScene } from "@/components/shared/OceanScene";
 import { SPLASH_FADE_MS, splashDismissDelay } from "@/lib/splash";
 
 /** Same periodic path as OceanWaves: 2400 wide, repeats every 1200 (= 50%). */
 const WAVE = "M0 40 Q150 0 300 40 T600 40 T900 40 T1200 40 T1500 40 T1800 40 T2100 40 T2400 40 V100 H0 Z";
-const CREDITS = [...new Set(SCENE_PHOTOS.map((p) => p.credit))].join(" · ");
 
 /** The loading mark: גל rides a wave; the waves slide under him and he bobs with them. */
 function SurfLoader() {
   return (
     <div aria-hidden className="ld relative h-44 w-60">
       <div className="ld-sea absolute inset-x-0 bottom-0 h-14 overflow-hidden">
-        <svg viewBox="0 0 2400 100" preserveAspectRatio="none" className="ld-wave ld-wave-back absolute bottom-2 left-0 h-12 w-[200%] text-white/35">
+        <svg viewBox="0 0 2400 100" preserveAspectRatio="none" className="ld-wave ld-wave-back absolute bottom-2 left-0 h-12 w-[200%] text-sticker-blue/45">
           <path d={WAVE} fill="currentColor" />
         </svg>
-        <svg viewBox="0 0 2400 100" preserveAspectRatio="none" className="ld-wave absolute bottom-0 left-0 h-10 w-[200%] text-white/80">
+        <svg viewBox="0 0 2400 100" preserveAspectRatio="none" className="ld-wave absolute bottom-0 left-0 h-10 w-[200%] text-sticker-blue">
           <path d={WAVE} fill="currentColor" />
         </svg>
       </div>
@@ -81,7 +80,7 @@ export function Splash({ ready }: { ready: boolean }) {
       aria-label="טוען את surFriends"
       inert={phase === "fading"}
       style={{ transitionDuration: `${SPLASH_FADE_MS}ms` }}
-      className={`fixed inset-0 z-[100] overflow-hidden bg-ocean-deep text-white transition-opacity ease-out ${
+      className={`fixed inset-0 z-[100] overflow-hidden bg-page text-ink transition-opacity ease-out ${
         phase === "fading" ? "opacity-0" : "opacity-100"
       }`}
     >
@@ -89,15 +88,12 @@ export function Splash({ ready }: { ready: boolean }) {
       <OceanScene />
       <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-sm flex-col items-center justify-center gap-5 px-6 pb-16 text-center">
         <SurfLoader />
-        <p className="flex items-center gap-2 font-display text-display font-normal text-white drop-shadow">
-          <Waves className="size-7 shrink-0" aria-hidden />
+        <p className="flex items-center gap-2 font-display text-[3.25rem] leading-[0.85] font-bold text-ink">
+          <Waves className="size-8 shrink-0" aria-hidden />
           surFriends
         </p>
-        <p className="eyebrow eyebrow-light">קהילת הגולשים של ישראל</p>
+        <p className="eyebrow">קהילת הגולשים של ישראל</p>
       </div>
-      <span className="credit z-10" aria-hidden>
-        © {CREDITS} · CC
-      </span>
     </div>
   );
 }

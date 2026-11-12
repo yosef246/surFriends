@@ -1,5 +1,8 @@
 # surFriends — Design System v4 ("Coast")
 
+> **v5 "Slush" (2026-11-12, ענף `redesign-slush`):** המסמך הזה מתאר את v4. ב-v5 השמות של הטוקנים וה-utilities נשארו, והערכים הוחלפו לפי [Slush](https://styles.refero.design/style/8b6b547f-a357-4f1b-9842-4579c62dd42b): דף תכלת `#dceeff`, כרטיסים לבנים עם קו מתאר שחור 1px, פעולה ראשית בשחור, כפתורי גלולה, בלי צללים ובלי גרדיאנטים, פלטת מדבקות (כחול חשמלי, מנטה, לבנדר, אמבר, שמש, סגול). גופנים: Karantina לתצוגה (במקום Lateral), Rubik לממשק (במקום Aeonik Pro). המקור הקובע: `app/globals.css`. לחזרה ל-v4: git tag `design-v4-coast`.
+
+
 > מחליף את v3 (Sea). מקור הטוקנים בקוד: `app/globals.css`. המסמך מגדיר מראה בלבד; מבנה וזרימות ב-`docs/UX_SPEC.md`. שמות הטוקנים באנגלית = שמות ה-utility של Tailwind v4 (`bg-brand`, `text-ink` ...). Light הוא ברירת המחדל; ערכת dark מוגדרת בסעיף 2.5 כטוקנים בלבד (אין toggle, לא ממומש ב-CSS).
 
 ## 1. כיוון עיצובי

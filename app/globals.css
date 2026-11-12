@@ -3,9 +3,13 @@
 @import "shadcn/tailwind.css";
 
 /* Light only. The dark variant stays class-based so that `dark:` utilities
-   inside shadcn components never fire from the OS preference. See docs/DESIGN_SYSTEM.md (v4 "Coast").
-   v4: flat, photo-led, white cards on a pale cool-blue page, one strong brand blue. Every v3 token /
-   utility NAME is kept as an alias (turquoise/aqua/signature now map to the brand blue family). */
+   inside shadcn components never fire from the OS preference.
+   v5 "Slush" (styles.refero.design/slush): sticker book on pastel paper. Sky-wash page, white cards with a 1px
+   BLACK outline (the hand-cut sticker edge), pill buttons, black primary action, a sticker palette for accents
+   (electric blue, mint, lavender, ember, sunburst, violet). No shadows, no gradients: outlines do the work.
+   Display = Karantina (condensed Hebrew, stands in for Lateral), UI = Rubik (stands in for Aeonik Pro).
+   Every older token / utility NAME is kept so components keep working; only the values changed.
+   Previous design: git tag design-v4-coast. */
 @custom-variant dark (&:is(.dark *));
 
 /* ------------------------------------------------------------------ */
@@ -14,8 +18,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-plex-hebrew), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-suez-one), var(--font-plex-hebrew), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-rubik), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-karantina), var(--font-rubik), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, monospace;
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -66,7 +70,7 @@
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
-  --radius-xl: 1rem; /* 16px = card (v4) */
+  --radius-xl: 1.25rem; /* 20px = card (Slush) */
   --radius-2xl: 1.75rem;
   --radius-3xl: 2rem;
   --radius-4xl: 2.5rem;
@@ -77,76 +81,76 @@
 /* ------------------------------------------------------------------ */
 @theme static {
   /* ===== Sea scale: abyss -> deep -> ocean -> turquoise -> aqua -> sky -> foam ===== */
-  /* ===== v4 Coast: brand blue family. Old turquoise/aqua names are ALIASES of these. ===== */
-  --color-brand: #0f5fa8; /* primary. WHITE on it 6.52:1 */
-  --color-brand-hover: #0b4f8f; /* white 8.4:1 */
-  --color-brand-pressed: #093f75; /* white 10.6:1 */
-  --color-brand-bright: #1b6fcf; /* gradient start / decorative fills. white 4.98:1 */
-  --color-brand-soft: #e1eefa; /* selected / soft fill. ink 15:1 */
-  --color-page: #eef5fb; /* page background */
-  --color-card-line: #dbe7f2; /* card hairline (decorative) */
+  /* ===== v5 Slush: brand = the black action ink; blues/pastels are sticker surfaces. ===== */
+  --color-brand: #000000; /* primary. WHITE on it 6.52:1 */
+  --color-brand-hover: #262626; /* white 8.4:1 */
+  --color-brand-pressed: #3d3d3d; /* white 10.6:1 */
+  --color-brand-bright: #4da2ff; /* gradient start / decorative fills. white 4.98:1 */
+  --color-brand-soft: #e9ccff; /* selected / soft fill. ink 15:1 */
+  --color-page: #dceeff; /* page background */
+  --color-card-line: #000000; /* card hairline (decorative) */
 
   --color-abyss: #08131f; /* deepest; dark theme bg, overlays */
-  --color-ocean-deep: #0a3d73; /* hero fallback / gradient end. white 10.5:1 */
-  --color-ocean: #0f5fa8; /* = brand */
-  --color-turquoise: #1b6fcf; /* ALIAS -> brand-bright */
-  --color-aqua: #8fc2ee; /* decorative fills only. NEVER text on light bg. pale text on dark/photo only */
-  --color-sky: #dbe9f6; /* deepest light tint */
-  --color-foam-blue: #eef5fb; /* = page */
+  --color-ocean-deep: #000000; /* hero fallback / gradient end. white 10.5:1 */
+  --color-ocean: #4da2ff; /* = brand */
+  --color-turquoise: #4da2ff; /* ALIAS -> brand-bright */
+  --color-aqua: #a8d1ff; /* decorative fills only. NEVER text on light bg. pale text on dark/photo only */
+  --color-sky: #dceeff; /* deepest light tint */
+  --color-foam-blue: #dceeff; /* = page */
 
   /* ===== signature = primary ACTION = brand blue. TEXT ON IT = WHITE (6.52:1). INK ON IT FAILS (2.7:1) ===== */
-  --color-signature: #0f5fa8;
-  --color-signature-hover: #0b4f8f;
-  --color-signature-pressed: #093f75;
-  --color-signature-soft: #e1eefa; /* selected rows / soft chips. ink 15:1 */
-  --color-orange-text: #0f5fa8; /* ALIAS NAME KEPT: now brand-blue text. 6.52 white / 5.9 page */
+  --color-signature: #000000;
+  --color-signature-hover: #262626;
+  --color-signature-pressed: #3d3d3d;
+  --color-signature-soft: #e9ccff; /* selected rows / soft chips. ink 15:1 */
+  --color-orange-text: #000000; /* ALIAS NAME KEPT: now brand-blue text. 6.52 white / 5.9 page */
 
   /* ===== ink + neutrals (cool) ===== */
-  --color-ink: #0b1b2b; /* headings, numerals. 17.4:1 on white */
-  --color-copy: #22384d; /* body text. 12.1 white / 11.0 page */
-  --color-muted-text: #55687b; /* secondary. 5.75 white / 5.23 page / 5.0 brand-soft */
-  --color-surface: #e8f0f8; /* soft panels, input-off, toggle-off */
-  --color-line: #dbe7f2; /* decorative hairlines only */
-  --color-link-blue: #0f5fa8; /* links. 6.52 white */
-  --color-link-soft: #e1eefa;
+  --color-ink: #000000; /* headings, numerals. 17.4:1 on white */
+  --color-copy: #111111; /* body text. 12.1 white / 11.0 page */
+  --color-muted-text: #4b4b4b; /* secondary. 5.75 white / 5.23 page / 5.0 brand-soft */
+  --color-surface: #e9e9e9; /* soft panels, input-off, toggle-off */
+  --color-line: #000000; /* decorative hairlines only */
+  --color-link-blue: #000000; /* links. 6.52 white */
+  --color-link-soft: #e9ccff;
 
   /* ===== Existing names, kept as aliases ===== */
-  --color-sea-deep: #0b1b2b; /* = ink */
-  --color-sea-wave: #1b6fcf; /* decorative blue (illustrations, charts). Not text. */
-  --color-sand: #e8f0f8; /* DEPRECATED alias of surface */
-  --color-foam: #f7fbff; /* near-white (login etc.) */
-  --color-sunset: #0f5fa8; /* DEPRECATED alias of signature */
-  --color-kelp: #0f7b5f; /* success green. 5.23 white / 4.7 page */
-  --color-shadow: #22384d; /* = copy */
-  --color-mist: #9db5cb; /* decorative only, never text */
+  --color-sea-deep: #000000; /* = ink */
+  --color-sea-wave: #4da2ff; /* decorative blue (illustrations, charts). Not text. */
+  --color-sand: #e9e9e9; /* DEPRECATED alias of surface */
+  --color-foam: #ffffff; /* near-white (login etc.) */
+  --color-sunset: #000000; /* DEPRECATED alias of signature */
+  --color-kelp: #0a7a45; /* success green. 5.23 white / 4.7 page */
+  --color-shadow: #111111; /* = copy */
+  --color-mist: #cccccc; /* decorative only, never text */
 
-  --color-sea-wave-text: #0f5fa8; /* = link-blue */
-  --color-sunset-text: #0f5fa8; /* = brand */
-  --color-mist-text: #55687b; /* = muted-text */
-  --color-mist-border: #6b819a; /* control borders. 3.9 white (3:1 non-text OK) */
+  --color-sea-wave-text: #000000; /* = link-blue */
+  --color-sunset-text: #000000; /* = brand */
+  --color-mist-text: #4b4b4b; /* = muted-text */
+  --color-mist-border: #000000; /* control borders. 3.9 white (3:1 non-text OK) */
 
   /* ===== Warm accent: coral. Meta/eyebrow lines, live dot, notification badges ===== */
-  --color-coral: #ff6b57; /* fill. ink on it 7.0:1 */
-  --color-coral-text: #c2410c; /* coral AS TEXT on light: 5.18 white / 4.7 page */
-  --color-coral-on-photo: #ffa594; /* coral eyebrow over photo gradient (>= 7:1 on the dark overlay) */
+  --color-coral: #fb4903; /* fill. ink on it 7.0:1 */
+  --color-coral-text: #b33500; /* coral AS TEXT on light: 5.18 white / 4.7 page */
+  --color-coral-on-photo: #ffb08f; /* coral eyebrow over photo gradient (>= 7:1 on the dark overlay) */
 
   /* ===== Status (text on white AA) ===== */
-  --color-good-text: #0f7b5f; /* 5.23 white */
+  --color-good-text: #0a7a45; /* 5.23 white */
   --color-warn-text: #b45309; /* 5.02 white / 4.57 page */
-  --color-warn-bg: #fff4e0;
-  --color-warn-line: #f0b35c;
-  --color-warn-ink: #6b3304; /* text on warn-bg, 9.5:1 */
+  --color-warn-bg: #fff3c4;
+  --color-warn-line: #000000;
+  --color-warn-ink: #000000; /* text on warn-bg, 9.5:1 */
   --color-bad-text: #c62828; /* 5.6 white */
 
   /* ===== Chat sender name colors (AA on white bubble) ===== */
-  --color-sender-1: #0f5fa8; /* 6.52 */
+  --color-sender-1: #1d5fd1; /* 6.52 */
   --color-sender-2: #b45309; /* 5.02 */
   --color-sender-3: #0f7b5f; /* 5.23 */
-  --color-sender-4: #7c3aaf; /* 6.8 */
+  --color-sender-4: #5c4ade; /* 6.8 */
   --color-sender-5: #b3265a; /* 6.3 */
   --color-sender-6: #0e7490; /* 5.35 */
 
-  /* ===== Font weights (IBM Plex Sans Hebrew 400-700). Display font Suez One is 400 only. ===== */
+  /* ===== Font weights (Rubik 400-800). Display font Karantina 400/700. ===== */
   --font-weight-light: 300;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
@@ -154,10 +158,10 @@
   --font-weight-bold: 700;
 
   /* ===== Typography scale ===== */
-  --text-hero: 2.5rem; /* photo hero headline, Suez One, white */
-  --text-hero--line-height: 2.5rem;
-  --text-display: 2rem;
-  --text-display--line-height: 2.125rem;
+  --text-hero: 3.5rem; /* photo hero headline, Suez One, white */
+  --text-hero--line-height: 0.9;
+  --text-display: 2.75rem;
+  --text-display--line-height: 0.95;
   --text-title: 1.625rem; /* page title (sans 700) */
   --text-title--line-height: 2rem;
   --text-section: 1.375rem; /* section title (sans 700) */
@@ -174,8 +178,8 @@
   --text-caption--line-height: 1rem;
   --text-data: 0.8125rem;
   --text-data--line-height: 1.125rem;
-  --text-numeral-xl: 4.5rem;
-  --text-numeral-xl--line-height: 1;
+  --text-numeral-xl: 5.5rem;
+  --text-numeral-xl--line-height: 0.85;
   --text-numeral-lg: 2.75rem;
   --text-numeral-lg--line-height: 1;
   --text-numeral-md: 1.75rem;
@@ -190,20 +194,20 @@
   --container-feed: 36rem;
 
   /* ===== Radii ===== */
-  --radius-card: 1rem; /* 16px */
-  --radius-tile: 0.875rem; /* 14px photo tile */
-  --radius-button: 0.75rem; /* 12px */
+  --radius-card: 1.25rem; /* 16px */
+  --radius-tile: 1.25rem; /* 14px photo tile */
+  --radius-button: 9999px; /* 12px */
   --radius-pill: 9999px; /* chips, badges */
-  --radius-bubble: 1rem; /* 16px chat bubble (tail corner is 4px) */
+  --radius-bubble: 1.25rem; /* 16px chat bubble (tail corner is 4px) */
 
-  /* ===== Elevation: nearly flat. Hairline borders do the work. ===== */
-  --shadow-card: 0 1px 2px rgb(11 27 43 / 0.04);
-  --shadow-raised: 0 4px 12px -2px rgb(11 27 43 / 0.12);
-  --shadow-fab: 0 4px 12px -2px rgb(11 27 43 / 0.12); /* alias of raised */
+  /* ===== Elevation: none. Raised elements get a 1px black ring (sticker outline), never a soft shadow. ===== */
+  --shadow-card: none;
+  --shadow-raised: 0 0 0 1px #000000;
+  --shadow-fab: 0 0 0 1px #000000; /* alias of raised */
   --shadow-hero: none;
-  --shadow-nav: 0 -1px 0 #dbe7f2;
-  --shadow-sheet: 0 -8px 28px rgb(11 27 43 / 0.2);
-  --shadow-bubble: 0 1px 1px rgb(11 27 43 / 0.08);
+  --shadow-nav: 0 -1px 0 #000000;
+  --shadow-sheet: 0 -1px 0 #000000;
+  --shadow-bubble: none;
 
   /* ===== Easing ===== */
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
@@ -290,11 +294,11 @@
   }
   @keyframes pulse-ring {
     0% {
-      box-shadow: 0 0 0 0 rgb(255 107 87 / 0.6);
+      box-shadow: 0 0 0 0 rgb(251 73 3 / 0.55);
     }
     70%,
     100% {
-      box-shadow: 0 0 0 9px rgb(255 107 87 / 0);
+      box-shadow: 0 0 0 9px rgb(251 73 3 / 0);
     }
   }
   @keyframes sending {
@@ -385,89 +389,89 @@
 /* ------------------------------------------------------------------ */
 :root {
   /* raw palette as CSS variables (names kept) */
-  --sea-deep: #0b1b2b;
-  --sea-wave: #1b6fcf;
-  --sand: #e8f0f8;
-  --foam: #f7fbff;
-  --sunset: #0f5fa8;
-  --kelp: #0f7b5f;
-  --shadow: #22384d;
-  --mist: #9db5cb;
+  --sea-deep: #000000;
+  --sea-wave: #4da2ff;
+  --sand: #e9e9e9;
+  --foam: #ffffff;
+  --sunset: #000000;
+  --kelp: #0a7a45;
+  --shadow: #111111;
+  --mist: #cccccc;
 
-  --signature: #0f5fa8;
-  --ink: #0b1b2b;
-  --surface: #e8f0f8;
-  --brand: #0f5fa8;
-  --brand-soft: #e1eefa;
-  --page: #eef5fb;
+  --signature: #000000;
+  --ink: #000000;
+  --surface: #e9e9e9;
+  --brand: #000000;
+  --brand-soft: #e9ccff;
+  --page: #dceeff;
 
   /* Gradients */
   --gradient-page: none; /* v4: flat page color (body uses --background). Name kept. */
-  --gradient-hero: linear-gradient(160deg, #0a3d73 0%, #0f5fa8 70%, #1b6fcf 100%); /* brand cover. WHITE text: 10.5 / 6.5 / 4.98 */
+  --gradient-hero: linear-gradient(#4da2ff, #4da2ff); /* brand cover. WHITE text: 10.5 / 6.5 / 4.98 */
   --gradient-hero-glow: none;
-  --gradient-action: linear-gradient(180deg, #1b6fcf 0%, #0f5fa8 100%); /* WHITE text >= 4.98:1 */
-  --gradient-fab: linear-gradient(180deg, #1b6fcf 0%, #0f5fa8 100%);
-  --gradient-text: linear-gradient(100deg, #0a3d73 0%, #0f5fa8 100%); /* AA on white and page */
+  --gradient-action: linear-gradient(#000000, #000000); /* WHITE text >= 4.98:1 */
+  --gradient-fab: linear-gradient(#000000, #000000);
+  --gradient-text: linear-gradient(#000000, #000000); /* AA on white and page */
   --gradient-text-light: linear-gradient(100deg, #ffffff 0%, #ffffff 100%);
   /* Photo overlays: text-safe white-on-photo (bottom heavy) */
   --gradient-photo-hero: linear-gradient(180deg, rgb(8 19 31 / 0.35) 0%, rgb(8 19 31 / 0.15) 35%, rgb(8 19 31 / 0.78) 100%);
   --gradient-photo-tile: linear-gradient(180deg, rgb(8 19 31 / 0) 35%, rgb(8 19 31 / 0.78) 100%);
 
   /* shadcn semantic roles */
-  --background: #eef5fb;
-  --foreground: #22384d;
+  --background: #dceeff;
+  --foreground: #111111;
   --card: #ffffff;
-  --card-foreground: #22384d;
+  --card-foreground: #111111;
   --popover: #ffffff;
-  --popover-foreground: #22384d;
-  --primary: #0f5fa8;
+  --popover-foreground: #111111;
+  --primary: #000000;
   --primary-foreground: #ffffff; /* WHITE on brand blue, 6.52:1 */
-  --secondary: #e1eefa;
-  --secondary-foreground: #0b1b2b;
-  --muted: #e8f0f8;
-  --muted-foreground: #55687b;
-  --accent: #e1eefa;
-  --accent-foreground: #0b1b2b;
-  --destructive: #c62828;
+  --secondary: #e9ccff;
+  --secondary-foreground: #000000;
+  --muted: #e9e9e9;
+  --muted-foreground: #4b4b4b;
+  --accent: #e9ccff;
+  --accent-foreground: #000000;
+  --destructive: #d92d20;
   --destructive-foreground: #ffffff;
-  --border: #dbe7f2;
-  --input: #6b819a;
-  --ring: #0f5fa8;
+  --border: #000000;
+  --input: #000000;
+  --ring: #4da2ff;
 
   /* surFriends additions */
-  --live: #ff6b57; /* coral dots + badges */
-  --live-foreground: #0b1b2b; /* 7.0:1 */
-  --live-text: #c2410c;
-  --success: #0f7b5f;
-  --success-foreground: #ffffff;
-  --danger: #c62828;
-  --link: #0f5fa8;
+  --live: #fb4903; /* coral dots + badges */
+  --live-foreground: #000000; /* 7.0:1 */
+  --live-text: #b33500;
+  --success: #55db9c;
+  --success-foreground: #000000;
+  --danger: #d92d20;
+  --link: #000000;
 
-  --chart-1: #1b6fcf;
-  --chart-2: #0f5fa8;
-  --chart-3: #0b1b2b;
-  --chart-4: #8fc2ee;
-  --chart-5: #ff6b57;
+  --chart-1: #4da2ff;
+  --chart-2: #000000;
+  --chart-3: #000000;
+  --chart-4: #a8d1ff;
+  --chart-5: #fb4903;
   /* Wave chart (components/forecast/WaveChart.tsx). Lines pass 3:1 on white/page. */
-  --chart-wave: #0f5fa8; /* total wave height line */
-  --chart-swell: #0a3d73; /* swell line (dashed) */
-  --chart-fill-top: #1b6fcf; /* area gradient, top */
-  --chart-fill-bottom: #bcd9f3; /* area gradient, bottom */
-  --chart-grid: #dbe7f2; /* gridlines + day separators (decorative) */
-  --chart-now: #0b1b2b; /* "now" marker */
-  --chart-wind-offshore: #0f7b5f; /* offshore wind (= success) */
-  --chart-wind-other: #55687b; /* onshore / cross / calm (= muted-text) */
+  --chart-wave: #000000; /* total wave height line */
+  --chart-swell: #5c4ade; /* swell line (dashed) */
+  --chart-fill-top: #4da2ff; /* area gradient, top */
+  --chart-fill-bottom: #dceeff; /* area gradient, bottom */
+  --chart-grid: #cccccc; /* gridlines + day separators (decorative) */
+  --chart-now: #fb4903; /* "now" marker */
+  --chart-wind-offshore: #0a7a45; /* offshore wind (= success) */
+  --chart-wind-other: #4b4b4b; /* onshore / cross / calm (= muted-text) */
 
-  --radius: 0.75rem; /* 12px inputs + buttons */
+  --radius: 1rem; /* 12px inputs + buttons */
 
   --sidebar: #ffffff;
-  --sidebar-foreground: #22384d;
-  --sidebar-primary: #0f5fa8;
+  --sidebar-foreground: #111111;
+  --sidebar-primary: #000000;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e1eefa;
-  --sidebar-accent-foreground: #0b1b2b;
-  --sidebar-border: #dbe7f2;
-  --sidebar-ring: #0f5fa8;
+  --sidebar-accent: #e9ccff;
+  --sidebar-accent-foreground: #000000;
+  --sidebar-border: #000000;
+  --sidebar-ring: #4da2ff;
 
   /* motion durations (duration-(--dur-fast) etc.) */
   --dur-instant: 80ms;
@@ -505,13 +509,13 @@
     @apply font-sans;
     -webkit-text-size-adjust: 100%;
   }
-  /* v4: h1 = Suez One display; h2/h3 = IBM Plex Sans Hebrew 700 (section titles). Use font-display for hero text. */
+  /* v5: h1 = Karantina display, crushed leading; h2/h3 = Rubik 700. Use font-display for hero text. */
   h1 {
     color: var(--ink);
     font-family: var(--font-display);
-    font-weight: 400;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 0.95;
   }
   h2,
   h3 {
@@ -539,39 +543,25 @@
   background-image: var(--gradient-page);
 }
 
-/* Hero: deep ocean -> turquoise. TEXT INSIDE = white (or ink NEVER). Keep text out of the lower-left (mascot) corner. */
+/* Hero: electric-blue sticker surface, black text + outline. */
 @utility bg-hero-sea {
-  background-color: #0f5fa8;
-  background-image: var(--gradient-hero);
-  color: #ffffff;
+  background-color: #4da2ff;
+  color: #000000;
+  border: 1px solid #000000;
 }
 
-/* v3 deep-ocean hero card (restored for the live summary): ocean gradient + glow + highlight + shadow. WHITE text only. */
+/* Live summary card: electric-blue sticker card, black outline, BLACK text (white fails on #4da2ff). */
 @utility bg-hero-ocean {
-  background-color: #0b6c9e;
-  background-image:
-    radial-gradient(70% 80% at 0% 100%, rgb(28 200 218 / 0.28), transparent 65%),
-    linear-gradient(160deg, #06335c 0%, #0b6c9e 55%, #0c7fa6 100%);
-  color: #ffffff;
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.25),
-    0 18px 40px -12px rgb(6 51 92 / 0.55);
+  background-color: #4da2ff;
+  color: #000000;
+  border: 1px solid #000000;
 }
 
-/* v3 raised deep-ocean bubble (report button in the bottom nav). White icon/text. */
+/* Report button in the bottom nav: black filled circle (the one primary action), white icon. */
 @utility bubble-ocean-raised {
   color: #ffffff;
-  background-color: #0b6c9e;
-  background-image:
-    linear-gradient(180deg, rgb(255 255 255 / 0.22) 0%, rgb(255 255 255 / 0) 50%),
-    radial-gradient(70% 80% at 0% 100%, rgb(28 200 218 / 0.28), transparent 65%),
-    linear-gradient(160deg, #06335c 0%, #0b6c9e 55%, #0c7fa6 100%);
-  border-color: rgb(255 255 255 / 0.25);
-  box-shadow:
-    inset 0 2px 0 rgb(255 255 255 / 0.3),
-    inset 0 -3px 6px rgb(4 33 61 / 0.3),
-    0 10px 20px -8px rgb(6 51 92 / 0.6),
-    0 2px 5px rgb(6 51 92 / 0.18);
+  background-color: #000000;
+  border: 1px solid #000000;
   &:active {
     transform: scale(0.96);
   }
@@ -580,24 +570,21 @@
 /* v4: glass-card is now the plain Coast card (alias of card-coast). */
 @utility glass-card {
   background-color: #ffffff;
-  border: 1px solid var(--color-card-line);
-  box-shadow: var(--shadow-card);
+  border: 1px solid #000000;
 }
 
 /* v4: top header / bottom bar: solid white + hairline (alias; see bar-coast). */
 @utility glass-bar {
   background-color: #ffffff;
-  border-color: var(--color-card-line);
-  box-shadow: var(--shadow-nav);
+  border-color: #000000;
 }
 
 /* ---------- v4 Coast surfaces ---------- */
-/* White card, 16px radius, hairline, near-zero shadow */
+/* White sticker card: 20px radius, 1px black outline, no shadow */
 @utility card-coast {
   background-color: #ffffff;
-  border: 1px solid var(--color-card-line);
+  border: 1px solid #000000;
   border-radius: var(--radius-card);
-  box-shadow: var(--shadow-card);
   padding: 1rem;
 }
 
@@ -626,11 +613,11 @@
   justify-content: flex-end;
   padding: 1rem;
   color: #ffffff;
-  background-color: #0a3d73; /* shows while the photo loads */
-  background-image: var(--gradient-hero);
+  background-color: #4da2ff; /* shows while the photo loads */
+  border: 1px solid #000000;
 }
 
-/* BeachPhotoTile: 14px radius, 3:4 photo, fixed width in sliders (w-40 / w-44) */
+/* BeachPhotoTile: 20px radius sticker, 4:5 photo, 1px black outline */
 @utility tile {
   position: relative;
   overflow: hidden;
@@ -640,9 +627,8 @@
   aspect-ratio: 4 / 5;
   border-radius: var(--radius-tile);
   color: #ffffff;
-  background-color: #0a3d73;
-  background-image: var(--gradient-hero);
-  border: 1px solid var(--color-card-line);
+  background-color: #4da2ff;
+  border: 1px solid #000000;
 }
 @utility tile-title {
   font-weight: 700;
@@ -660,7 +646,8 @@
   padding-inline: 0.5rem;
   border-radius: 9999px;
   background-color: #ffffff;
-  color: var(--ink);
+  border: 1px solid #000000;
+  color: #000000;
   font-size: var(--text-caption);
   line-height: 1;
   font-weight: 700;
@@ -689,7 +676,7 @@
   color: var(--ink);
 }
 
-/* Chips: white pill, 1px border, 40px tall; selected = brand-soft fill + brand border */
+/* Chips: white pill, 1px black outline; selected = inverted (black fill, white text) */
 @utility chip-coast {
   display: inline-flex;
   align-items: center;
@@ -699,25 +686,25 @@
   padding-inline: 1rem;
   border-radius: 9999px;
   background-color: #ffffff;
-  border: 1px solid var(--color-mist-border);
-  color: var(--ink);
+  border: 1px solid #000000;
+  color: #000000;
   font-size: var(--text-label);
   line-height: normal;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.02em;
   white-space: nowrap;
   transition:
     background-color var(--dur-fast) ease-out,
-    border-color var(--dur-fast) ease-out;
+    color var(--dur-fast) ease-out;
   &:hover {
-    background-color: var(--color-brand-soft);
+    background-color: #e9e9e9;
   }
   &:is([aria-pressed="true"], [aria-checked="true"], [data-selected="true"], [data-state="on"]) {
-    background-color: var(--color-brand-soft);
-    border-color: var(--color-brand);
-    color: var(--color-brand);
+    background-color: #000000;
+    color: #ffffff;
   }
 }
-/* Small link chip (e.g. beach name inside a bubble): 28px */
+/* Small link chip (beach name inside a bubble): lavender sticker pill, 28px */
 @utility chip-link {
   display: inline-flex;
   align-items: center;
@@ -725,8 +712,9 @@
   height: 1.75rem;
   padding-inline: 0.625rem;
   border-radius: 9999px;
-  background-color: var(--color-brand-soft);
-  color: var(--color-brand);
+  background-color: #e9ccff;
+  border: 1px solid #000000;
+  color: #000000;
   font-size: var(--text-label);
   line-height: 1;
   font-weight: 700;
@@ -739,7 +727,7 @@
   gap: 0.25rem;
   padding: 0.875rem;
   background-color: #ffffff;
-  border: 1px solid var(--color-card-line);
+  border: 1px solid #000000;
   border-radius: var(--radius-card);
   min-width: 0;
 }
@@ -778,16 +766,16 @@
   & > i {
     display: block;
     width: 0.875rem;
-    height: 0.25rem;
+    height: 0.3125rem;
     border-radius: 9999px;
-    background-color: #c9d9ea;
+    background-color: #cccccc;
   }
   &[data-level="1"] > i:nth-child(-n + 1),
   &[data-level="2"] > i:nth-child(-n + 2),
   &[data-level="3"] > i:nth-child(-n + 3),
   &[data-level="4"] > i:nth-child(-n + 4),
   &[data-level="5"] > i:nth-child(-n + 5) {
-    background-color: var(--color-brand);
+    background-color: #000000;
   }
 }
 /* Compact wave rating row = level-bar + label word (+ number). 20px tall max */
@@ -804,47 +792,21 @@
 
 /* ---------- WhatsApp-style status bubble ----------
    Layout (RTL): row = [avatar RIGHT][bubble]. Apply .bubble-msg to the bubble; add data-own="true" for MY messages
-   (aligned to the opposite side/LEFT, no avatar, brand-soft bg, tail mirrored). */
+   (aligned to the opposite side/LEFT, no avatar, lavender bg). v5: no tail; the flat corner points at the sender. */
 @utility bubble-msg {
   position: relative;
   max-width: min(100%, 30rem);
-  padding: 0.5rem 0.75rem 0.5rem;
+  padding: 0.625rem 0.875rem 0.5rem;
   background-color: #ffffff;
   color: var(--color-copy);
-  border: 1px solid var(--color-card-line);
+  border: 1px solid #000000;
   border-radius: var(--radius-bubble);
-  border-start-start-radius: 0.25rem; /* corner next to the avatar (inline-start = RIGHT in RTL) */
-  box-shadow: var(--shadow-bubble);
-  /* Tail: 10x12 triangle on the inline-start edge, pointing at the avatar. Default clip = LTR (left side). */
-  &::before {
-    content: "";
-    position: absolute;
-    top: -1px;
-    inset-inline-start: -9px;
-    inset-inline-end: auto;
-    width: 10px;
-    height: 12px;
-    background-color: #ffffff;
-    clip-path: polygon(100% 0, 0 0, 100% 100%);
-  }
-  [dir="rtl"] &::before {
-    clip-path: polygon(0 0, 100% 0, 0 100%);
-  }
-  /* MY message: opposite side, no avatar, brand-soft, tail on inline-end, flat corner mirrored */
+  border-start-start-radius: 0.375rem; /* corner next to the avatar (inline-start = RIGHT in RTL) */
+  /* MY message: opposite side, no avatar, lavender sticker, flat corner mirrored */
   &[data-own="true"] {
-    background-color: var(--color-brand-soft);
-    border-color: #c5dcf2;
+    background-color: #e9ccff;
     border-start-start-radius: var(--radius-bubble);
-    border-start-end-radius: 0.25rem;
-    &::before {
-      inset-inline-start: auto;
-      inset-inline-end: -9px;
-      background-color: var(--color-brand-soft);
-      clip-path: polygon(0 0, 100% 0, 0 100%);
-    }
-  }
-  [dir="rtl"] &[data-own="true"]::before {
-    clip-path: polygon(100% 0, 0 0, 100% 100%);
+    border-start-end-radius: 0.375rem;
   }
 }
 /* Sender name inside a bubble: bold 13px; add data-c="1".."6" */
@@ -867,19 +829,19 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Warning / alert card: beige bg, orange border, warn-ink text */
+/* Warning / alert card: pale sunburst sticker, black outline + text */
 @utility alert-coast {
-  background-color: var(--color-warn-bg);
-  border: 1px solid var(--color-warn-line);
+  background-color: #fff3c4;
+  border: 1px solid #000000;
   border-radius: var(--radius-card);
-  color: var(--color-warn-ink);
+  color: #000000;
   padding: 0.875rem 1rem;
 }
 
-/* Header + bottom nav bars: white, hairline */
+/* Header + bottom nav bars: white, black hairline */
 @utility bar-coast {
   background-color: #ffffff;
-  border-color: var(--color-card-line);
+  border-color: #000000;
 }
 @utility nav-item {
   display: flex;
@@ -899,19 +861,18 @@
   }
 }
 
-/* ProfileHero: brand-gradient cover when the user has no photo (h-28) */
+/* ProfileHero: electric-blue cover when the user has no photo (h-28) */
 @utility cover-brand {
-  background-color: #0f5fa8;
-  background-image: var(--gradient-hero);
+  background-color: #4da2ff;
 }
 
-/* Skeleton block: pale blue base, white shimmer */
+/* Skeleton block: soft-mist base, white shimmer */
 @utility skeleton {
-  background-color: #dbe7f2;
+  background-color: #e9e9e9;
   background-image: linear-gradient(
     100deg,
     transparent 30%,
-    rgb(255 255 255 / 0.75) 50%,
+    rgb(255 255 255 / 0.85) 50%,
     transparent 70%
   );
   background-size: 300% 100%;
@@ -960,7 +921,7 @@
   }
 }
 
-/* Eyebrow: small tracked turquoise label above section titles (AA teal #07707F) */
+/* Eyebrow: small tracked black label with an ember sticker dot */
 @utility eyebrow {
   display: inline-flex;
   align-items: center;
@@ -968,20 +929,21 @@
   font-size: var(--text-caption);
   line-height: var(--text-caption--line-height);
   font-weight: 700;
-  letter-spacing: 0.02em;
-  color: var(--color-live-text); /* v4: coral meta line, 5.18:1 on white */
+  letter-spacing: 0.032em;
+  color: #000000;
   &::before {
     content: "";
-    width: 0.375rem;
-    height: 0.375rem;
+    width: 0.5rem;
+    height: 0.5rem;
     border-radius: 9999px;
-    background-color: var(--color-coral);
+    background-color: #fb4903;
+    box-shadow: 0 0 0 1px #000000;
   }
 }
 
-/* Coral eyebrow: same as eyebrow in v4 (name kept). */
+/* Coral eyebrow: same as eyebrow (name kept). */
 @utility eyebrow-coral {
-  color: var(--color-live-text);
+  color: #000000;
 }
 
 /* Eyebrow on a photo / dark hero: light coral, 7:1+ on the overlay */
@@ -990,7 +952,7 @@
   text-shadow: 0 1px 2px rgb(8 19 31 / 0.5);
 }
 
-/* v3 eyebrow on the deep-ocean live summary card (bg-hero-ocean): pale aqua text + turquoise dot. */
+/* Eyebrow on the electric-blue live card: black text + sunburst sticker dot. */
 @utility eyebrow-ocean {
   display: inline-flex;
   align-items: center;
@@ -998,15 +960,15 @@
   font-size: var(--text-caption);
   line-height: var(--text-caption--line-height);
   font-weight: 700;
-  letter-spacing: 0.12em;
-  color: #a5f3fa;
+  letter-spacing: 0.032em;
+  color: #000000;
   &::before {
     content: "";
     width: 0.5rem;
     height: 0.5rem;
     border-radius: 9999px;
-    background-image: linear-gradient(160deg, #7fe3ee, #1cc8da);
-    box-shadow: 0 0 0 3px rgb(28 200 218 / 0.2);
+    background-color: #ffd731;
+    box-shadow: 0 0 0 1px #000000;
   }
 }
 
@@ -1017,12 +979,12 @@
   text-wrap: pretty;
 }
 
-/* Tight display type for headings/greeting */
+/* Crushed display type for headings/greeting (Karantina) */
 @utility heading-tight {
   font-family: var(--font-display);
-  font-weight: 400;
-  letter-spacing: -0.03em;
-  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 0.95;
   text-wrap: balance;
 }
 
@@ -1037,7 +999,7 @@
     inset-inline: 0;
     bottom: 0;
     height: 8px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='8' viewBox='0 0 24 8'%3E%3Cpath d='M0 4 Q6 0 12 4 T24 4' fill='none' stroke='%231B6FCF' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='8' viewBox='0 0 24 8'%3E%3Cpath d='M0 4 Q6 0 12 4 T24 4' fill='none' stroke='%234DA2FF' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E");
     background-repeat: repeat-x;
     background-size: 24px 8px;
     pointer-events: none;
@@ -1050,166 +1012,183 @@
 /* ------------------------------------------------------------------ */
 /* v4 Coast buttons. Flat, 12px radius (the cva base sets the shape). Names bubble-* kept; btn-* are aliases. */
 @utility bubble-primary {
-  color: #ffffff; /* white on brand 6.52:1 */
-  background-color: var(--color-brand);
+  color: #ffffff;
+  background-color: #000000;
   &:hover:not(:disabled, [aria-disabled="true"]) {
-    background-color: var(--color-brand-hover);
+    background-color: #262626;
   }
   &:active:not(:disabled, [aria-disabled="true"]) {
-    background-color: var(--color-brand-pressed);
+    background-color: #3d3d3d;
     transform: scale(0.98);
   }
 }
 @utility btn-primary {
   color: #ffffff;
-  background-color: var(--color-brand);
+  background-color: #000000;
   &:hover:not(:disabled, [aria-disabled="true"]) {
-    background-color: var(--color-brand-hover);
+    background-color: #262626;
   }
   &:active:not(:disabled, [aria-disabled="true"]) {
-    background-color: var(--color-brand-pressed);
+    background-color: #3d3d3d;
+    transform: scale(0.98);
   }
 }
-/* Key action (full-width "לפי המיקום שלי"): brand gradient, white text >= 4.98:1 */
+/* Key action (full-width CTA): black pill (name kept from the gradient era) */
 @utility btn-gradient {
   color: #ffffff;
-  background-image: var(--gradient-action);
+  background-color: #000000;
   &:hover:not(:disabled, [aria-disabled="true"]) {
-    filter: brightness(0.94);
+    background-color: #262626;
   }
   &:active:not(:disabled, [aria-disabled="true"]) {
-    filter: brightness(0.88);
+    background-color: #3d3d3d;
+    transform: scale(0.98);
   }
 }
 
-/* Secondary: white + 1px dark border */
+/* Secondary: white ghost pill, 1px black outline */
 @utility bubble-glass {
-  color: var(--ink);
+  color: #000000;
   background-color: #ffffff;
-  border: 1px solid var(--ink);
+  border: 1px solid #000000;
   &:hover:not(:disabled, [aria-disabled="true"]) {
-    background-color: var(--color-brand-soft);
+    background-color: #e9e9e9;
   }
   &:active:not(:disabled, [aria-disabled="true"]) {
-    background-color: #cfe3f6;
+    background-color: #dcdcdc;
     transform: scale(0.98);
   }
 }
 @utility btn-secondary {
-  color: var(--ink);
+  color: #000000;
   background-color: #ffffff;
-  border: 1px solid var(--ink);
+  border: 1px solid #000000;
   &:hover:not(:disabled, [aria-disabled="true"]) {
-    background-color: var(--color-brand-soft);
+    background-color: #e9e9e9;
+  }
+  &:active:not(:disabled, [aria-disabled="true"]) {
+    background-color: #dcdcdc;
+    transform: scale(0.98);
   }
 }
 
-/* Soft: brand-soft fill, brand text (6.52 on white; 5.9 on soft) */
+/* Soft: lavender sticker pill, black text + outline */
 @utility bubble-soft {
-  color: var(--color-brand-pressed); /* 9.0:1 on brand-soft */
-  background-color: var(--color-brand-soft);
+  color: #000000;
+  background-color: #e9ccff;
+  border: 1px solid #000000;
   &:hover:not(:disabled, [aria-disabled="true"]) {
-    background-color: #cfe3f6;
+    background-color: #dfb8ff;
   }
   &:active:not(:disabled, [aria-disabled="true"]) {
     transform: scale(0.98);
   }
 }
 
-/* Outline: white fill + control border */
+/* Outline: same as secondary */
 @utility bubble-outline {
-  color: var(--ink);
+  color: #000000;
   background-color: #ffffff;
-  border: 1px solid var(--input);
+  border: 1px solid #000000;
   &:hover:not(:disabled, [aria-disabled="true"]) {
-    background-color: var(--color-brand-soft);
+    background-color: #e9e9e9;
   }
   &:active:not(:disabled, [aria-disabled="true"]) {
+    background-color: #dcdcdc;
     transform: scale(0.98);
   }
 }
 
 @utility bubble-ghost {
-  color: var(--ink);
+  color: #000000;
   &:hover:not(:disabled, [aria-disabled="true"]) {
-    background-color: rgb(15 95 168 / 0.08);
+    background-color: rgb(0 0 0 / 0.06);
   }
   &:active:not(:disabled, [aria-disabled="true"]) {
-    background-color: rgb(15 95 168 / 0.14);
+    background-color: rgb(0 0 0 / 0.12);
   }
 }
 @utility btn-ghost {
-  color: var(--ink);
+  color: #000000;
   &:hover:not(:disabled, [aria-disabled="true"]) {
-    background-color: rgb(15 95 168 / 0.08);
+    background-color: rgb(0 0 0 / 0.06);
+  }
+  &:active:not(:disabled, [aria-disabled="true"]) {
+    background-color: rgb(0 0 0 / 0.12);
   }
 }
 
 @utility bubble-danger {
-  color: #ffffff; /* white on #c62828 5.6:1 */
-  background-color: #c62828;
+  color: #ffffff; /* white on #d92d20 4.9:1 */
+  background-color: #d92d20;
+  border: 1px solid #000000;
   &:hover:not(:disabled, [aria-disabled="true"]) {
-    background-color: #a81f1f;
+    background-color: #b8261b;
   }
   &:active:not(:disabled, [aria-disabled="true"]) {
-    background-color: #8f1919;
+    background-color: #9a2017;
     transform: scale(0.98);
   }
 }
 @utility btn-danger {
-  color: #ffffff;
-  background-color: #c62828;
+  color: #ffffff; /* white on #d92d20 4.9:1 */
+  background-color: #d92d20;
+  border: 1px solid #000000;
   &:hover:not(:disabled, [aria-disabled="true"]) {
-    background-color: #a81f1f;
-  }
-}
-
-/* ocean = primary brand blue in v4 (kept as a name; slightly darker gradient start for hero contexts) */
-@utility bubble-ocean {
-  color: #ffffff;
-  background-color: var(--color-brand);
-  &:hover:not(:disabled, [aria-disabled="true"]) {
-    background-color: var(--color-brand-hover);
+    background-color: #b8261b;
   }
   &:active:not(:disabled, [aria-disabled="true"]) {
-    background-color: var(--color-brand-pressed);
+    background-color: #9a2017;
     transform: scale(0.98);
   }
 }
 
-/* Former raised FAB: now a flat brand-blue circle (no raise). Use only if a round icon button is needed. */
+/* ocean: electric-blue sticker pill with black text + outline (secondary highlight, not the main CTA) */
+@utility bubble-ocean {
+  color: #000000;
+  background-color: #4da2ff;
+  border: 1px solid #000000;
+  &:hover:not(:disabled, [aria-disabled="true"]) {
+    background-color: #3a94f7;
+  }
+  &:active:not(:disabled, [aria-disabled="true"]) {
+    background-color: #2f86e6;
+    transform: scale(0.98);
+  }
+}
+
+/* Round icon button: black filled circle */
 @utility bubble-fab {
   color: #ffffff;
-  background-color: var(--color-brand);
+  background-color: #000000;
   &:hover {
-    background-color: var(--color-brand-hover);
+    background-color: #262626;
   }
   &:active {
-    background-color: var(--color-brand-pressed);
+    background-color: #3d3d3d;
     transform: scale(0.96);
   }
 }
 
-/* Chips (bubble-chip = chip-coast look; kept name). Selected = brand-soft fill + brand border. */
+/* Chips (bubble-chip = chip-coast look; kept name). Selected = inverted black. */
 @utility bubble-chip {
-  color: var(--ink);
-  font-weight: 600;
+  color: #000000;
+  font-weight: 700;
   border-radius: 9999px;
   background-color: #ffffff;
-  border: 1px solid var(--color-mist-border);
+  border: 1px solid #000000;
   transition:
     background-color var(--dur-fast) ease-out,
-    border-color var(--dur-fast) ease-out;
+    color var(--dur-fast) ease-out;
   &:hover {
-    background-color: var(--color-brand-soft);
+    background-color: #e9e9e9;
   }
   &:active {
     transform: scale(0.98);
   }
   &:is([aria-pressed="true"], [aria-checked="true"], [data-selected="true"], [data-state="on"]) {
-    color: var(--color-brand);
-    background-color: var(--color-brand-soft);
-    border-color: var(--color-brand);
+    color: #ffffff;
+    background-color: #000000;
   }
 }
 
@@ -1420,47 +1399,6 @@ html[data-splash-seen] [data-splash] {
 /* ------------------------------------------------------------------ */
 /* 10. Onboarding / splash "scene" (v4.1). transform + opacity only.    */
 /*     Reduced motion: every .ob-* animation is off, static layout.     */
-/* ------------------------------------------------------------------ */
-/* Deep-ocean veil over the photo: keeps white text >= AA. */
-.ob-veil {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    radial-gradient(70% 50% at 0% 100%, rgb(28 200 218 / 0.22), transparent 65%),
-    linear-gradient(180deg, rgb(6 51 92 / 0.62) 0%, rgb(6 51 92 / 0.38) 38%, rgb(6 51 92 / 0.82) 100%);
-}
-/* Slow cross-fade between 3 photos (24s) + Ken-Burns zoom. --d = start offset. */
-.ob-photo {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  animation:
-    ob-xfade 24s linear infinite var(--d, 0s),
-    ob-kb 24s ease-in-out infinite alternate var(--d, 0s);
-}
-.ob-photo-first {
-  opacity: 1;
-  animation-name: ob-xfade-first, ob-kb;
-}
-@keyframes ob-xfade {
-  0% { opacity: 0; }
-  6% { opacity: 1; }
-  33% { opacity: 1; }
-  40% { opacity: 0; }
-  100% { opacity: 0; }
-}
-@keyframes ob-xfade-first {
-  0% { opacity: 1; }
-  33% { opacity: 1; }
-  40% { opacity: 0; }
-  94% { opacity: 0; }
-  100% { opacity: 1; }
-}
-@keyframes ob-kb {
-  from { transform: scale(1.02) translate3d(0, 0, 0); }
-  to { transform: scale(1.14) translate3d(-1.5%, -1%, 0); }
-}
 /* Rising foam bubbles. */
 .ob-bubble {
   position: absolute;
@@ -1469,8 +1407,8 @@ html[data-splash-seen] [data-splash] {
   width: var(--s, 10px);
   height: var(--s, 10px);
   border-radius: 9999px;
-  background: rgb(255 255 255 / 0.22);
-  border: 1px solid rgb(255 255 255 / 0.4);
+  background: var(--c, #ffffff);
+  border: 1px solid #000000;
   opacity: 0;
   animation: ob-rise var(--t, 12s) ease-in infinite var(--d, 0s);
 }
@@ -1526,8 +1464,8 @@ html[data-splash-seen] [data-splash] {
   content: "";
   position: absolute;
   inset: -4px;
-  border-radius: 1rem;
-  border: 2px solid var(--color-brand);
+  border-radius: 1.25rem;
+  border: 2px solid #4da2ff; /* electric-blue focus halo around the black field outline */
   opacity: 0;
   transform: scale(0.97);
   transition:
@@ -1602,7 +1540,7 @@ html[data-splash-seen] [data-splash] {
   from { opacity: 0; transform: scale(0.2) rotate(-40deg); }
   to { opacity: 1; transform: none; }
 }
-/* Full-screen wave wipe: ocean sheet with a wavy top edge sweeps up; covered at ~50%. */
+/* Full-screen wave wipe: electric-blue sheet with a wavy top edge sweeps up; covered at ~50%. */
 .ob-wipe {
   position: fixed;
   inset: 0;
@@ -1617,7 +1555,7 @@ html[data-splash-seen] [data-splash] {
 .ob-wipe-body {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, #0b6c9e 0%, #06335c 100%);
+  background: #4da2ff; /* electric-blue sticker sheet */
 }
 .ob-wipe-edge {
   position: absolute;
@@ -1625,11 +1563,9 @@ html[data-splash-seen] [data-splash] {
   top: -63px;
   height: 64px;
   width: 100%;
-  color: #0b6c9e;
+  color: #4da2ff;
 }
 @media (prefers-reduced-motion: reduce) {
-  .ob-photo,
-  .ob-photo-first,
   .ob-bubble,
   .ob-word,
   .ob-rise,
@@ -1642,7 +1578,6 @@ html[data-splash-seen] [data-splash] {
   .ob-wipe {
     animation: none !important;
   }
-  .ob-photo:not(.ob-photo-first),
   .ob-bubble,
   .ob-cta::after {
     opacity: 0 !important;
@@ -1715,4 +1650,15 @@ html[data-splash-seen] [data-splash] {
   .mascot-zzz {
     opacity: 1 !important;
   }
+}
+
+/* ===== Slush sticker palette (decorative fills; never text on light) ===== */
+@theme static {
+  --color-sticker-blue: #4da2ff;
+  --color-sticker-mint: #55db9c;
+  --color-sticker-lavender: #e9ccff;
+  --color-sticker-ember: #fb4903;
+  --color-sticker-sun: #ffd731;
+  --color-sticker-violet: #5c4ade;
+  --color-concrete: #cccccc;
 }

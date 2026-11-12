@@ -426,33 +426,36 @@ export function WaveChart({
         גררו או השתמשו בחצים לפרטי שעה. תחזית אוטומטית, לא דיווח גולשים.
       </figcaption>
 
-      <table className="sr-only">
-        <caption>ערכי תחזית כל 6 שעות</caption>
-        <thead>
-          <tr>
-            <th scope="col">שעה</th>
-            <th scope="col">גובה גל (מטר)</th>
-            <th scope="col">מחזור (שניות)</th>
-            <th scope="col">כיוון גל</th>
-            <th scope="col">רוח (קמ&quot;ש)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {win
-            .filter((p) => hourOf(p.time) % 6 === 0)
-            .map((p) => (
-              <tr key={p.time}>
-                <th scope="row">
-                  {dayLabel(p.time.slice(0, 10), today)} {hhmmOf(p.time)}
-                </th>
-                <td>{p.waveHeight !== null ? num(p.waveHeight) : "אין נתון"}</td>
-                <td>{p.wavePeriod !== null ? Math.round(p.wavePeriod) : "אין נתון"}</td>
-                <td>{directionLabel(p.waveDirection) ?? "אין נתון"}</td>
-                <td>{p.windSpeed !== null ? Math.round(p.windSpeed) : "אין נתון"}</td>
-              </tr>
-            ))}
-        </tbody>
-      </table>
+      {/* sr-only on a wrapper: a <table> ignores the 1px width and would widen the page. */}
+      <div className="sr-only">
+        <table>
+          <caption>ערכי תחזית כל 6 שעות</caption>
+          <thead>
+            <tr>
+              <th scope="col">שעה</th>
+              <th scope="col">גובה גל (מטר)</th>
+              <th scope="col">מחזור (שניות)</th>
+              <th scope="col">כיוון גל</th>
+              <th scope="col">רוח (קמ&quot;ש)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {win
+              .filter((p) => hourOf(p.time) % 6 === 0)
+              .map((p) => (
+                <tr key={p.time}>
+                  <th scope="row">
+                    {dayLabel(p.time.slice(0, 10), today)} {hhmmOf(p.time)}
+                  </th>
+                  <td>{p.waveHeight !== null ? num(p.waveHeight) : "אין נתון"}</td>
+                  <td>{p.wavePeriod !== null ? Math.round(p.wavePeriod) : "אין נתון"}</td>
+                  <td>{directionLabel(p.waveDirection) ?? "אין נתון"}</td>
+                  <td>{p.windSpeed !== null ? Math.round(p.windSpeed) : "אין נתון"}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
     </figure>
   );
 }

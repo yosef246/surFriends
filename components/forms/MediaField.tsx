@@ -17,7 +17,7 @@ type Props = {
 };
 
 const SEGMENT =
-  "btn-secondary motion-press inline-flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-lg px-4 text-body-sm font-semibold has-[:focus-visible]:outline-2";
+  "btn-secondary motion-press inline-flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-full px-4 text-body-sm font-bold has-[:focus-visible]:outline-2";
 
 export function MediaField({ onChange, onProcessing, uploading, uploadError, disabled }: Props) {
   const imageRef = useRef<HTMLInputElement>(null);

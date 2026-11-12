@@ -1,21 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Suez_One, IBM_Plex_Sans_Hebrew } from "next/font/google";
+import { Karantina, Rubik } from "next/font/google";
 import "./globals.css";
 import { AppStart } from "@/components/session/AppStart";
 import { DaylightProvider } from "@/components/night/DaylightProvider";
 import { startupImages } from "@/lib/apple-splash";
 import { getDaylightState, toSnapshot } from "@/lib/daylight";
 
-const suezOne = Suez_One({
-  variable: "--font-suez-one",
+// Display: Karantina, a condensed Hebrew face standing in for Slush's crushed Lateral. UI: Rubik (for Aeonik Pro).
+const karantina = Karantina({
+  variable: "--font-karantina",
   subsets: ["hebrew", "latin"],
-  weight: "400",
+  weight: ["400", "700"],
 });
 
-const plexHebrew = IBM_Plex_Sans_Hebrew({
-  variable: "--font-plex-hebrew",
+const rubik = Rubik({
+  variable: "--font-rubik",
   subsets: ["hebrew", "latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#0b6c9e",
+  themeColor: "#dceeff",
   interactiveWidget: "resizes-content",
 };
 
@@ -38,8 +39,10 @@ export default function RootLayout({
   const now = new Date();
   const daylight = toSnapshot(getDaylightState(now), now);
   return (
-    <html lang="he" dir="rtl" suppressHydrationWarning>
-      <body className={`${suezOne.variable} ${plexHebrew.variable} antialiased`}>
+    // Font variables live on <html>: globals.css sets `html { font-family: var(--font-sans) }`, and a variable
+    // defined only on <body> is undefined at <html>, which silently fell back to the browser's default serif.
+    <html lang="he" dir="rtl" suppressHydrationWarning className={`${karantina.variable} ${rubik.variable}`}>
+      <body className="antialiased">
         <script
           // Before first paint: hide the launch splash when it was already shown in this browser session.
           dangerouslySetInnerHTML={{
